@@ -83,7 +83,7 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
   const [transcript, setTranscript] = useState("");
   const [responseText, setResponseText] = useState("");
   const recognitionRef = useRef<any>(null);
-  const synthRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const animFrameRef = useRef<number>(0);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
