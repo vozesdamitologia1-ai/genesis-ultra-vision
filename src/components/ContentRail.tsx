@@ -167,9 +167,9 @@ const ContentRail = ({ title, description, pathType, category, isVip = false, la
           ))}
         </div>
       ) : (
-        <div className="flex h-32 items-center justify-center rounded-xl border border-border/50 bg-card/50">
-          <p className="text-xs text-muted-foreground">{searchQuery ? t("content.noResults", "Nenhum resultado.") : t("content.noContent")}</p>
-        </div>
+          <div className="flex h-32 items-center justify-center rounded-xl border border-border/50 bg-card/50">
+            <p className="text-xs text-muted-foreground">{searchQuery ? t("content.noResults", "Nenhum resultado.") : (emptyMessage || t("content.noContent"))}</p>
+          </div>
       )}
     </section>
   );
