@@ -22,18 +22,19 @@ serve(async (req) => {
 
     const { message, history } = await req.json();
 
-    if (!message || typeof message !== "string" || message.trim().length === 0) {
+    if (!message || typeof message !== "string" || message.trim().length === 0 || message.length > 5000) {
       return new Response(
-        JSON.stringify({ error: "Message is required and must be a non-empty string" }),
+        JSON.stringify({ error: "Message is required (max 5000 chars)" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    // Build conversation contents for Gemini API
     const contents: Array<{ role: string; parts: Array<{ text: string }> }> = [];
 
     if (history && Array.isArray(history)) {
-      for (const msg of history) {
+      // Limit history to last 20 messages
+      const recentHistory = history.slice(-20);
+      for (const msg of recentHistory) {
         if (msg.role && msg.content && typeof msg.content === "string") {
           contents.push({
             role: msg.role === "assistant" ? "model" : "user",
@@ -49,7 +50,7 @@ serve(async (req) => {
     });
 
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${GEMINI_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -73,8 +74,16 @@ serve(async (req) => {
     if (!response.ok) {
       const errorText = await response.text();
       console.error("Gemini API error:", response.status, errorText);
+
+      if (response.status === 429) {
+        return new Response(
+          JSON.stringify({ error: "Rate limit exceeded. Please wait a moment and try again." }),
+          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
       return new Response(
-        JSON.stringify({ error: "Failed to get AI response", details: errorText, status: response.status }),
+        JSON.stringify({ error: "Failed to get AI response" }),
         { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -90,7 +99,7 @@ serve(async (req) => {
   } catch (e) {
     console.error("gemini-chat error:", e);
     return new Response(
-      JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
+      JSON.stringify({ error: "Internal server error" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
