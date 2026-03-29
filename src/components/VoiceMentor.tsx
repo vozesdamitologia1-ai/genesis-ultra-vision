@@ -695,7 +695,12 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
     onClose();
   };
 
-  const stateLabel = {
+  const stateLabel = isEnglish ? {
+    idle: isLegado ? "Tap to speak with the Biblical Mentor" : "Tap the mic to start",
+    listening: "Listening...",
+    processing: isLegado ? "Searching the Scriptures..." : "Processing...",
+    speaking: isLegado ? "Mentor proclaiming..." : "Coach speaking...",
+  } : {
     idle: isLegado ? "Toque para falar com o Mentor Bíblico" : "Toque no microfone para começar",
     listening: "Ouvindo...",
     processing: isLegado ? "Buscando nas Escrituras..." : "Processando...",
