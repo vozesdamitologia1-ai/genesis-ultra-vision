@@ -9,39 +9,33 @@ interface VoiceMentorProps {
   onClose: () => void;
 }
 
-const LEGADO_PROMPT = `Você é um mentor de vida, empresário bem-sucedido e estrategista de alto desempenho.
-Sua abordagem é conservadora, baseada em disciplina, responsabilidade, constância e princípios sólidos.
-Você carrega valores cristãos, mas não menciona nomes de igrejas ou instituições.
-Sua comunicação é firme, direta e respeitosa, como um mentor experiente que orienta com autoridade.
+const LEGADO_PROMPT = `Você é um mentor de vida conservador, firme e disciplinado. Fale como um pai sábio num bate-papo direto.
 
-Você acredita que resultados vêm de: Disciplina diária, Sacrifício consciente, Controle emocional, Planejamento de longo prazo.
+REGRAS OBRIGATÓRIAS:
+- Máximo 3-4 frases curtas (40-60 palavras total)
+- Fale como num diálogo rápido, NÃO uma palestra
+- NUNCA termine com "espero ter ajudado" ou clichês
+- SEMPRE termine com uma pergunta curta OU uma ordem de ação
+- Sem listas, bullets ou formatação. Frases fluidas apenas
+- Tom: firme, grave, autoritário, focado em responsabilidade
 
-Você orienta nas áreas de: Finanças (construção de patrimônio, evitar dívidas, consistência), Relacionamentos (responsabilidade, compromisso, liderança), Carreira e negócios (crescimento sólido, decisões racionais), Disciplina pessoal e hábitos.
+Estilo: "A falta de vontade é o primeiro passo para a ruína da disciplina. Homens de legado cumprem o que prometem a si mesmos. Honre seu compromisso hoje. O que você vai fazer agora?"
 
-Regras de resposta: Não use gírias ou linguagem informal. Seja direto e objetivo. Corrija o usuário quando ele estiver se sabotando. Evite motivação vazia. Traga sempre um senso de responsabilidade pessoal.
+Responda na mesma língua que o usuário usar.`;
 
-Formato das respostas: 1. Diagnóstico claro da situação. 2. Onde a pessoa está errando. 3. Plano de ação prático e disciplinado.
+const FLOW_PROMPT = `Você é um coach energético e ativador. Fale como um treinador intenso num bate-papo motivacional.
 
-Seu objetivo é formar pessoas fortes, estáveis e confiáveis, que constroem uma vida sólida ao longo do tempo.
-Responda na mesma língua que o usuário usar. Mantenha respostas concisas (máximo 3 parágrafos curtos) para serem faladas em voz alta.
-IMPORTANTE: Responda de forma conversacional e natural, como se estivesse falando diretamente com a pessoa num bate-papo. Não use listas numeradas, bullets ou formatação. Use frases completas e fluidas, conectando ideias naturalmente.`;
+REGRAS OBRIGATÓRIAS:
+- Máximo 3-4 frases curtas (40-60 palavras total)
+- Fale como num diálogo rápido de treino, NÃO uma palestra
+- NUNCA termine com "espero ter ajudado" ou clichês
+- SEMPRE termine com uma ordem de ação direta
+- Sem listas, bullets ou formatação. Frases fluidas apenas
+- Tom: enérgico, urgente, provocador, com "soco" motivacional
 
-const FLOW_PROMPT = `Você é um coach de vida, comunicador energético e mentor de alta performance, com uma abordagem moderna, intensa e conectada com uma linguagem jovem.
-Você carrega valores cristãos na essência, mas não menciona nomes de igrejas ou instituições.
+Estilo: "A vontade é passageira, o governo é eterno. Levanta agora, coloca o tênis e não negocia com a sua mente. O corpo obedece ao espírito. Vai!"
 
-Sua comunicação é: Direta, mas motivadora. Energética e envolvente. Atual, com linguagem acessível.
-
-Você acredita que a vida é movimento, atitude e posicionamento. Você incentiva o usuário a sair da inércia e agir com coragem.
-
-Você orienta nas áreas de: Finanças (crescimento, mentalidade de prosperidade, ação), Relacionamentos (inteligência emocional, posicionamento), Propósito e identidade, Disciplina e consistência com intensidade.
-
-Regras de resposta: Pode usar linguagem mais leve e moderna (sem exagerar em gírias). Ser inspirador sem ser superficial. Confrontar quando necessário, mas com energia de construção. Trazer senso de urgência e ação.
-
-Formato das respostas: 1. Verdade direta (o que precisa ser dito). 2. Quebra de mentalidade (tirar a pessoa da inércia). 3. Ação prática imediata.
-
-Seu objetivo é ativar o potencial do usuário, gerar movimento e fazer com que ele tome decisões que mudem sua vida.
-Responda na mesma língua que o usuário usar. Mantenha respostas concisas (máximo 3 parágrafos curtos) para serem faladas em voz alta.
-IMPORTANTE: Responda de forma conversacional e natural, como se estivesse num bate-papo animado. Não use listas numeradas, bullets ou formatação. Use frases completas e fluidas, com energia e conexão direta.`;
+Responda na mesma língua que o usuário usar.`;
 
 type VoiceState = "idle" | "listening" | "processing" | "speaking";
 
@@ -61,7 +55,6 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
   const isLegado = path === "legado";
   const systemPrompt = isLegado ? LEGADO_PROMPT : FLOW_PROMPT;
 
-  // Waveform colors
   const waveColor = isLegado ? "#D4AF37" : "#ef4444";
   const bgGradient = isLegado
     ? "from-black via-neutral-900 to-black"
@@ -91,12 +84,11 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
     if (!open) stopEverything();
   }, [open, stopEverything]);
 
-  // Draw waveform
+  // Draw waveform from mic
   const drawWaveform = useCallback(() => {
     const canvas = canvasRef.current;
     const analyser = analyserRef.current;
     if (!canvas || !analyser) return;
-
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
@@ -106,19 +98,15 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
     const draw = () => {
       animFrameRef.current = requestAnimationFrame(draw);
       analyser.getByteTimeDomainData(dataArray);
-
       ctx.fillStyle = "rgba(0, 0, 0, 0.15)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-
       ctx.lineWidth = 3;
       ctx.strokeStyle = waveColor;
       ctx.shadowColor = waveColor;
       ctx.shadowBlur = 20;
       ctx.beginPath();
-
       const sliceWidth = canvas.width / bufferLength;
       let x = 0;
-
       for (let i = 0; i < bufferLength; i++) {
         const v = dataArray[i] / 128.0;
         const y = (v * canvas.height) / 2;
@@ -126,16 +114,14 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
         else ctx.lineTo(x, y);
         x += sliceWidth;
       }
-
       ctx.lineTo(canvas.width, canvas.height / 2);
       ctx.stroke();
       ctx.shadowBlur = 0;
     };
-
     draw();
   }, [waveColor]);
 
-  // Idle animation when not using mic
+  // Idle/speaking animation
   const drawIdleWave = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -147,38 +133,32 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
       animFrameRef.current = requestAnimationFrame(draw);
       ctx.fillStyle = "rgba(0, 0, 0, 0.15)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-
       ctx.lineWidth = 2;
       ctx.strokeStyle = waveColor;
       ctx.shadowColor = waveColor;
       ctx.shadowBlur = 15;
       ctx.beginPath();
-
       const amplitude = state === "speaking" ? 40 : 10;
       for (let x = 0; x < canvas.width; x++) {
         const y = canvas.height / 2 + Math.sin(x * 0.02 + phase) * amplitude * Math.sin(x * 0.005);
         if (x === 0) ctx.moveTo(x, y);
         else ctx.lineTo(x, y);
       }
-
       ctx.stroke();
       ctx.shadowBlur = 0;
-      phase += 0.05;
+      phase += state === "speaking" ? 0.08 : 0.03;
     };
-
     draw();
   }, [waveColor, state]);
 
   useEffect(() => {
     if (!open) return;
     if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
-
     if (state === "listening" && analyserRef.current) {
       drawWaveform();
-    } else if (state === "speaking" || state === "idle" || state === "processing") {
+    } else {
       drawIdleWave();
     }
-
     return () => {
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
     };
@@ -200,14 +180,11 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
   const sendToGemini = async (text: string) => {
     setState("processing");
     setResponseText("");
-
     try {
       const { data, error } = await supabase.functions.invoke("gemini-chat", {
         body: { message: text, history: [], systemPrompt },
       });
-
       if (error) throw error;
-
       const reply = data?.reply ?? "Sem resposta.";
       setResponseText(reply);
       speakResponse(reply);
@@ -220,88 +197,112 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
 
   const pickMaleVoice = (voices: SpeechSynthesisVoice[]): SpeechSynthesisVoice | null => {
     const ptVoices = voices.filter(v => v.lang.startsWith("pt"));
-    
-    // Priority male voice keywords
-    const maleKeywords = ["daniel", "ricardo", "guilherme", "microsoft", "google português do brasil"];
-    
-    // Try to find a known male voice
+
+    // Filter out known female voices
+    const femaleKeywords = ["female", "feminino", "mulher", "woman", "francisca", "luciana", "maria", "ana", "fernanda", "alice"];
+    const nonFemale = ptVoices.filter(v => !femaleKeywords.some(k => v.name.toLowerCase().includes(k)));
+
+    // Priority: known male voices
+    const maleKeywords = ["male", "masculino", "homem", "daniel", "ricardo", "guilherme", "microsoft", "google português do brasil"];
     for (const keyword of maleKeywords) {
-      const match = ptVoices.find(v => v.name.toLowerCase().includes(keyword));
+      const match = nonFemale.find(v => v.name.toLowerCase().includes(keyword));
       if (match) return match;
     }
-    
-    // Try any Portuguese Google voice (tend to be higher quality)
+
+    // Any non-female Portuguese voice
+    if (nonFemale.length > 0) return nonFemale[0];
+
+    // Any Portuguese Google voice
     const googlePt = ptVoices.find(v => v.name.toLowerCase().includes("google"));
     if (googlePt) return googlePt;
-    
-    // Any Portuguese voice
+
     if (ptVoices.length > 0) return ptVoices[0];
-    
-    // Absolute fallback
     return voices[0] || null;
+  };
+
+  const humanizeText = (text: string): string => {
+    return text
+      .replace(/\.\.\./g, ", ")
+      .replace(/\n\n/g, ". ")
+      .replace(/\n/g, ", ")
+      .replace(/\d+\.\s/g, "")
+      .replace(/[•\-]\s/g, "")
+      .replace(/\s{2,}/g, " ")
+      // Add SSML-like pauses via natural punctuation
+      .replace(/,\s*/g, ", ")   // normalize comma spacing
+      .replace(/\.\s*/g, ". ")  // normalize period spacing
+      .trim();
   };
 
   const speakResponse = (text: string) => {
     setState("speaking");
     window.speechSynthesis.cancel();
 
-    // Clean text for more natural speech - remove excessive punctuation pauses
-    const cleanedText = text
-      .replace(/\.\.\./g, ", ")
-      .replace(/\n\n/g, ". ")
-      .replace(/\n/g, ", ")
-      .replace(/\d+\.\s/g, "") // remove numbered list markers like "1. "
-      .replace(/[•\-]\s/g, "") // remove bullet markers
-      .replace(/\s{2,}/g, " ")
-      .trim();
+    const cleanedText = humanizeText(text);
 
-    const utterance = new SpeechSynthesisUtterance(cleanedText);
-    utterance.lang = "pt-BR";
-    
-    // Persona differentiation
-    if (isLegado) {
-      utterance.rate = 0.9;   // slower, more solemn
-      utterance.pitch = 0.85; // deeper, authoritative
-    } else {
-      utterance.rate = 1.1;   // faster, energetic
-      utterance.pitch = 1.05; // slightly higher, youthful
-    }
+    // Split into sentences for more natural delivery
+    const sentences = cleanedText.split(/(?<=[.!?])\s+/).filter(s => s.trim());
 
-    // Pick best male voice available
-    const voices = window.speechSynthesis.getVoices();
-    const selectedVoice = pickMaleVoice(voices);
-    if (selectedVoice) {
-      utterance.voice = selectedVoice;
-    } else {
-      // If no voice found yet (voices load async), retry once
-      utterance.pitch = 0.8; // fallback: make it as deep as possible
-    }
+    let currentIndex = 0;
 
-    utterance.onend = () => setState("idle");
-    utterance.onerror = () => setState("idle");
+    const speakNext = () => {
+      if (currentIndex >= sentences.length) {
+        setState("idle");
+        return;
+      }
 
-    synthRef.current = utterance;
-    window.speechSynthesis.speak(utterance);
+      const sentence = sentences[currentIndex];
+      const utterance = new SpeechSynthesisUtterance(sentence);
+      utterance.lang = "pt-BR";
+
+      if (isLegado) {
+        utterance.rate = 0.9;
+        utterance.pitch = 0.85;
+      } else {
+        utterance.rate = 1.05;
+        utterance.pitch = 1.1;
+      }
+
+      const voices = window.speechSynthesis.getVoices();
+      const selectedVoice = pickMaleVoice(voices);
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+      } else {
+        utterance.pitch = 0.8;
+      }
+
+      utterance.onend = () => {
+        currentIndex++;
+        // Inter-sentence pause: 300ms
+        setTimeout(speakNext, 300);
+      };
+      utterance.onerror = () => {
+        currentIndex++;
+        speakNext();
+      };
+
+      synthRef.current = utterance;
+      window.speechSynthesis.speak(utterance);
+    };
+
+    speakNext();
   };
 
   const startListening = async () => {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      setResponseText("Seu navegador não suporta reconhecimento de voz. Use o Chrome para melhor experiência.");
+      setResponseText("Seu navegador não suporta reconhecimento de voz. Use o Chrome.");
       return;
     }
 
-    // Stop any ongoing speech
     window.speechSynthesis.cancel();
     setState("listening");
     setTranscript("");
     setResponseText("");
 
-    // Set up audio visualization (optional - don't block if it fails)
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
-
       const audioContext = new AudioContext();
       audioContextRef.current = audioContext;
       const source = audioContext.createMediaStreamSource(stream);
@@ -311,7 +312,6 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
       analyserRef.current = analyser;
     } catch (e) {
       console.warn("Mic visualization unavailable:", e);
-      // Continue without waveform - speech recognition may still work
     }
 
     let finalTranscript = "";
@@ -336,7 +336,6 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
     };
 
     recognition.onend = () => {
-      // Clean up audio
       if (streamRef.current) {
         streamRef.current.getTracks().forEach(t => t.stop());
         streamRef.current = null;
@@ -347,13 +346,10 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
       }
       analyserRef.current = null;
 
-      // Use the captured finalTranscript directly
-      const textToSend = finalTranscript.trim() || "";
+      const textToSend = finalTranscript.trim();
       if (textToSend) {
-        console.log("Sending to Gemini:", textToSend);
         sendToGemini(textToSend);
       } else {
-        console.log("No speech detected");
         setResponseText("Não consegui ouvir. Tente novamente.");
         setState("idle");
       }
@@ -361,30 +357,26 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
 
     recognition.onerror = (event: any) => {
       console.error("Speech recognition error:", event.error);
-      // Clean up audio
       if (streamRef.current) {
         streamRef.current.getTracks().forEach(t => t.stop());
         streamRef.current = null;
       }
-      
       const errorMessages: Record<string, string> = {
-        "not-allowed": "Permissão do microfone negada. Permita o acesso nas configurações do navegador.",
+        "not-allowed": "Permissão do microfone negada. Permita o acesso nas configurações.",
         "no-speech": "Nenhuma fala detectada. Tente novamente.",
         "network": "Erro de rede. Verifique sua conexão.",
         "aborted": "Escuta cancelada.",
       };
-      setResponseText(errorMessages[event.error] || `Erro no reconhecimento de voz: ${event.error}`);
+      setResponseText(errorMessages[event.error] || `Erro: ${event.error}`);
       setState("idle");
     };
 
     recognitionRef.current = recognition;
-    
     try {
       recognition.start();
-      console.log("Speech recognition started");
     } catch (e) {
       console.error("Failed to start speech recognition:", e);
-      setResponseText("Não foi possível iniciar o reconhecimento de voz. Abra o app diretamente no navegador (não em iframe).");
+      setResponseText("Não foi possível iniciar. Abra o app diretamente no navegador.");
       setState("idle");
     }
   };
@@ -406,7 +398,7 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
     idle: "Toque no microfone para começar",
     listening: "Ouvindo...",
     processing: "Processando...",
-    speaking: "Falando...",
+    speaking: "Mentor falando...",
   };
 
   const accentColor = isLegado ? "text-amber-400" : "text-red-500";
@@ -427,13 +419,8 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
           exit={{ opacity: 0 }}
           className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-gradient-to-b ${bgGradient}`}
         >
-          {/* Canvas for waveform */}
-          <canvas
-            ref={canvasRef}
-            className="absolute inset-0 z-0"
-          />
+          <canvas ref={canvasRef} className="absolute inset-0 z-0" />
 
-          {/* Close button */}
           <button
             onClick={handleClose}
             className="absolute top-4 right-4 z-10 rounded-full bg-white/10 p-2 text-white/70 backdrop-blur-sm transition-colors hover:bg-white/20 hover:text-white"
@@ -441,14 +428,11 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
             <X className="h-6 w-6" />
           </button>
 
-          {/* Path label */}
           <div className={`absolute top-6 left-6 z-10 text-xs font-bold uppercase tracking-[0.3em] ${accentColor}`}>
             {isLegado ? "LEGADO" : "FLOW"}
           </div>
 
-          {/* Content */}
           <div className="relative z-10 flex flex-col items-center gap-8 px-6 max-w-md w-full">
-            {/* Status */}
             <motion.p
               key={state}
               initial={{ opacity: 0, y: -10 }}
@@ -458,7 +442,6 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
               {stateLabel[state]}
             </motion.p>
 
-            {/* Mic button */}
             <motion.button
               onClick={handleMicClick}
               disabled={state === "processing" || state === "speaking"}
@@ -475,7 +458,6 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
                 <Mic className={`h-10 w-10 ${state === "processing" ? "animate-pulse text-white/50" : "text-white"}`} />
               )}
 
-              {/* Pulse ring */}
               {state === "listening" && (
                 <motion.div
                   className={`absolute inset-0 rounded-full border-2 ${accentBorder}`}
@@ -483,9 +465,16 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
                   transition={{ duration: 1.5, repeat: Infinity }}
                 />
               )}
+
+              {state === "speaking" && (
+                <motion.div
+                  className={`absolute inset-0 rounded-full border-2 ${accentBorder}`}
+                  animate={{ scale: [1, 1.3, 1], opacity: [0.4, 0.8, 0.4] }}
+                  transition={{ duration: 1, repeat: Infinity }}
+                />
+              )}
             </motion.button>
 
-            {/* Transcript */}
             {transcript && (
               <motion.div
                 initial={{ opacity: 0 }}
@@ -497,7 +486,6 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
               </motion.div>
             )}
 
-            {/* Response */}
             {responseText && (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
@@ -512,7 +500,6 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
             )}
           </div>
 
-          {/* Bottom label */}
           <div className="absolute bottom-8 z-10">
             <p className="text-[10px] text-white/30 tracking-widest uppercase">
               Genesis Vision • {isLegado ? "Mentor Conservador" : "Coach Energético"}
