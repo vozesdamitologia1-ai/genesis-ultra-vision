@@ -102,7 +102,11 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
     if (recognitionRef.current) {
       try { recognitionRef.current.stop(); } catch {}
     }
-    window.speechSynthesis.cancel();
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.src = "";
+      audioRef.current = null;
+    }
     if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
     if (streamRef.current) {
       streamRef.current.getTracks().forEach(t => t.stop());
