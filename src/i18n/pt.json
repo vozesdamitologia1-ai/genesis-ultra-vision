@@ -139,6 +139,10 @@
   },
   "content": {
     "noContent": "Nenhum conteúdo disponível ainda.",
+    "noResults": "Nenhum resultado encontrado.",
+    "searchPlaceholder": "Buscar conteúdo...",
+    "searchGroups": "Buscar grupo...",
+    "leader": "Líder",
     "watchNow": "Assistir",
     "readMore": "Ler Mais"
   }
