@@ -13,17 +13,36 @@ const BibleAudioPlayer = ({ result }: BibleAudioPlayerProps) => {
   const [loading, setLoading] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  const speakWithBrowserTTS = (text: string) => {
+    if (!("speechSynthesis" in window)) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "pt-BR";
+    utterance.rate = 0.9;
+    utterance.pitch = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const ptVoice = voices.find(v => v.lang.startsWith("pt") && v.name.toLowerCase().includes("google"))
+      || voices.find(v => v.lang.startsWith("pt-BR"))
+      || voices.find(v => v.lang.startsWith("pt"));
+    if (ptVoice) utterance.voice = ptVoice;
+    utterance.onend = () => { setPlaying(false); };
+    utterance.onerror = () => { setPlaying(false); };
+    window.speechSynthesis.speak(utterance);
+  };
+
   const handlePlay = async () => {
-    if (playing && audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current = null;
+    if (playing) {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+      window.speechSynthesis?.cancel();
       setPlaying(false);
       return;
     }
 
     setLoading(true);
     try {
-      // Build narration text: chapter title + first 10 verses + insight summary
       const versesText = result.verses
         .slice(0, 10)
         .map((v) => `Versículo ${v.verse}. ${v.content}`)
@@ -64,7 +83,14 @@ const BibleAudioPlayer = ({ result }: BibleAudioPlayerProps) => {
       await audio.play();
       setPlaying(true);
     } catch (e) {
-      console.error("TTS error:", e);
+      console.warn("ElevenLabs unavailable, using browser TTS:", e);
+      const versesText = result.verses
+        .slice(0, 10)
+        .map((v) => `Versículo ${v.verse}. ${v.content}`)
+        .join(". ");
+      const text = `${result.book}, capítulo ${result.chapter}. ${versesText}`;
+      setPlaying(true);
+      speakWithBrowserTTS(text);
     } finally {
       setLoading(false);
     }
