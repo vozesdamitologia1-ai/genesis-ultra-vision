@@ -20,7 +20,7 @@ serve(async (req) => {
       );
     }
 
-    const { message, history } = await req.json();
+    const { message, history, systemPrompt } = await req.json();
 
     if (!message || typeof message !== "string" || message.trim().length === 0 || message.length > 5000) {
       return new Response(
@@ -28,6 +28,11 @@ serve(async (req) => {
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
+
+    const defaultSystemPrompt = "You are a helpful spiritual mentor and life coach assistant for the Genesis Vision app. You provide guidance rooted in faith, purpose, and personal growth. Answer in the same language the user writes to you.";
+    const finalSystemPrompt = (systemPrompt && typeof systemPrompt === "string" && systemPrompt.length <= 5000)
+      ? systemPrompt
+      : defaultSystemPrompt;
 
     const contents: Array<{ role: string; parts: Array<{ text: string }> }> = [];
 
@@ -59,7 +64,7 @@ serve(async (req) => {
           systemInstruction: {
             parts: [
               {
-                text: "You are a helpful spiritual mentor and life coach assistant for the Genesis Vision app. You provide guidance rooted in faith, purpose, and personal growth. Answer in the same language the user writes to you.",
+                text: finalSystemPrompt,
               },
             ],
           },
