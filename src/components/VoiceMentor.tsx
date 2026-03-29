@@ -582,7 +582,7 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
   const startListening = async () => {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      setResponseText("Seu navegador não suporta reconhecimento de voz. Use o Chrome.");
+      setResponseText(isEnglish ? "Your browser doesn't support voice recognition. Use Chrome." : "Seu navegador não suporta reconhecimento de voz. Use o Chrome.");
       return;
     }
 
