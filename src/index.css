@@ -48,6 +48,28 @@
     --font-serif: 'Playfair Display', Georgia, serif;
     --font-sans: 'Inter', system-ui, sans-serif;
   }
+
+  /* LEGADO: Clássico — Preto e Branco, serifado */
+  .theme-legado {
+    --primary: 0 0% 100%;
+    --primary-foreground: 0 0% 0%;
+    --accent: 0 0% 85%;
+    --accent-foreground: 0 0% 0%;
+    --muted-foreground: 0 0% 70%;
+    --ring: 0 0% 100%;
+    --border: 0 0% 22%;
+  }
+
+  /* FLOW: Netflix Dark — Preto e Vermelho */
+  .theme-flow {
+    --primary: 357 91% 47%;
+    --primary-foreground: 0 0% 100%;
+    --accent: 357 91% 47%;
+    --accent-foreground: 0 0% 100%;
+    --muted-foreground: 0 0% 64%;
+    --ring: 357 91% 47%;
+    --border: 0 0% 18%;
+  }
 }
 
 @layer base {
