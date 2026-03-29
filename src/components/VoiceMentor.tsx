@@ -646,7 +646,7 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
       if (textToSend) {
         sendToGemini(textToSend);
       } else {
-        setResponseText("Não consegui ouvir. Tente novamente.");
+        setResponseText(isEnglish ? "Couldn't hear you. Try again." : "Não consegui ouvir. Tente novamente.");
         setState("idle");
       }
     };
