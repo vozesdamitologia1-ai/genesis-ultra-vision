@@ -8,7 +8,7 @@ interface BibleAudioPlayerProps {
 }
 
 const BibleAudioPlayer = ({ result }: BibleAudioPlayerProps) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [playing, setPlaying] = useState(false);
   const [loading, setLoading] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
