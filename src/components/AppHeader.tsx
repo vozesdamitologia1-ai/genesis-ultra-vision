@@ -2,11 +2,11 @@ import { KeyRound, Mic } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import LanguageSelector from "./LanguageSelector";
-import MentorChat from "./MentorChat";
+import VoiceMentor from "./VoiceMentor";
 
 const AppHeader = () => {
   const { t } = useTranslation();
-  const [chatOpen, setChatOpen] = useState(false);
+  const [voiceOpen, setVoiceOpen] = useState(false);
 
   return (
     <>
@@ -20,14 +20,14 @@ const AppHeader = () => {
         <div className="flex items-center gap-3">
           <LanguageSelector />
           <button
-            onClick={() => setChatOpen(true)}
+            onClick={() => setVoiceOpen(true)}
             className="text-muted-foreground transition-colors hover:text-foreground"
           >
             <Mic className="h-5 w-5" />
           </button>
         </div>
       </header>
-      <MentorChat open={chatOpen} onClose={() => setChatOpen(false)} />
+      <VoiceMentor open={voiceOpen} onClose={() => setVoiceOpen(false)} />
     </>
   );
 };
