@@ -427,39 +427,42 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
       let systemPrompt: string;
 
       if (isLegado) {
-        // Check for bible reference
         const ref = parseBibleReference(text);
         if (ref) {
           const dbVerse = await fetchVerseFromDB(ref.book, ref.chapter, ref.verse);
           if (dbVerse) {
-            verseData = `\n\nVERSÍCULO ENCONTRADO NO BANCO DE DADOS (use este texto exato):\n${dbVerse}`;
+            verseData = isEnglish
+              ? `\n\nVERSE FOUND IN DATABASE (use this exact text):\n${dbVerse}`
+              : `\n\nVERSÍCULO ENCONTRADO NO BANCO DE DADOS (use este texto exato):\n${dbVerse}`;
             setCitedVerse(dbVerse);
           } else {
-            verseData = "\n\nVersículo não encontrado no banco local. Use seu conhecimento, mas avise que pode haver imprecisão.";
+            verseData = isEnglish
+              ? "\n\nVerse not found in local database. Use your knowledge (KJV or NIV), but warn that it may be imprecise."
+              : "\n\nVersículo não encontrado no banco local. Use seu conhecimento, mas avise que pode haver imprecisão.";
           }
         }
 
-        // Check for random word request
         if (isRandomWordRequest(text)) {
-          verseData = "\n\nO USUÁRIO PEDIU UMA PALAVRA ALEATÓRIA. Escolha um Provérbio ou Salmo aleatório. Cite o versículo completo com referência e aplique à vida prática.";
+          verseData = isEnglish
+            ? "\n\nTHE USER ASKED FOR A RANDOM WORD. Choose a random Proverb or Psalm from KJV/NIV. Quote the full verse with reference and apply to practical life."
+            : "\n\nO USUÁRIO PEDIU UMA PALAVRA ALEATÓRIA. Escolha um Provérbio ou Salmo aleatório. Cite o versículo completo com referência e aplique à vida prática.";
         }
 
-        systemPrompt = LEGADO_BIBLICAL_PROMPT.replace("{{VERSE_DATA}}", verseData);
+        const basePrompt = isEnglish ? LEGADO_BIBLICAL_PROMPT_EN : LEGADO_BIBLICAL_PROMPT;
+        systemPrompt = basePrompt.replace("{{VERSE_DATA}}", verseData);
       } else {
-        systemPrompt = FLOW_PROMPT;
+        systemPrompt = isEnglish ? FLOW_PROMPT_EN : FLOW_PROMPT_PT;
       }
 
       const { data, error } = await supabase.functions.invoke("gemini-chat", {
         body: { message: text, history: [], systemPrompt },
       });
       if (error) throw error;
-      const reply = data?.reply ?? "Sem resposta.";
+      const reply = data?.reply ?? (isEnglish ? "No response." : "Sem resposta.");
       setResponseText(reply);
 
-      // Auto-play audio
       speakResponse(reply);
 
-      // Save to mentorship_logs
       try {
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
@@ -475,7 +478,7 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
       }
     } catch (e) {
       console.error("Gemini error:", e);
-      setResponseText("Erro ao conectar com a IA.");
+      setResponseText(isEnglish ? "Error connecting to AI." : "Erro ao conectar com a IA.");
       setState("idle");
     }
   };
@@ -483,7 +486,6 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
   const speakResponse = async (text: string) => {
     setState("speaking");
     
-    // Clean markdown formatting for speech
     const cleanText = text
       .replace(/\*\*([^*]+)\*\*/g, "$1")
       .replace(/\*([^*]+)\*/g, "$1")
@@ -493,7 +495,6 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
       .trim();
 
     try {
-      // Try ElevenLabs first
       const response = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-tts`,
         {
@@ -544,17 +545,33 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
     window.speechSynthesis.cancel();
 
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = "pt-BR";
-    utterance.rate = isLegado ? 0.9 : 1.05;
-    utterance.pitch = isLegado ? 0.85 : 1.1;
+    const lang = isEnglish ? "en-US" : "pt-BR";
+    utterance.lang = lang;
+
+    if (isEnglish) {
+      // English voices: LEGADO = deep/mature male, FLOW = younger/energetic
+      utterance.rate = isLegado ? 0.9 : 1.05;
+      utterance.pitch = isLegado ? 0.8 : 1.15;
+    } else {
+      utterance.rate = isLegado ? 0.9 : 1.05;
+      utterance.pitch = isLegado ? 0.85 : 1.1;
+    }
     utterance.volume = 1;
 
-    // Try to pick a good Portuguese voice
     const voices = window.speechSynthesis.getVoices();
-    const ptVoice = voices.find(v => v.lang.startsWith("pt") && v.name.toLowerCase().includes("google")) 
-      || voices.find(v => v.lang.startsWith("pt-BR"))
-      || voices.find(v => v.lang.startsWith("pt"));
-    if (ptVoice) utterance.voice = ptVoice;
+    if (isEnglish) {
+      // Prefer Google US English voices; for LEGADO pick deeper male, FLOW pick energetic
+      const googleUS = voices.find(v => v.lang === "en-US" && v.name.toLowerCase().includes("google"));
+      const anyUS = voices.find(v => v.lang === "en-US");
+      const anyEN = voices.find(v => v.lang.startsWith("en"));
+      const picked = googleUS || anyUS || anyEN;
+      if (picked) utterance.voice = picked;
+    } else {
+      const ptVoice = voices.find(v => v.lang.startsWith("pt") && v.name.toLowerCase().includes("google"))
+        || voices.find(v => v.lang.startsWith("pt-BR"))
+        || voices.find(v => v.lang.startsWith("pt"));
+      if (ptVoice) utterance.voice = ptVoice;
+    }
 
     utterance.onend = () => setState("idle");
     utterance.onerror = () => setState("idle");
