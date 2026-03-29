@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      campaigns: {
+        Row: {
+          city: string
+          country_code: string | null
+          created_at: string | null
+          description: string | null
+          goal_amount: number
+          id: string
+          path_type: string | null
+          project_type: string | null
+          raised_amount: number | null
+          state: string
+          title: string
+        }
+        Insert: {
+          city: string
+          country_code?: string | null
+          created_at?: string | null
+          description?: string | null
+          goal_amount: number
+          id?: string
+          path_type?: string | null
+          project_type?: string | null
+          raised_amount?: number | null
+          state: string
+          title: string
+        }
+        Update: {
+          city?: string
+          country_code?: string | null
+          created_at?: string | null
+          description?: string | null
+          goal_amount?: number
+          id?: string
+          path_type?: string | null
+          project_type?: string | null
+          raised_amount?: number | null
+          state?: string
+          title?: string
+        }
+        Relationships: []
+      }
       cells: {
         Row: {
           id: string
@@ -143,6 +185,7 @@ export type Database = {
           preferred_language: string | null
           selected_path: string | null
           updated_at: string | null
+          user_country: string | null
         }
         Insert: {
           access_level?: string | null
@@ -155,6 +198,7 @@ export type Database = {
           preferred_language?: string | null
           selected_path?: string | null
           updated_at?: string | null
+          user_country?: string | null
         }
         Update: {
           access_level?: string | null
@@ -167,6 +211,7 @@ export type Database = {
           preferred_language?: string | null
           selected_path?: string | null
           updated_at?: string | null
+          user_country?: string | null
         }
         Relationships: []
       }
