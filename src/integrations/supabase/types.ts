@@ -146,6 +146,36 @@ export type Database = {
         }
         Relationships: []
       }
+      groups: {
+        Row: {
+          id: string
+          leader: string | null
+          link_join: string | null
+          meeting_day: string | null
+          meeting_time: string | null
+          name: string
+          path_type: string | null
+        }
+        Insert: {
+          id?: string
+          leader?: string | null
+          link_join?: string | null
+          meeting_day?: string | null
+          meeting_time?: string | null
+          name: string
+          path_type?: string | null
+        }
+        Update: {
+          id?: string
+          leader?: string | null
+          link_join?: string | null
+          meeting_day?: string | null
+          meeting_time?: string | null
+          name?: string
+          path_type?: string | null
+        }
+        Relationships: []
+      }
       mentorship_logs: {
         Row: {
           ai_response: string | null
