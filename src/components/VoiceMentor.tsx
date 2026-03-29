@@ -181,6 +181,10 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
       audioRef.current.src = "";
       audioRef.current = null;
     }
+    // Stop browser TTS
+    if ("speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
     if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
     if (streamRef.current) {
       streamRef.current.getTracks().forEach(t => t.stop());
