@@ -8,6 +8,9 @@ import Index from "./pages/Index.tsx";
 import Flow from "./pages/Flow.tsx";
 import Legado from "./pages/Legado.tsx";
 import Profile from "./pages/Profile.tsx";
+import Study from "./pages/Study.tsx";
+import VIP from "./pages/VIP.tsx";
+import Community from "./pages/Community.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -24,6 +27,9 @@ const App = () => (
             <Route path="/flow" element={<Flow />} />
             <Route path="/legado" element={<Legado />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/study" element={<Study />} />
+            <Route path="/vip" element={<VIP />} />
+            <Route path="/community" element={<Community />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </PathProvider>

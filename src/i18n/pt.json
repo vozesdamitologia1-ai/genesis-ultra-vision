@@ -31,12 +31,45 @@
   },
   "nav": {
     "home": "Home",
-    "trails": "Trilhas",
-    "mentor": "Mentor",
+    "study": "Estudo",
+    "vip": "VIP",
+    "community": "Comunidade",
     "profile": "Perfil"
   },
+  "study": {
+    "title": "Estudo",
+    "subtitle": "Aprofunde seu conhecimento com conteúdos selecionados."
+  },
+  "vip": {
+    "loading": "Carregando...",
+    "welcome": "Bem-vindo, VIP",
+    "welcomeDesc": "Você tem acesso completo ao conteúdo exclusivo.",
+    "feature1": "Mentoria Exclusiva 1:1",
+    "feature1Desc": "Sessões privadas com mentores seniores.",
+    "feature2": "Conteúdo Premium",
+    "feature2Desc": "Aulas avançadas e materiais exclusivos.",
+    "feature3": "Comunidade VIP",
+    "feature3Desc": "Acesso ao grupo fechado de líderes.",
+    "upgradeTitle": "Conteúdo Exclusivo",
+    "upgradeDesc": "Desbloqueie mentoria 1:1, conteúdo premium e acesso à comunidade VIP.",
+    "perk1": "Mentoria exclusiva com líderes",
+    "perk2": "Aulas e materiais premium",
+    "perk3": "Grupo VIP de networking",
+    "upgradeButton": "TORNAR-SE VIP",
+    "upgradeNote": "Cancele a qualquer momento."
+  },
+  "community": {
+    "title": "Comunidade",
+    "subtitle": "Conecte-se com a comunidade em tempo real.",
+    "empty": "Nenhuma mensagem ainda. Seja o primeiro!",
+    "placeholder": "Escreva sua mensagem...",
+    "loginRequired": "Faça login para participar da comunidade."
+  },
   "profile": {
-    "comingSoon": "Em breve: seu perfil completo com histórico e configurações."
+    "comingSoon": "Em breve: seu perfil completo com histórico e configurações.",
+    "language": "Idioma",
+    "theme": "Tema",
+    "logout": "Sair"
   },
   "flow": {
     "hero": {

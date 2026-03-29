@@ -31,12 +31,45 @@
   },
   "nav": {
     "home": "Home",
-    "trails": "Trails",
-    "mentor": "Mentor",
+    "study": "Study",
+    "vip": "VIP",
+    "community": "Community",
     "profile": "Profile"
   },
+  "study": {
+    "title": "Study",
+    "subtitle": "Deepen your knowledge with curated content."
+  },
+  "vip": {
+    "loading": "Loading...",
+    "welcome": "Welcome, VIP",
+    "welcomeDesc": "You have full access to exclusive content.",
+    "feature1": "Exclusive 1:1 Mentoring",
+    "feature1Desc": "Private sessions with senior mentors.",
+    "feature2": "Premium Content",
+    "feature2Desc": "Advanced classes and exclusive materials.",
+    "feature3": "VIP Community",
+    "feature3Desc": "Access to the closed group of leaders.",
+    "upgradeTitle": "Exclusive Content",
+    "upgradeDesc": "Unlock 1:1 mentoring, premium content and VIP community access.",
+    "perk1": "Exclusive mentoring with leaders",
+    "perk2": "Premium classes and materials",
+    "perk3": "VIP networking group",
+    "upgradeButton": "BECOME VIP",
+    "upgradeNote": "Cancel anytime."
+  },
+  "community": {
+    "title": "Community",
+    "subtitle": "Connect with the community in real time.",
+    "empty": "No messages yet. Be the first!",
+    "placeholder": "Write your message...",
+    "loginRequired": "Log in to join the community."
+  },
   "profile": {
-    "comingSoon": "Coming soon: your full profile with history and settings."
+    "comingSoon": "Coming soon: your full profile with history and settings.",
+    "language": "Language",
+    "theme": "Theme",
+    "logout": "Logout"
   },
   "flow": {
     "hero": {
