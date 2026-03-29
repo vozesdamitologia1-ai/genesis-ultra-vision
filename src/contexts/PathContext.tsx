@@ -49,8 +49,8 @@ export const PathProvider = ({ children }: { children: ReactNode }) => {
 
           // Apply persisted language
           if (profile?.language) {
-            const { i18n } = await import("@/i18n");
-            i18n.changeLanguage(profile.language);
+            const i18nModule = await import("@/i18n");
+            i18nModule.default.changeLanguage(profile.language);
           }
         } else {
           setPath(getPathFromLocation());
