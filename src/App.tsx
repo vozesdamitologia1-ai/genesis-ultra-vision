@@ -22,7 +22,6 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/flow" element={<Flow />} />
             <Route path="/legado" element={<Legado />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </PathProvider>
