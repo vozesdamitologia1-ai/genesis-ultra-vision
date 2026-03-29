@@ -74,7 +74,7 @@ serve(async (req) => {
       const errorText = await response.text();
       console.error("Gemini API error:", response.status, errorText);
       return new Response(
-        JSON.stringify({ error: "Failed to get AI response" }),
+        JSON.stringify({ error: "Failed to get AI response", details: errorText, status: response.status }),
         { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
