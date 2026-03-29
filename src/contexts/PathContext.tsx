@@ -19,9 +19,11 @@ export const PathProvider = ({ children }: { children: ReactNode }) => {
   const [path, setPath] = useState<PathType>("portal");
   const [loaded, setLoaded] = useState(false);
 
-  const getPathFromLocation = (): PathType => {
+  const getPathFromLocation = (currentPath?: PathType): PathType => {
     if (location.pathname.startsWith("/legado")) return "legado";
     if (location.pathname.startsWith("/flow")) return "flow";
+    // For non-path-specific routes (study, vip, community, profile), keep current path
+    if (currentPath && currentPath !== "portal") return currentPath;
     return "portal";
   };
 
@@ -44,7 +46,7 @@ export const PathProvider = ({ children }: { children: ReactNode }) => {
               navigate(`/${profile.current_mode}`, { replace: true });
             }
           } else {
-            setPath(getPathFromLocation());
+            setPath(getPathFromLocation("portal"));
           }
 
           // Apply persisted language
@@ -53,10 +55,10 @@ export const PathProvider = ({ children }: { children: ReactNode }) => {
             i18nModule.default.changeLanguage(profile.language);
           }
         } else {
-          setPath(getPathFromLocation());
+          setPath(getPathFromLocation("portal"));
         }
       } catch {
-        setPath(getPathFromLocation());
+        setPath(getPathFromLocation("portal"));
       }
       setLoaded(true);
     };
@@ -64,11 +66,13 @@ export const PathProvider = ({ children }: { children: ReactNode }) => {
     loadPersistedMode();
   }, []);
 
-  // Sync path from URL changes (after initial load)
+  // Sync path from URL changes — only update if navigating to /legado or /flow
   useEffect(() => {
-    if (loaded) {
-      setPath(getPathFromLocation());
-    }
+    if (!loaded) return;
+    if (location.pathname.startsWith("/legado")) setPath("legado");
+    else if (location.pathname.startsWith("/flow")) setPath("flow");
+    else if (location.pathname === "/") setPath("portal");
+    // For all other routes (/study, /vip, /community, /profile), keep current path unchanged
   }, [location.pathname, loaded]);
 
   const selectPath = useCallback(async (p: PathType) => {
