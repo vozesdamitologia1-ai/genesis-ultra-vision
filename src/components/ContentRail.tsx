@@ -23,6 +23,7 @@ interface ContentRailProps {
   isVip?: boolean;
   layout?: "list" | "grid";
   showSearch?: boolean;
+  emptyMessage?: string;
 }
 
 const ContentRail = ({ title, description, pathType, category, isVip = false, layout = "grid", showSearch = false }: ContentRailProps) => {

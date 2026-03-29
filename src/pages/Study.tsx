@@ -40,27 +40,28 @@ const Study = () => {
             showSearch
           />
         ) : (
-          /* FLOW study content - organized sections */
+          /* FLOW study content - 3 sections only */
           <>
             <ContentRail
-              title={t("flow.rails.performance.title", "Performance & Disciplina")}
-              description={t("flow.rails.performance.description", "")}
+              title="Performance & Disciplina"
+              description="Treinos físicos, foco nos estudos e rotinas de alta performance."
               pathType="flow"
               category="performance"
               isVip={false}
               layout="grid"
-              showSearch
+              emptyMessage="Nenhum conteúdo disponível ainda."
             />
 
             <div className="mx-0 my-2 h-px bg-border/50" />
 
             <ContentRail
-              title={t("flow.rails.government.title", "Governo & Carreira")}
-              description={t("flow.rails.government.description", "")}
+              title="Governo & Carreira"
+              description="Mentorias sobre trabalho, dinheiro e liderança."
               pathType="flow"
               category="government"
               isVip={false}
               layout="grid"
+              emptyMessage="Nenhum conteúdo disponível ainda."
             />
 
             <div className="mx-0 my-2 h-px bg-border/50" />
