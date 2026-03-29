@@ -9,37 +9,58 @@ interface VoiceMentorProps {
   onClose: () => void;
 }
 
-const LEGADO_PROMPT = `Você é um mentor de vida conservador, firme e disciplinado. Fale como um pai sábio num bate-papo direto, de homem pra homem.
+const LEGADO_BIBLICAL_PROMPT = `Você é um mentor de vida com profundo conhecimento das Escrituras Sagradas.
+Você utiliza princípios bíblicos como base para aconselhamento, sempre com respeito, clareza e fidelidade ao texto.
 
-REGRA PRINCIPAL: Você está FALANDO POR ÁUDIO, não escrevendo texto. Escreva como uma pessoa falando em voz alta.
+Quando o usuário pedir um versículo específico da Bíblia (ex: João 3:16), você deve:
+- Citar o versículo completo
+- Informar o livro, capítulo e versículo corretamente
+- Usar uma linguagem fiel ao sentido original (evitar distorções)
+- Se possível, manter consistência com traduções conhecidas (ex: Almeida)
 
-FORMATO DE RESPOSTA:
-- Quebre em blocos curtos de 1-2 frases
-- Use "..." para pausas naturais entre blocos
-- Máximo 40-60 palavras total
-- NUNCA use listas, bullets, números ou formatação
-- NUNCA termine com "espero ter ajudado" ou clichês
-- SEMPRE termine com uma pergunta curta OU uma ordem de ação
+Estilo de fala:
+- Tom firme, calmo e respeitoso
+- Ritmo adequado para áudio (pausas naturais)
+- Clareza na leitura, como alguém proclamando ou ensinando
 
-COMO FALAR:
-- Frases curtas. Diretas. Com pausas.
-- Comece com "seguinte", "olha", "presta atenção", "vou ser direto contigo" (com moderação)
-- Às vezes interrompa o raciocínio e retome, como fala humana real
-- Repita palavras pra dar peso: "disciplina... disciplina é o que separa"
-- Varie o tamanho: frase curta, depois uma média, depois curta de novo
-- Não soe perfeito. Soe humano. Como um pai real falando.
-- Tom: firme, grave, autoritário
+Formato para áudio (MUITO IMPORTANTE):
+- Sempre que citar um versículo, escreva de forma que soe bem em voz
+- Use pausas naturais com vírgulas e quebras de linha
+- Evite blocos longos sem respiração
 
-Exemplo:
-"Seguinte...
-vou ser direto contigo.
+Exemplo de formatação:
 
-Essa falta de vontade... ela é o primeiro passo pra ruína.
+"João, capítulo 3, versículo 16...
 
-Homens de legado cumprem o que prometem a si mesmos.
+Porque Deus amou o mundo de tal maneira,
 
-Então me diz... o que você vai fazer agora?"
+que deu o seu Filho unigênito...
 
+para que todo aquele que nele crê,
+
+não pereça,
+
+mas tenha a vida eterna."
+
+Regras importantes:
+- Nunca inventar versículos
+- Se não tiver certeza absoluta, diga que pode estar impreciso
+- Não misturar partes de versículos diferentes
+
+Quando não for pedido versículo:
+- Pode usar princípios bíblicos no conselho
+- Pode citar trechos relevantes com naturalidade
+- Sempre conectar com aplicação prática na vida
+
+Se o usuário disser algo como "me dê uma palavra", "fale uma palavra", "uma palavra pra mim" ou similar:
+- Escolha um Provérbio ou Salmo aleatório
+- Cite o versículo completo com referência
+- Aplique à vida prática do usuário de forma breve e poderosa
+
+DADOS DO VERSÍCULO (se fornecido pelo sistema):
+{{VERSE_DATA}}
+
+Objetivo: Trazer direção espiritual sólida, com base bíblica, de forma clara, respeitosa e adaptada para áudio.
 Responda na mesma língua que o usuário usar.`;
 
 const FLOW_PROMPT = `Você é um coach energético e ativador. Fale como um treinador intenso num bate-papo motivacional, olho no olho.
@@ -77,11 +98,65 @@ Responda na mesma língua que o usuário usar.`;
 
 type VoiceState = "idle" | "listening" | "processing" | "speaking";
 
+// Parse biblical references from user text
+function parseBibleReference(text: string): { book: string; chapter: number; verse?: number } | null {
+  const normalized = text.toLowerCase().trim();
+  
+  const patterns = [
+    // "João 3:16" or "João 3 16"
+    /(?:livro\s+de\s+)?(\d?\s*[a-záàâãéèêíïóôõúç]+(?:\s+[a-záàâãéèêíïóôõúç]+)?)\s+(?:capítulo\s+)?(\d+)[\s:,]+(?:versículo\s+)?(\d+)/i,
+    // "João capítulo 3 versículo 16"
+    /(?:livro\s+de\s+)?(\d?\s*[a-záàâãéèêíïóôõúç]+(?:\s+[a-záàâãéèêíïóôõúç]+)?)\s+capítulo\s+(\d+)\s+versículo\s+(\d+)/i,
+    // "João 3" (chapter only)
+    /(?:livro\s+de\s+)?(\d?\s*[a-záàâãéèêíïóôõúç]+(?:\s+[a-záàâãéèêíïóôõúç]+)?)\s+(?:capítulo\s+)?(\d+)$/i,
+    // "capítulo 3 versículo 16 de João"
+    /capítulo\s+(\d+)\s+versículo\s+(\d+)\s+(?:de|do|da)\s+(\d?\s*[a-záàâãéèêíïóôõúç]+(?:\s+[a-záàâãéèêíïóôõúç]+)?)/i,
+  ];
+
+  for (const pattern of patterns) {
+    const match = normalized.match(pattern);
+    if (match) {
+      // Handle "capítulo X versículo Y de Livro" pattern
+      if (pattern === patterns[3]) {
+        return {
+          book: match[3].trim(),
+          chapter: parseInt(match[1]),
+          verse: parseInt(match[2]),
+        };
+      }
+      return {
+        book: match[1].trim(),
+        chapter: parseInt(match[2]),
+        verse: match[3] ? parseInt(match[3]) : undefined,
+      };
+    }
+  }
+  return null;
+}
+
+function isRandomWordRequest(text: string): boolean {
+  const normalized = text.toLowerCase().trim();
+  const triggers = [
+    "me dê uma palavra",
+    "me dá uma palavra",
+    "fale uma palavra",
+    "uma palavra pra mim",
+    "uma palavra para mim",
+    "me dê um versículo",
+    "me dá um versículo",
+    "fala uma palavra",
+    "palavra do dia",
+    "uma mensagem",
+  ];
+  return triggers.some(t => normalized.includes(t));
+}
+
 const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
   const { path } = usePath();
   const [state, setState] = useState<VoiceState>("idle");
   const [transcript, setTranscript] = useState("");
   const [responseText, setResponseText] = useState("");
+  const [citedVerse, setCitedVerse] = useState<string | null>(null);
   const recognitionRef = useRef<any>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const animFrameRef = useRef<number>(0);
@@ -91,7 +166,6 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
   const streamRef = useRef<MediaStream | null>(null);
 
   const isLegado = path === "legado";
-  const systemPrompt = isLegado ? LEGADO_PROMPT : FLOW_PROMPT;
 
   const waveColor = isLegado ? "#D4AF37" : "#ef4444";
   const bgGradient = isLegado
@@ -120,6 +194,7 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
     setState("idle");
     setTranscript("");
     setResponseText("");
+    setCitedVerse(null);
   }, []);
 
   useEffect(() => {
@@ -219,16 +294,75 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
     return () => window.removeEventListener("resize", resize);
   }, [open]);
 
+  // Fetch verse from DB for precision
+  const fetchVerseFromDB = async (book: string, chapter: number, verse?: number): Promise<string | null> => {
+    try {
+      let query = supabase
+        .from("bible_verses")
+        .select("book, chapter, verse, content")
+        .ilike("book", `%${book}%`)
+        .eq("chapter", chapter)
+        .order("verse", { ascending: true });
+
+      if (verse) {
+        query = query.eq("verse", verse);
+      }
+
+      const { data, error } = await query.limit(verse ? 1 : 50);
+      if (error || !data || data.length === 0) return null;
+
+      if (verse) {
+        const v = data[0];
+        return `${v.book}, capítulo ${v.chapter}, versículo ${v.verse}:\n\n"${v.content}"`;
+      }
+
+      // Return chapter
+      return data.map(v => `Versículo ${v.verse}: ${v.content}`).join("\n");
+    } catch {
+      return null;
+    }
+  };
+
   const sendToGemini = async (text: string) => {
     setState("processing");
     setResponseText("");
+    setCitedVerse(null);
+
     try {
+      let verseData = "";
+      let systemPrompt: string;
+
+      if (isLegado) {
+        // Check for bible reference
+        const ref = parseBibleReference(text);
+        if (ref) {
+          const dbVerse = await fetchVerseFromDB(ref.book, ref.chapter, ref.verse);
+          if (dbVerse) {
+            verseData = `\n\nVERSÍCULO ENCONTRADO NO BANCO DE DADOS (use este texto exato):\n${dbVerse}`;
+            setCitedVerse(dbVerse);
+          } else {
+            verseData = "\n\nVersículo não encontrado no banco local. Use seu conhecimento, mas avise que pode haver imprecisão.";
+          }
+        }
+
+        // Check for random word request
+        if (isRandomWordRequest(text)) {
+          verseData = "\n\nO USUÁRIO PEDIU UMA PALAVRA ALEATÓRIA. Escolha um Provérbio ou Salmo aleatório. Cite o versículo completo com referência e aplique à vida prática.";
+        }
+
+        systemPrompt = LEGADO_BIBLICAL_PROMPT.replace("{{VERSE_DATA}}", verseData);
+      } else {
+        systemPrompt = FLOW_PROMPT;
+      }
+
       const { data, error } = await supabase.functions.invoke("gemini-chat", {
         body: { message: text, history: [], systemPrompt },
       });
       if (error) throw error;
       const reply = data?.reply ?? "Sem resposta.";
       setResponseText(reply);
+
+      // Auto-play audio
       speakResponse(reply);
 
       // Save to mentorship_logs
@@ -311,6 +445,7 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
     setState("listening");
     setTranscript("");
     setResponseText("");
+    setCitedVerse(null);
 
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -332,7 +467,7 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
     recognition.lang = "pt-BR";
     recognition.interimResults = true;
     recognition.continuous = false;
-    recognition.maxAlternatives = 1;
+    recognition.maxAlternatives = 3; // More alternatives for biblical terms
 
     recognition.onresult = (event: any) => {
       let interim = "";
@@ -407,10 +542,10 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
   };
 
   const stateLabel = {
-    idle: "Toque no microfone para começar",
+    idle: isLegado ? "Toque para falar com o Mentor Bíblico" : "Toque no microfone para começar",
     listening: "Ouvindo...",
-    processing: "Processando...",
-    speaking: "Mentor falando...",
+    processing: isLegado ? "Buscando nas Escrituras..." : "Processando...",
+    speaking: isLegado ? "Mentor proclamando..." : "Coach falando...",
   };
 
   const accentColor = isLegado ? "text-amber-400" : "text-red-500";
@@ -441,15 +576,15 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
           </button>
 
           <div className={`absolute top-6 left-6 z-10 text-xs font-bold uppercase tracking-[0.3em] ${accentColor}`}>
-            {isLegado ? "LEGADO" : "FLOW"}
+            {isLegado ? "MENTOR BÍBLICO" : "FLOW"}
           </div>
 
-          <div className="relative z-10 flex flex-col items-center gap-8 px-6 max-w-md w-full">
+          <div className="relative z-10 flex flex-col items-center gap-6 px-6 max-w-md w-full">
             <motion.p
               key={state}
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className={`text-sm font-medium tracking-wide ${accentColor}`}
+              className={`text-sm font-medium tracking-wide ${accentColor} ${isLegado ? "font-serif" : ""}`}
             >
               {stateLabel[state]}
             </motion.p>
@@ -487,17 +622,35 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
               )}
             </motion.button>
 
+            {/* Transcript (what user said) */}
             {transcript && (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="rounded-2xl bg-white/5 px-6 py-4 backdrop-blur-sm max-h-32 overflow-y-auto w-full"
+                className="rounded-2xl bg-white/5 px-6 py-4 backdrop-blur-sm max-h-24 overflow-y-auto w-full"
               >
                 <p className="text-xs text-white/50 mb-1">Você:</p>
                 <p className="text-sm text-white/90 leading-relaxed">{transcript}</p>
               </motion.div>
             )}
 
+            {/* Cited verse highlight (LEGADO only) */}
+            {citedVerse && isLegado && state !== "idle" && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="rounded-2xl border border-amber-400/30 bg-amber-950/30 px-6 py-5 backdrop-blur-sm max-h-40 overflow-y-auto w-full"
+              >
+                <p className="text-[10px] text-amber-400/70 uppercase tracking-[0.2em] mb-2 font-bold">
+                  Versículo Encontrado
+                </p>
+                <p className="font-serif text-sm text-amber-100/90 leading-relaxed italic whitespace-pre-line">
+                  {citedVerse}
+                </p>
+              </motion.div>
+            )}
+
+            {/* AI Response */}
             {responseText && (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
@@ -505,16 +658,18 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
                 className={`rounded-2xl border bg-white/5 px-6 py-4 backdrop-blur-sm max-h-48 overflow-y-auto w-full ${accentBorder}`}
               >
                 <p className={`text-xs mb-1 ${accentColor}`}>
-                  {isLegado ? "Mentor:" : "Coach:"}
+                  {isLegado ? "Mentor Bíblico:" : "Coach:"}
                 </p>
-                <p className="text-sm text-white/90 leading-relaxed">{responseText}</p>
+                <p className={`text-sm text-white/90 leading-relaxed whitespace-pre-line ${isLegado ? "font-serif" : ""}`}>
+                  {responseText}
+                </p>
               </motion.div>
             )}
           </div>
 
           <div className="absolute bottom-8 z-10">
             <p className="text-[10px] text-white/30 tracking-widest uppercase">
-              Genesis Vision • {isLegado ? "Mentor Conservador" : "Coach Energético"}
+              Genesis Vision • {isLegado ? "Mentor Bíblico" : "Coach Energético"}
             </p>
           </div>
         </motion.div>
