@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import AppHeader from "@/components/AppHeader";
 import BottomNav from "@/components/BottomNav";
 import ContentRail from "@/components/ContentRail";
+import GroupsRail from "@/components/GroupsRail";
 import { usePath } from "@/contexts/PathContext";
 import { motion } from "framer-motion";
 
@@ -28,14 +29,45 @@ const Study = () => {
           <div className={`mt-3 h-0.5 w-12 ${isLegado ? "bg-amber-400/50" : "bg-primary/50"}`} />
         </motion.div>
 
-        <ContentRail
-          title={t(isLegado ? "legado.rails.school.title" : "flow.rails.performance.title", "Conteúdo")}
-          description={t(isLegado ? "legado.rails.school.description" : "flow.rails.performance.description", "")}
-          pathType={pathType}
-          isVip={false}
-          layout={isLegado ? "list" : "grid"}
-          showSearch
-        />
+        {isLegado ? (
+          /* LEGADO study content */
+          <ContentRail
+            title={t("legado.rails.school.title", "Escola de Ensino")}
+            description={t("legado.rails.school.description", "")}
+            pathType="legacy"
+            isVip={false}
+            layout="list"
+            showSearch
+          />
+        ) : (
+          /* FLOW study content - organized sections */
+          <>
+            <ContentRail
+              title={t("flow.rails.performance.title", "Performance & Disciplina")}
+              description={t("flow.rails.performance.description", "")}
+              pathType="flow"
+              category="performance"
+              isVip={false}
+              layout="grid"
+              showSearch
+            />
+
+            <div className="mx-0 my-2 h-px bg-border/50" />
+
+            <ContentRail
+              title={t("flow.rails.government.title", "Governo & Carreira")}
+              description={t("flow.rails.government.description", "")}
+              pathType="flow"
+              category="government"
+              isVip={false}
+              layout="grid"
+            />
+
+            <div className="mx-0 my-2 h-px bg-border/50" />
+
+            <GroupsRail pathType="flow" />
+          </>
+        )}
       </main>
       <BottomNav />
     </div>

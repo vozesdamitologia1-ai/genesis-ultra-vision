@@ -3,9 +3,8 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import portalLegado from "@/assets/portal-legado.jpg";
 import portalFlow from "@/assets/portal-flow.jpg";
-import AppHeader from "@/components/AppHeader";
-import BottomNav from "@/components/BottomNav";
 import { usePath } from "@/contexts/PathContext";
+import LanguageSelector from "@/components/LanguageSelector";
 
 const Index = () => {
   const { selectPath } = usePath();
@@ -14,9 +13,15 @@ const Index = () => {
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <AppHeader />
+      {/* Minimal header with just brand + language */}
+      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between bg-background/95 px-4 py-3 backdrop-blur-md">
+        <span className="font-serif text-lg font-bold italic tracking-wide text-foreground">
+          {t("header.brand")}
+        </span>
+        <LanguageSelector />
+      </header>
 
-      <main className="flex flex-1 flex-col pt-12 pb-16">
+      <main className="flex flex-1 flex-col pt-12">
         {/* LEGADO */}
         <section
           className="relative flex flex-1 flex-col items-center justify-center overflow-hidden"
@@ -94,8 +99,6 @@ const Index = () => {
           </motion.div>
         </section>
       </main>
-
-      <BottomNav />
     </div>
   );
 };

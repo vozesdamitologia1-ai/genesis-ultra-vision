@@ -1,6 +1,7 @@
-import { KeyRound, Mic } from "lucide-react";
+import { KeyRound, Mic, Home } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate, useLocation } from "react-router-dom";
 import LanguageSelector from "./LanguageSelector";
 import VoiceMentor from "./VoiceMentor";
 import { usePath } from "@/contexts/PathContext";
@@ -9,13 +10,25 @@ const AppHeader = () => {
   const { t } = useTranslation();
   const [voiceOpen, setVoiceOpen] = useState(false);
   const { path } = usePath();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const showMic = path === "legado" || path === "flow";
+  const isInsidePath = location.pathname !== "/";
 
   return (
     <>
       <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between bg-background/95 px-4 py-3 backdrop-blur-md">
         <div className="flex items-center gap-2">
+          {isInsidePath && (
+            <button
+              onClick={() => navigate("/")}
+              className="mr-1 text-muted-foreground transition-colors hover:text-foreground"
+              aria-label="Home"
+            >
+              <Home className="h-5 w-5" />
+            </button>
+          )}
           <KeyRound className="h-5 w-5 text-primary" />
           <span className="font-serif text-lg font-bold italic tracking-wide text-foreground">
             {t("header.brand")}

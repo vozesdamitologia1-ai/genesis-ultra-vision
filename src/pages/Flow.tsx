@@ -61,14 +61,12 @@ const Flow = () => {
 
         <div className="mx-4 h-px bg-border/50" />
 
-        {/* SOS */}
-        <SOSButton />
-
-        <div className="mx-4 h-px bg-border/50" />
-
         {/* Volunteer */}
         <VolunteerSection />
       </main>
+
+      {/* Fixed SOS Button */}
+      <SOSButton />
 
       <BottomNav />
     </div>
