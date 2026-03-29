@@ -23,7 +23,8 @@ Regras de resposta: Não use gírias ou linguagem informal. Seja direto e objeti
 Formato das respostas: 1. Diagnóstico claro da situação. 2. Onde a pessoa está errando. 3. Plano de ação prático e disciplinado.
 
 Seu objetivo é formar pessoas fortes, estáveis e confiáveis, que constroem uma vida sólida ao longo do tempo.
-Responda na mesma língua que o usuário usar. Mantenha respostas concisas (máximo 3 parágrafos) para serem faladas em voz alta.`;
+Responda na mesma língua que o usuário usar. Mantenha respostas concisas (máximo 3 parágrafos curtos) para serem faladas em voz alta.
+IMPORTANTE: Responda de forma conversacional e natural, como se estivesse falando diretamente com a pessoa num bate-papo. Não use listas numeradas, bullets ou formatação. Use frases completas e fluidas, conectando ideias naturalmente.`;
 
 const FLOW_PROMPT = `Você é um coach de vida, comunicador energético e mentor de alta performance, com uma abordagem moderna, intensa e conectada com uma linguagem jovem.
 Você carrega valores cristãos na essência, mas não menciona nomes de igrejas ou instituições.
@@ -39,7 +40,8 @@ Regras de resposta: Pode usar linguagem mais leve e moderna (sem exagerar em gí
 Formato das respostas: 1. Verdade direta (o que precisa ser dito). 2. Quebra de mentalidade (tirar a pessoa da inércia). 3. Ação prática imediata.
 
 Seu objetivo é ativar o potencial do usuário, gerar movimento e fazer com que ele tome decisões que mudem sua vida.
-Responda na mesma língua que o usuário usar. Mantenha respostas concisas (máximo 3 parágrafos) para serem faladas em voz alta.`;
+Responda na mesma língua que o usuário usar. Mantenha respostas concisas (máximo 3 parágrafos curtos) para serem faladas em voz alta.
+IMPORTANTE: Responda de forma conversacional e natural, como se estivesse num bate-papo animado. Não use listas numeradas, bullets ou formatação. Use frases completas e fluidas, com energia e conexão direta.`;
 
 type VoiceState = "idle" | "listening" | "processing" | "speaking";
 
@@ -216,21 +218,64 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
     }
   };
 
+  const pickMaleVoice = (voices: SpeechSynthesisVoice[]): SpeechSynthesisVoice | null => {
+    const ptVoices = voices.filter(v => v.lang.startsWith("pt"));
+    
+    // Priority male voice keywords
+    const maleKeywords = ["daniel", "ricardo", "guilherme", "microsoft", "google português do brasil"];
+    
+    // Try to find a known male voice
+    for (const keyword of maleKeywords) {
+      const match = ptVoices.find(v => v.name.toLowerCase().includes(keyword));
+      if (match) return match;
+    }
+    
+    // Try any Portuguese Google voice (tend to be higher quality)
+    const googlePt = ptVoices.find(v => v.name.toLowerCase().includes("google"));
+    if (googlePt) return googlePt;
+    
+    // Any Portuguese voice
+    if (ptVoices.length > 0) return ptVoices[0];
+    
+    // Absolute fallback
+    return voices[0] || null;
+  };
+
   const speakResponse = (text: string) => {
     setState("speaking");
     window.speechSynthesis.cancel();
 
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = "pt-BR";
-    utterance.rate = 1.0;
-    utterance.pitch = isLegado ? 0.9 : 1.1;
+    // Clean text for more natural speech - remove excessive punctuation pauses
+    const cleanedText = text
+      .replace(/\.\.\./g, ", ")
+      .replace(/\n\n/g, ". ")
+      .replace(/\n/g, ", ")
+      .replace(/\d+\.\s/g, "") // remove numbered list markers like "1. "
+      .replace(/[•\-]\s/g, "") // remove bullet markers
+      .replace(/\s{2,}/g, " ")
+      .trim();
 
-    // Try to pick a good voice
+    const utterance = new SpeechSynthesisUtterance(cleanedText);
+    utterance.lang = "pt-BR";
+    
+    // Persona differentiation
+    if (isLegado) {
+      utterance.rate = 0.9;   // slower, more solemn
+      utterance.pitch = 0.85; // deeper, authoritative
+    } else {
+      utterance.rate = 1.1;   // faster, energetic
+      utterance.pitch = 1.05; // slightly higher, youthful
+    }
+
+    // Pick best male voice available
     const voices = window.speechSynthesis.getVoices();
-    const ptVoice = voices.find(v => v.lang.startsWith("pt") && v.name.toLowerCase().includes("google"))
-      || voices.find(v => v.lang.startsWith("pt"))
-      || voices[0];
-    if (ptVoice) utterance.voice = ptVoice;
+    const selectedVoice = pickMaleVoice(voices);
+    if (selectedVoice) {
+      utterance.voice = selectedVoice;
+    } else {
+      // If no voice found yet (voices load async), retry once
+      utterance.pitch = 0.8; // fallback: make it as deep as possible
+    }
 
     utterance.onend = () => setState("idle");
     utterance.onerror = () => setState("idle");
