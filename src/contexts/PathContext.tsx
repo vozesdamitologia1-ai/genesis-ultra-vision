@@ -66,11 +66,13 @@ export const PathProvider = ({ children }: { children: ReactNode }) => {
     loadPersistedMode();
   }, []);
 
-  // Sync path from URL changes (after initial load)
+  // Sync path from URL changes — only update if navigating to /legado or /flow
   useEffect(() => {
-    if (loaded) {
-      setPath(getPathFromLocation());
-    }
+    if (!loaded) return;
+    if (location.pathname.startsWith("/legado")) setPath("legado");
+    else if (location.pathname.startsWith("/flow")) setPath("flow");
+    else if (location.pathname === "/") setPath("portal");
+    // For all other routes (/study, /vip, /community, /profile), keep current path unchanged
   }, [location.pathname, loaded]);
 
   const selectPath = useCallback(async (p: PathType) => {
