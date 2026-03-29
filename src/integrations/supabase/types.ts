@@ -44,6 +44,30 @@ export type Database = {
         }
         Relationships: []
       }
+      community_messages: {
+        Row: {
+          content: string | null
+          created_at: string | null
+          id: string
+          path_type: string | null
+          user_id: string | null
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          path_type?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          path_type?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       contents: {
         Row: {
           category: string | null
@@ -112,6 +136,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          access_level: string | null
           avatar_url: string | null
           current_mode: string | null
           full_name: string | null
@@ -123,6 +148,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          access_level?: string | null
           avatar_url?: string | null
           current_mode?: string | null
           full_name?: string | null
@@ -134,6 +160,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          access_level?: string | null
           avatar_url?: string | null
           current_mode?: string | null
           full_name?: string | null
