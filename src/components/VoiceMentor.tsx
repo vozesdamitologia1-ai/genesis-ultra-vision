@@ -288,7 +288,11 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
       return;
     }
 
-    window.speechSynthesis.cancel();
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.src = "";
+      audioRef.current = null;
+    }
     setState("listening");
     setTranscript("");
     setResponseText("");
