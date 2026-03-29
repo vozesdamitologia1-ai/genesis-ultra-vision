@@ -34,6 +34,7 @@ const Study = () => {
           pathType={pathType}
           isVip={false}
           layout={isLegado ? "list" : "grid"}
+          showSearch
         />
       </main>
       <BottomNav />
