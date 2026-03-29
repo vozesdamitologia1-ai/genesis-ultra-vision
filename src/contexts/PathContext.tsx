@@ -16,6 +16,8 @@ export const usePath = () => useContext(PathContext);
 export const PathProvider = ({ children }: { children: ReactNode }) => {
   const location = useLocation();
   const navigate = useNavigate();
+  const [path, setPath] = useState<PathType>("portal");
+  const [loaded, setLoaded] = useState(false);
 
   const getPathFromLocation = (): PathType => {
     if (location.pathname.startsWith("/legado")) return "legado";
@@ -23,11 +25,51 @@ export const PathProvider = ({ children }: { children: ReactNode }) => {
     return "portal";
   };
 
-  const [path, setPath] = useState<PathType>(getPathFromLocation);
-
+  // Load persisted current_mode from Supabase on mount
   useEffect(() => {
-    setPath(getPathFromLocation());
-  }, [location.pathname]);
+    const loadPersistedMode = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("current_mode, language")
+            .eq("id", user.id)
+            .single();
+
+          if (profile?.current_mode && (profile.current_mode === "legado" || profile.current_mode === "flow")) {
+            setPath(profile.current_mode as PathType);
+            // Navigate to persisted path if on portal
+            if (location.pathname === "/") {
+              navigate(`/${profile.current_mode}`, { replace: true });
+            }
+          } else {
+            setPath(getPathFromLocation());
+          }
+
+          // Apply persisted language
+          if (profile?.language) {
+            const i18nModule = await import("@/i18n");
+            i18nModule.default.changeLanguage(profile.language);
+          }
+        } else {
+          setPath(getPathFromLocation());
+        }
+      } catch {
+        setPath(getPathFromLocation());
+      }
+      setLoaded(true);
+    };
+
+    loadPersistedMode();
+  }, []);
+
+  // Sync path from URL changes (after initial load)
+  useEffect(() => {
+    if (loaded) {
+      setPath(getPathFromLocation());
+    }
+  }, [location.pathname, loaded]);
 
   const selectPath = useCallback(async (p: PathType) => {
     setPath(p);
@@ -35,14 +77,15 @@ export const PathProvider = ({ children }: { children: ReactNode }) => {
       navigate("/");
     } else {
       navigate(`/${p}`);
-      // Sync selected_path to Supabase if logged in
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        await supabase
-          .from("profiles")
-          .update({ selected_path: p } as any)
-          .eq("id", user.id);
-      }
+    }
+
+    // Sync to Supabase
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      await supabase
+        .from("profiles")
+        .update({ selected_path: p, current_mode: p } as any)
+        .eq("id", user.id);
     }
   }, [navigate]);
 

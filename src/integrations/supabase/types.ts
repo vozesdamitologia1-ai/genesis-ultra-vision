@@ -83,28 +83,64 @@ export type Database = {
         }
         Relationships: []
       }
+      mentorship_logs: {
+        Row: {
+          ai_response: string | null
+          created_at: string | null
+          id: string
+          path_type: string | null
+          user_id: string | null
+          user_query: string | null
+        }
+        Insert: {
+          ai_response?: string | null
+          created_at?: string | null
+          id?: string
+          path_type?: string | null
+          user_id?: string | null
+          user_query?: string | null
+        }
+        Update: {
+          ai_response?: string | null
+          created_at?: string | null
+          id?: string
+          path_type?: string | null
+          user_id?: string | null
+          user_query?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
+          current_mode: string | null
           full_name: string | null
           id: string
           language: string | null
+          last_checkin: string | null
+          preferred_language: string | null
           selected_path: string | null
           updated_at: string | null
         }
         Insert: {
           avatar_url?: string | null
+          current_mode?: string | null
           full_name?: string | null
           id: string
           language?: string | null
+          last_checkin?: string | null
+          preferred_language?: string | null
           selected_path?: string | null
           updated_at?: string | null
         }
         Update: {
           avatar_url?: string | null
+          current_mode?: string | null
           full_name?: string | null
           id?: string
           language?: string | null
+          last_checkin?: string | null
+          preferred_language?: string | null
           selected_path?: string | null
           updated_at?: string | null
         }

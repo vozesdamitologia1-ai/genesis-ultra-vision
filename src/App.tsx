@@ -7,6 +7,7 @@ import { PathProvider } from "@/contexts/PathContext";
 import Index from "./pages/Index.tsx";
 import Flow from "./pages/Flow.tsx";
 import Legado from "./pages/Legado.tsx";
+import Profile from "./pages/Profile.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/flow" element={<Flow />} />
             <Route path="/legado" element={<Legado />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </PathProvider>
