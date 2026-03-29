@@ -26,7 +26,7 @@ interface ContentRailProps {
   emptyMessage?: string;
 }
 
-const ContentRail = ({ title, description, pathType, category, isVip = false, layout = "grid", showSearch = false }: ContentRailProps) => {
+const ContentRail = ({ title, description, pathType, category, isVip = false, layout = "grid", showSearch = false, emptyMessage }: ContentRailProps) => {
   const { t } = useTranslation();
   const [items, setItems] = useState<ContentItem[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
