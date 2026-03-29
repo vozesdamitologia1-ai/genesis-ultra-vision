@@ -5,6 +5,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { PathProvider } from "@/contexts/PathContext";
 import Index from "./pages/Index.tsx";
+import Flow from "./pages/Flow.tsx";
+import Legado from "./pages/Legado.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -12,17 +14,19 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <PathProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        <PathProvider>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/flow" element={<Flow />} />
+            <Route path="/legado" element={<Legado />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </BrowserRouter>
-      </PathProvider>
+        </PathProvider>
+      </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
 );

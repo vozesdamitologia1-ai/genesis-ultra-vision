@@ -7,44 +7,8 @@ import BottomNav from "@/components/BottomNav";
 import { usePath } from "@/contexts/PathContext";
 
 const Index = () => {
-  const { path, selectPath } = usePath();
+  const { selectPath } = usePath();
   const { t } = useTranslation();
-
-  if (path === "legado" || path === "flow") {
-    const isLegado = path === "legado";
-    const key = isLegado ? "legado" : "flow";
-    return (
-      <div className="flex min-h-screen flex-col bg-background">
-        <AppHeader />
-        <main className="flex flex-1 flex-col items-center justify-center gap-6 px-6 pt-12 pb-16 text-center">
-          <motion.div
-            className="flex flex-col items-center gap-5"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6 }}
-          >
-            <span className="text-xs font-semibold uppercase tracking-[0.35em] text-primary">
-              {t(`path.${key}.tag`)}
-            </span>
-            <h1 className={`text-3xl font-bold text-foreground sm:text-4xl ${isLegado ? "font-serif" : "font-sans"}`}>
-              {t(`path.${key}.title`)}
-            </h1>
-            <p className="max-w-sm text-sm text-muted-foreground">
-              {t(`path.${key}.description`)}
-            </p>
-            <div className="h-0.5 w-12 bg-primary" />
-            <button
-              onClick={() => selectPath("portal")}
-              className="mt-2 border border-muted-foreground px-8 py-3 text-[10px] font-bold uppercase tracking-[0.25em] text-muted-foreground transition-all hover:border-foreground hover:text-foreground"
-            >
-              [{t("path.back")}]
-            </button>
-          </motion.div>
-        </main>
-        <BottomNav />
-      </div>
-    );
-  }
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
