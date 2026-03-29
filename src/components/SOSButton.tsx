@@ -9,6 +9,7 @@ const SOSButton = () => {
   const { t } = useTranslation();
   const [showMessage, setShowMessage] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [expanded, setExpanded] = useState(false);
 
   const handleSOS = async () => {
     setLoading(true);
@@ -50,42 +51,58 @@ const SOSButton = () => {
   };
 
   return (
-    <section className="px-4 py-8">
-      <div className="relative overflow-hidden rounded-lg border border-primary/30 bg-gradient-to-r from-primary/10 via-background to-primary/10 p-6 text-center">
-        <h3 className="mb-1 text-lg font-bold text-foreground">{t("flow.sos.title")}</h3>
-        <p className="mb-4 text-xs text-muted-foreground">{t("flow.sos.description")}</p>
+    <>
+      {/* Fixed floating SOS button */}
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="fixed bottom-20 right-4 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-destructive text-destructive-foreground shadow-lg transition-transform hover:scale-110 active:scale-95"
+        aria-label="SOS"
+      >
+        <Heart className="h-5 w-5" />
+      </button>
 
-        <button
-          onClick={handleSOS}
-          disabled={loading || showMessage}
-          className="inline-flex items-center gap-2 bg-primary px-8 py-3 text-xs font-bold uppercase tracking-[0.2em] text-primary-foreground transition-all hover:bg-primary/90 disabled:opacity-60"
-        >
-          {loading ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : showMessage ? (
-            <CheckCircle className="h-4 w-4" />
-          ) : (
-            <Heart className="h-4 w-4" />
-          )}
-          {showMessage ? t("flow.sos.sentShort", "Enviado!") : t("flow.sos.button")}
-        </button>
+      {/* Expanded SOS panel */}
+      <AnimatePresence>
+        {expanded && (
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            className="fixed bottom-34 right-4 z-40 w-72 rounded-xl border border-destructive/30 bg-background p-4 shadow-xl"
+          >
+            <h3 className="mb-1 text-sm font-bold text-foreground">{t("flow.sos.title")}</h3>
+            <p className="mb-3 text-[11px] text-muted-foreground">{t("flow.sos.description")}</p>
 
-        <AnimatePresence>
-          {showMessage && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              className="mt-4 rounded bg-primary/20 p-3"
+            <button
+              onClick={handleSOS}
+              disabled={loading || showMessage}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-destructive px-4 py-2.5 text-xs font-bold uppercase tracking-[0.15em] text-destructive-foreground transition-all hover:bg-destructive/90 disabled:opacity-60"
             >
-              <p className="text-sm text-foreground">
-                {t("flow.sos.confirmation", "Sua mensagem foi enviada. Nossa equipe entrará em contato em breve. Você não está sozinho(a). 💛")}
-              </p>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-    </section>
+              {loading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : showMessage ? (
+                <CheckCircle className="h-4 w-4" />
+              ) : (
+                <Heart className="h-4 w-4" />
+              )}
+              {showMessage ? t("flow.sos.sentShort", "Enviado!") : t("flow.sos.button")}
+            </button>
+
+            {showMessage && (
+              <motion.div
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-3 rounded-lg bg-destructive/10 p-2.5"
+              >
+                <p className="text-[11px] text-foreground">
+                  {t("flow.sos.confirmation", "Sua mensagem foi enviada. Nossa equipe entrará em contato em breve. Você não está sozinho(a). 💛")}
+                </p>
+              </motion.div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 
