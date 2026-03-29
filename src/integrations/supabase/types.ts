@@ -71,39 +71,36 @@ export type Database = {
       contents: {
         Row: {
           category: string | null
-          content_url: string | null
-          created_at: string
+          created_at: string | null
           description: string | null
           id: string
-          language: string | null
-          path_type: string | null
+          is_vip: boolean | null
+          path_type: string
           thumbnail_url: string | null
           title: string
-          type: string | null
+          video_url: string | null
         }
         Insert: {
           category?: string | null
-          content_url?: string | null
-          created_at?: string
+          created_at?: string | null
           description?: string | null
           id?: string
-          language?: string | null
-          path_type?: string | null
+          is_vip?: boolean | null
+          path_type: string
           thumbnail_url?: string | null
           title: string
-          type?: string | null
+          video_url?: string | null
         }
         Update: {
           category?: string | null
-          content_url?: string | null
-          created_at?: string
+          created_at?: string | null
           description?: string | null
           id?: string
-          language?: string | null
-          path_type?: string | null
+          is_vip?: boolean | null
+          path_type?: string
           thumbnail_url?: string | null
           title?: string
-          type?: string | null
+          video_url?: string | null
         }
         Relationships: []
       }
