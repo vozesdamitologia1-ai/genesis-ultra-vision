@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import portalLegado from "@/assets/portal-legado.jpg";
 import portalFlow from "@/assets/portal-flow.jpg";
@@ -9,6 +10,7 @@ import { usePath } from "@/contexts/PathContext";
 const Index = () => {
   const { selectPath } = usePath();
   const { t } = useTranslation();
+  const [hovered, setHovered] = useState<"legado" | "flow" | null>(null);
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -16,8 +18,18 @@ const Index = () => {
 
       <main className="flex flex-1 flex-col pt-12 pb-16">
         {/* LEGADO */}
-        <section className="relative flex flex-1 flex-col items-center justify-center overflow-hidden">
-          <img src={portalLegado} alt="" className="absolute inset-0 h-full w-full object-cover" />
+        <section
+          className="relative flex flex-1 flex-col items-center justify-center overflow-hidden"
+          onMouseEnter={() => setHovered("legado")}
+          onMouseLeave={() => setHovered(null)}
+        >
+          <img
+            src={portalLegado}
+            alt=""
+            className={`absolute inset-0 h-full w-full object-cover transition-all duration-500 ${
+              hovered === "flow" ? "brightness-50" : "brightness-100"
+            }`}
+          />
           <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background/20 to-background" />
           <motion.div
             className="relative z-10 flex flex-col items-center gap-4 px-6 text-center"
@@ -45,8 +57,19 @@ const Index = () => {
         <div className="h-px w-full bg-border" />
 
         {/* FLOW */}
-        <section className="relative flex flex-1 flex-col items-center justify-center overflow-hidden">
-          <img src={portalFlow} alt="" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+        <section
+          className="relative flex flex-1 flex-col items-center justify-center overflow-hidden"
+          onMouseEnter={() => setHovered("flow")}
+          onMouseLeave={() => setHovered(null)}
+        >
+          <img
+            src={portalFlow}
+            alt=""
+            className={`absolute inset-0 h-full w-full object-cover transition-all duration-500 ${
+              hovered === "legado" ? "brightness-50" : "brightness-100"
+            }`}
+            loading="lazy"
+          />
           <div className="absolute inset-0 bg-gradient-to-t from-background/50 via-background/20 to-background" />
           <motion.div
             className="relative z-10 flex flex-col items-center gap-4 px-6 text-center"
@@ -57,7 +80,7 @@ const Index = () => {
             <span className="text-[10px] font-semibold uppercase tracking-[0.35em] text-primary">
               {t("portal.flow.tag")}
             </span>
-            <h2 className="max-w-xs font-sans text-2xl font-bold leading-tight text-foreground sm:text-3xl">
+            <h2 className="max-w-xs font-sans text-2xl font-extrabold leading-tight text-foreground sm:text-3xl uppercase tracking-wide">
               {t("portal.flow.title")}
             </h2>
             <p className="text-xs text-primary">{t("portal.flow.subtitle")}</p>
