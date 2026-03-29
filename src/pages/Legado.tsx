@@ -39,7 +39,7 @@ const Legado = () => {
         <ContentRail
           title={t("legado.rails.school.title")}
           description={t("legado.rails.school.description")}
-          pathType="legado"
+          pathType="legacy"
           category="school"
         />
 
