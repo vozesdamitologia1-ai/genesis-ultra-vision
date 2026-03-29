@@ -1,29 +1,73 @@
+import { motion } from "framer-motion";
+import portalLegado from "@/assets/portal-legado.jpg";
+import portalFlow from "@/assets/portal-flow.jpg";
 import AppHeader from "@/components/AppHeader";
 import BottomNav from "@/components/BottomNav";
-import HeroSection from "@/components/HeroSection";
-import heroLegado from "@/assets/hero-legado.jpg";
-import heroFlow from "@/assets/hero-flow.jpg";
 
 const Index = () => (
-  <div className="min-h-screen bg-background">
+  <div className="flex min-h-screen flex-col bg-background">
     <AppHeader />
 
-    <main className="pt-12 pb-20">
-      <HeroSection
-        tag="Tradição"
-        title="LEGADO: Raízes, Teologia e Profundidade."
-        buttonLabel="ACESSAR TRADIÇÃO"
-        bgImage={heroLegado}
-        variant="legado"
-      />
+    <main className="flex flex-1 flex-col pt-12 pb-16">
+      {/* LEGADO - Top half */}
+      <section className="relative flex flex-1 flex-col items-center justify-center overflow-hidden">
+        <img
+          src={portalLegado}
+          alt="Biblioteca antiga com Bíblia de couro e luz de velas"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background/20 to-background" />
 
-      <HeroSection
-        tag="Performance"
-        title="FLOW: Propósito, Liderança e Performance."
-        buttonLabel="ATIVAR DESTINO"
-        bgImage={heroFlow}
-        variant="flow"
-      />
+        <motion.div
+          className="relative z-10 flex flex-col items-center gap-4 px-6 text-center"
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          <span className="text-[10px] font-semibold uppercase tracking-[0.35em] text-muted-foreground">
+            Tradição
+          </span>
+          <h2 className="max-w-xs font-serif text-2xl font-bold leading-tight text-foreground sm:text-3xl">
+            LEGADO: Raízes, Teologia e Profundidade.
+          </h2>
+          <div className="h-0.5 w-10 bg-muted-foreground" />
+          <button className="mt-2 border border-foreground bg-foreground px-8 py-3 text-[10px] font-bold uppercase tracking-[0.25em] text-background transition-all hover:bg-foreground/90">
+            [ACESSAR TRADIÇÃO]
+          </button>
+        </motion.div>
+      </section>
+
+      {/* Divider line */}
+      <div className="h-px w-full bg-border" />
+
+      {/* FLOW - Bottom half */}
+      <section className="relative flex flex-1 flex-col items-center justify-center overflow-hidden">
+        <img
+          src={portalFlow}
+          alt="Escritório moderno em arranha-céu à noite com neon vermelho"
+          className="absolute inset-0 h-full w-full object-cover"
+          loading="lazy"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-background/50 via-background/20 to-background" />
+
+        <motion.div
+          className="relative z-10 flex flex-col items-center gap-4 px-6 text-center"
+          initial={{ opacity: 0, x: 30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+        >
+          <span className="text-[10px] font-semibold uppercase tracking-[0.35em] text-primary">
+            Performance
+          </span>
+          <h2 className="max-w-xs font-sans text-2xl font-bold leading-tight text-foreground sm:text-3xl">
+            FLOW: Propósito, Liderança e Performance.
+          </h2>
+          <div className="h-0.5 w-10 bg-primary" />
+          <button className="mt-2 bg-primary px-8 py-3 text-[10px] font-bold uppercase tracking-[0.25em] text-primary-foreground transition-all hover:bg-primary/90">
+            [ATIVAR DESTINO]
+          </button>
+        </motion.div>
+      </section>
     </main>
 
     <BottomNav />
