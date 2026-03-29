@@ -73,7 +73,13 @@
     "comingSoon": "Em breve: seu perfil completo com histórico e configurações.",
     "language": "Idioma",
     "theme": "Tema",
-    "logout": "Sair"
+    "logout": "Sair",
+    "becomeVip": "Tornar-se VIP (teste)",
+    "removeVip": "Remover VIP (teste)",
+    "vipActivated": "🎉 VIP Ativado!",
+    "vipDeactivated": "VIP Desativado",
+    "vipActivatedDesc": "Você agora tem acesso ao conteúdo premium.",
+    "vipDeactivatedDesc": "Voltou ao plano gratuito."
   },
   "flow": {
     "hero": {
