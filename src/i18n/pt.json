@@ -56,6 +56,10 @@
     "perk2": "Aulas e materiais premium",
     "perk3": "Grupo VIP de networking",
     "upgradeButton": "TORNAR-SE VIP",
+    "unlockButton": "DESBLOQUEAR ACESSO VIP",
+    "subscriptionRequired": "Assinatura Necessária",
+    "exclusiveContent": "Conteúdo Exclusivo",
+    "exclusiveDesc": "Acesso premium desbloqueado",
     "upgradeNote": "Cancele a qualquer momento."
   },
   "community": {
