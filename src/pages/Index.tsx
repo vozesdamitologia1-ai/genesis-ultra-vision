@@ -1,16 +1,33 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import AppHeader from "@/components/AppHeader";
+import BottomNav from "@/components/BottomNav";
+import HeroSection from "@/components/HeroSection";
+import heroLegado from "@/assets/hero-legado.jpg";
+import heroFlow from "@/assets/hero-flow.jpg";
 
-// IMPORTANT: Fully REPLACE this with your own code
-const PlaceholderIndex = () => {
-  // PLACEHOLDER: Replace this entire return statement with the user's app.
-  // The inline background color is intentionally not part of the design system.
-  return (
-    <div className="flex min-h-screen items-center justify-center" style={{ backgroundColor: '#fcfbf8' }}>
-      <img data-lovable-blank-page-placeholder="REMOVE_THIS" src="/placeholder.svg" alt="Your app will live here!" />
-    </div>
-  );
-};
+const Index = () => (
+  <div className="min-h-screen bg-background">
+    <AppHeader />
 
-const Index = PlaceholderIndex;
+    <main className="pt-12 pb-20">
+      <HeroSection
+        tag="Tradição"
+        title="LEGADO: Raízes, Teologia e Profundidade."
+        buttonLabel="ACESSAR TRADIÇÃO"
+        bgImage={heroLegado}
+        variant="legado"
+      />
+
+      <HeroSection
+        tag="Performance"
+        title="FLOW: Propósito, Liderança e Performance."
+        buttonLabel="ATIVAR DESTINO"
+        bgImage={heroFlow}
+        variant="flow"
+      />
+    </main>
+
+    <BottomNav />
+  </div>
+);
 
 export default Index;
