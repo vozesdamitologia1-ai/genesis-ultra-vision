@@ -7,6 +7,8 @@ import BibleInsight from "@/components/bible/BibleInsight";
 import BibleOriginalWord from "@/components/bible/BibleOriginalWord";
 import BibleRelatedContent from "@/components/bible/BibleRelatedContent";
 import BibleAudioPlayer from "@/components/bible/BibleAudioPlayer";
+import BibleMentorChat from "@/components/bible/BibleMentorChat";
+import BibleMindMap from "@/components/bible/BibleMindMap";
 
 export interface BibleStudyResult {
   book: string;
