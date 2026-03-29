@@ -613,7 +613,7 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
     let finalTranscript = "";
 
     const recognition = new SpeechRecognition();
-    recognition.lang = "pt-BR";
+    recognition.lang = isEnglish ? "en-US" : "pt-BR";
     recognition.interimResults = true;
     recognition.continuous = false;
     recognition.maxAlternatives = 3; // More alternatives for biblical terms
