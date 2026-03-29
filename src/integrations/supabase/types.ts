@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      bible_verses: {
+        Row: {
+          book: string
+          chapter: number
+          content: string
+          id: string
+          path_type: string | null
+          verse: number
+          version: string | null
+        }
+        Insert: {
+          book: string
+          chapter: number
+          content: string
+          id?: string
+          path_type?: string | null
+          verse: number
+          version?: string | null
+        }
+        Update: {
+          book?: string
+          chapter?: number
+          content?: string
+          id?: string
+          path_type?: string | null
+          verse?: number
+          version?: string | null
+        }
+        Relationships: []
+      }
       campaigns: {
         Row: {
           city: string

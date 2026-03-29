@@ -56,6 +56,10 @@
     "perk2": "Premium classes and materials",
     "perk3": "VIP networking group",
     "upgradeButton": "BECOME VIP",
+    "unlockButton": "UNLOCK VIP ACCESS",
+    "subscriptionRequired": "Subscription Required",
+    "exclusiveContent": "Exclusive Content",
+    "exclusiveDesc": "Premium access unlocked",
     "upgradeNote": "Cancel anytime."
   },
   "community": {
@@ -69,7 +73,13 @@
     "comingSoon": "Coming soon: your full profile with history and settings.",
     "language": "Language",
     "theme": "Theme",
-    "logout": "Logout"
+    "logout": "Logout",
+    "becomeVip": "Become VIP (test)",
+    "removeVip": "Remove VIP (test)",
+    "vipActivated": "🎉 VIP Activated!",
+    "vipDeactivated": "VIP Deactivated",
+    "vipActivatedDesc": "You now have access to premium content.",
+    "vipDeactivatedDesc": "Back to free plan."
   },
   "flow": {
     "hero": {
@@ -129,7 +139,10 @@
     "bible": {
       "title": "Immersive Bible Reader",
       "placeholder": "Search passage... (e.g., Genesis 1:1)",
-      "button": "CONSULT THE LEGACY",
+      "button": "SEARCH",
+      "chapter": "Chapter",
+      "listen": "Listen to verse",
+      "noResults": "No verses found.",
       "example": {
         "title": "The Life of David",
         "text": "\"The Lord does not look at the things people look at. People look at the outward appearance, but the Lord looks at the heart.\" — 1 Samuel 16:7",
@@ -139,6 +152,10 @@
   },
   "content": {
     "noContent": "No content available yet.",
+    "noResults": "No results found.",
+    "searchPlaceholder": "Search content...",
+    "searchGroups": "Search group...",
+    "leader": "Leader",
     "watchNow": "Watch",
     "readMore": "Read More"
   }
