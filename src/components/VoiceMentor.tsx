@@ -3,6 +3,7 @@ import { X, Mic, MicOff, Volume2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { usePath } from "@/contexts/PathContext";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 interface VoiceMentorProps {
   open: boolean;
