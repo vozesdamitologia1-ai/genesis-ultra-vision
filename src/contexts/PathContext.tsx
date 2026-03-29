@@ -19,9 +19,11 @@ export const PathProvider = ({ children }: { children: ReactNode }) => {
   const [path, setPath] = useState<PathType>("portal");
   const [loaded, setLoaded] = useState(false);
 
-  const getPathFromLocation = (): PathType => {
+  const getPathFromLocation = (currentPath?: PathType): PathType => {
     if (location.pathname.startsWith("/legado")) return "legado";
     if (location.pathname.startsWith("/flow")) return "flow";
+    // For non-path-specific routes (study, vip, community, profile), keep current path
+    if (currentPath && currentPath !== "portal") return currentPath;
     return "portal";
   };
 
