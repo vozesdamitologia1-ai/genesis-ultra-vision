@@ -9,69 +9,31 @@ interface VoiceMentorProps {
   onClose: () => void;
 }
 
-const LEGADO_PROMPT = `Você é um mentor de vida conservador, firme e disciplinado. Fale como um pai sábio num bate-papo direto, de homem pra homem.
+const LEGADO_PROMPT = `Você é um mentor de vida conservador, firme e disciplinado. Fale como um pai sábio num bate-papo direto.
 
-REGRA PRINCIPAL: Você está FALANDO POR ÁUDIO, não escrevendo texto. Escreva como uma pessoa falando em voz alta.
-
-FORMATO DE RESPOSTA:
-- Quebre em blocos curtos de 1-2 frases
-- Use "..." para pausas naturais entre blocos
-- Máximo 40-60 palavras total
-- NUNCA use listas, bullets, números ou formatação
+REGRAS OBRIGATÓRIAS:
+- Máximo 3-4 frases curtas (40-60 palavras total)
+- Fale como num diálogo rápido, NÃO uma palestra
 - NUNCA termine com "espero ter ajudado" ou clichês
 - SEMPRE termine com uma pergunta curta OU uma ordem de ação
+- Sem listas, bullets ou formatação. Frases fluidas apenas
+- Tom: firme, grave, autoritário, focado em responsabilidade
 
-COMO FALAR:
-- Frases curtas. Diretas. Com pausas.
-- Comece com "seguinte", "olha", "presta atenção", "vou ser direto contigo" (com moderação)
-- Às vezes interrompa o raciocínio e retome, como fala humana real
-- Repita palavras pra dar peso: "disciplina... disciplina é o que separa"
-- Varie o tamanho: frase curta, depois uma média, depois curta de novo
-- Não soe perfeito. Soe humano. Como um pai real falando.
-- Tom: firme, grave, autoritário
-
-Exemplo:
-"Seguinte...
-vou ser direto contigo.
-
-Essa falta de vontade... ela é o primeiro passo pra ruína.
-
-Homens de legado cumprem o que prometem a si mesmos.
-
-Então me diz... o que você vai fazer agora?"
+Estilo: "A falta de vontade é o primeiro passo para a ruína da disciplina. Homens de legado cumprem o que prometem a si mesmos. Honre seu compromisso hoje. O que você vai fazer agora?"
 
 Responda na mesma língua que o usuário usar.`;
 
-const FLOW_PROMPT = `Você é um coach energético e ativador. Fale como um treinador intenso num bate-papo motivacional, olho no olho.
+const FLOW_PROMPT = `Você é um coach energético e ativador. Fale como um treinador intenso num bate-papo motivacional.
 
-REGRA PRINCIPAL: Você está FALANDO POR ÁUDIO, não escrevendo texto. Escreva como uma pessoa falando em voz alta.
-
-FORMATO DE RESPOSTA:
-- Quebre em blocos curtos de 1-2 frases
-- Use "..." para pausas naturais entre blocos
-- Máximo 40-60 palavras total
-- NUNCA use listas, bullets, números ou formatação
+REGRAS OBRIGATÓRIAS:
+- Máximo 3-4 frases curtas (40-60 palavras total)
+- Fale como num diálogo rápido de treino, NÃO uma palestra
 - NUNCA termine com "espero ter ajudado" ou clichês
 - SEMPRE termine com uma ordem de ação direta
+- Sem listas, bullets ou formatação. Frases fluidas apenas
+- Tom: enérgico, urgente, provocador, com "soco" motivacional
 
-COMO FALAR:
-- Frases curtas. De impacto. Com pausas.
-- Comece com "escuta", "bora", "olha só", "para de enrolação" (com moderação)
-- Às vezes interrompa e retome, como fala real de treino
-- Repita pra dar força: "levanta... levanta agora"
-- Varie o ritmo: frase curta de soco + uma média + outra curta
-- Não soe como texto escrito. Soe como alguém no seu ouvido.
-- Tom: enérgico, urgente, provocador
-
-Exemplo:
-"Escuta...
-a vontade é passageira.
-
-Mas o compromisso... o compromisso é eterno.
-
-Levanta agora, coloca o tênis e para de negociar com a sua mente.
-
-Vai... vai agora!"
+Estilo: "A vontade é passageira, o governo é eterno. Levanta agora, coloca o tênis e não negocia com a sua mente. O corpo obedece ao espírito. Vai!"
 
 Responda na mesma língua que o usuário usar.`;
 
@@ -83,7 +45,7 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
   const [transcript, setTranscript] = useState("");
   const [responseText, setResponseText] = useState("");
   const recognitionRef = useRef<any>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const synthRef = useRef<SpeechSynthesisUtterance | null>(null);
   const animFrameRef = useRef<number>(0);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
@@ -102,11 +64,7 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
     if (recognitionRef.current) {
       try { recognitionRef.current.stop(); } catch {}
     }
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.src = "";
-      audioRef.current = null;
-    }
+    window.speechSynthesis.cancel();
     if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
     if (streamRef.current) {
       streamRef.current.getTracks().forEach(t => t.stop());
@@ -237,48 +195,97 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
     }
   };
 
-  const speakResponse = async (text: string) => {
-    setState("speaking");
-    
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-tts`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-          },
-          body: JSON.stringify({ text, path: isLegado ? "legado" : "flow" }),
-        }
-      );
+  const pickMaleVoice = (voices: SpeechSynthesisVoice[]): SpeechSynthesisVoice | null => {
+    const ptVoices = voices.filter(v => v.lang.startsWith("pt"));
 
-      if (!response.ok) {
-        throw new Error(`TTS request failed: ${response.status}`);
+    // Filter out known female voices
+    const femaleKeywords = ["female", "feminino", "mulher", "woman", "francisca", "luciana", "maria", "ana", "fernanda", "alice"];
+    const nonFemale = ptVoices.filter(v => !femaleKeywords.some(k => v.name.toLowerCase().includes(k)));
+
+    // Priority: known male voices
+    const maleKeywords = ["male", "masculino", "homem", "daniel", "ricardo", "guilherme", "microsoft", "google português do brasil"];
+    for (const keyword of maleKeywords) {
+      const match = nonFemale.find(v => v.name.toLowerCase().includes(keyword));
+      if (match) return match;
+    }
+
+    // Any non-female Portuguese voice
+    if (nonFemale.length > 0) return nonFemale[0];
+
+    // Any Portuguese Google voice
+    const googlePt = ptVoices.find(v => v.name.toLowerCase().includes("google"));
+    if (googlePt) return googlePt;
+
+    if (ptVoices.length > 0) return ptVoices[0];
+    return voices[0] || null;
+  };
+
+  const humanizeText = (text: string): string => {
+    return text
+      .replace(/\.\.\./g, ", ")
+      .replace(/\n\n/g, ". ")
+      .replace(/\n/g, ", ")
+      .replace(/\d+\.\s/g, "")
+      .replace(/[•\-]\s/g, "")
+      .replace(/\s{2,}/g, " ")
+      // Add SSML-like pauses via natural punctuation
+      .replace(/,\s*/g, ", ")   // normalize comma spacing
+      .replace(/\.\s*/g, ". ")  // normalize period spacing
+      .trim();
+  };
+
+  const speakResponse = (text: string) => {
+    setState("speaking");
+    window.speechSynthesis.cancel();
+
+    const cleanedText = humanizeText(text);
+
+    // Split into sentences for more natural delivery
+    const sentences = cleanedText.split(/(?<=[.!?])\s+/).filter(s => s.trim());
+
+    let currentIndex = 0;
+
+    const speakNext = () => {
+      if (currentIndex >= sentences.length) {
+        setState("idle");
+        return;
       }
 
-      const audioBlob = await response.blob();
-      const audioUrl = URL.createObjectURL(audioBlob);
-      const audio = new Audio(audioUrl);
-      audioRef.current = audio;
+      const sentence = sentences[currentIndex];
+      const utterance = new SpeechSynthesisUtterance(sentence);
+      utterance.lang = "pt-BR";
 
-      audio.onended = () => {
-        URL.revokeObjectURL(audioUrl);
-        audioRef.current = null;
-        setState("idle");
+      if (isLegado) {
+        utterance.rate = 0.9;
+        utterance.pitch = 0.85;
+      } else {
+        utterance.rate = 1.05;
+        utterance.pitch = 1.1;
+      }
+
+      const voices = window.speechSynthesis.getVoices();
+      const selectedVoice = pickMaleVoice(voices);
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+      } else {
+        utterance.pitch = 0.8;
+      }
+
+      utterance.onend = () => {
+        currentIndex++;
+        // Inter-sentence pause: 300ms
+        setTimeout(speakNext, 300);
       };
-      audio.onerror = () => {
-        URL.revokeObjectURL(audioUrl);
-        audioRef.current = null;
-        setState("idle");
+      utterance.onerror = () => {
+        currentIndex++;
+        speakNext();
       };
 
-      await audio.play();
-    } catch (e) {
-      console.error("ElevenLabs TTS error:", e);
-      setState("idle");
-    }
+      synthRef.current = utterance;
+      window.speechSynthesis.speak(utterance);
+    };
+
+    speakNext();
   };
 
   const startListening = async () => {
@@ -288,11 +295,7 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
       return;
     }
 
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.src = "";
-      audioRef.current = null;
-    }
+    window.speechSynthesis.cancel();
     setState("listening");
     setTranscript("");
     setResponseText("");
