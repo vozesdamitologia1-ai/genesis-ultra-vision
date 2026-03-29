@@ -657,13 +657,18 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
         streamRef.current.getTracks().forEach(t => t.stop());
         streamRef.current = null;
       }
-      const errorMessages: Record<string, string> = {
+      const errorMessages: Record<string, string> = isEnglish ? {
+        "not-allowed": "Microphone permission denied. Allow access in settings.",
+        "no-speech": "No speech detected. Try again.",
+        "network": "Network error. Check your connection.",
+        "aborted": "Listening canceled.",
+      } : {
         "not-allowed": "Permissão do microfone negada. Permita o acesso nas configurações.",
         "no-speech": "Nenhuma fala detectada. Tente novamente.",
         "network": "Erro de rede. Verifique sua conexão.",
         "aborted": "Escuta cancelada.",
       };
-      setResponseText(errorMessages[event.error] || `Erro: ${event.error}`);
+      setResponseText(errorMessages[event.error] || `${isEnglish ? "Error" : "Erro"}: ${event.error}`);
       setState("idle");
     };
 
