@@ -139,6 +139,10 @@
   },
   "content": {
     "noContent": "No content available yet.",
+    "noResults": "No results found.",
+    "searchPlaceholder": "Search content...",
+    "searchGroups": "Search group...",
+    "leader": "Leader",
     "watchNow": "Watch",
     "readMore": "Read More"
   }
