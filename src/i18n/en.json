@@ -5,13 +5,13 @@
   "portal": {
     "legado": {
       "tag": "Tradition",
-      "title": "LEGACY: Roots, Theology and Depth.",
+      "title": "LEGACY: Theological Roots.",
       "subtitle": "Roots and Depth",
       "button": "ACCESS TRADITION"
     },
     "flow": {
       "tag": "Performance",
-      "title": "FLOW: Purpose, Leadership and Performance.",
+      "title": "FLOW: Live the Purpose.",
       "subtitle": "Purpose and Performance",
       "button": "ACTIVATE DESTINY"
     }
@@ -35,5 +35,75 @@
     "vip": "VIP",
     "community": "Community",
     "profile": "Profile"
+  },
+  "flow": {
+    "hero": {
+      "tag": "The Global Lifestyle",
+      "title": "FLOW: Purpose, Leadership and Performance.",
+      "subtitle": "Your destiny starts here."
+    },
+    "rails": {
+      "performance": {
+        "title": "Performance & Discipline",
+        "description": "Physical training, study focus, and high-performance routines."
+      },
+      "government": {
+        "title": "Government & Career",
+        "description": "Mentoring on work, money, and leadership."
+      },
+      "groups": {
+        "title": "CGs (Connection Groups)",
+        "description": "Cells and online groups for community growth.",
+        "joinNow": "Join Now",
+        "live": "LIVE",
+        "upcoming": "Coming Soon"
+      }
+    },
+    "sos": {
+      "title": "SOS — I Need Help",
+      "description": "If you're going through a tough time, we're here for you.",
+      "button": "ASK FOR HELP NOW",
+      "message": "You are not alone. Someone from our team will reach out."
+    },
+    "volunteer": {
+      "title": "Global Volunteering",
+      "description": "Humanitarian campaigns and social impact around the world.",
+      "donated": "raised",
+      "goal": "goal",
+      "donate": "CONTRIBUTE",
+      "campaigns": "Active Campaigns"
+    }
+  },
+  "legado": {
+    "hero": {
+      "tag": "Theological Foundation",
+      "title": "LEGACY: Roots, Theology and Depth.",
+      "subtitle": "The foundation of faith."
+    },
+    "rails": {
+      "school": {
+        "title": "Teaching School",
+        "description": "Exegesis and systematic theology videos."
+      },
+      "archive": {
+        "title": "Historical Archive",
+        "description": "Church history and biographies of heroes of the faith."
+      }
+    },
+    "bible": {
+      "title": "Immersive Bible Reader",
+      "placeholder": "Search passage... (e.g., Genesis 1:1)",
+      "button": "CONSULT THE LEGACY",
+      "example": {
+        "title": "The Life of David",
+        "text": "\"The Lord does not look at the things people look at. People look at the outward appearance, but the Lord looks at the heart.\" — 1 Samuel 16:7",
+        "explanation": "David, the shepherd who became king, symbolizes the journey of someone chosen not by appearance or status, but by heart. His story teaches us about courage against giants, genuine repentance, and the relentless pursuit of God's presence."
+      }
+    }
+  },
+  "content": {
+    "noContent": "No content available yet.",
+    "watchNow": "Watch",
+    "readMore": "Read More"
   }
 }
