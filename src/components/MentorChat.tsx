@@ -28,7 +28,7 @@ const MentorChat = ({ open, onClose }: MentorChatProps) => {
 
   const handleSend = () => {
     if (!input.trim() || isLoading) return;
-    sendMessage(input);
+    sendMessage(input, path);
     setInput("");
   };
 
