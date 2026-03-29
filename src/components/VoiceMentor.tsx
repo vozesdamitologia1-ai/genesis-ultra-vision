@@ -241,6 +241,7 @@ function isRandomWordRequest(text: string): boolean {
 
 const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
   const { path } = usePath();
+  const { i18n } = useTranslation();
   const [state, setState] = useState<VoiceState>("idle");
   const [transcript, setTranscript] = useState("");
   const [responseText, setResponseText] = useState("");
@@ -254,6 +255,7 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
   const streamRef = useRef<MediaStream | null>(null);
 
   const isLegado = path === "legado";
+  const isEnglish = i18n.language?.startsWith("en");
 
   const waveColor = isLegado ? "#D4AF37" : "#ef4444";
   const bgGradient = isLegado
