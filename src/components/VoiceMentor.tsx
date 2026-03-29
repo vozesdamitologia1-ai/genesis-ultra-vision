@@ -237,97 +237,48 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
     }
   };
 
-  const pickMaleVoice = (voices: SpeechSynthesisVoice[]): SpeechSynthesisVoice | null => {
-    const ptVoices = voices.filter(v => v.lang.startsWith("pt"));
-
-    // Filter out known female voices
-    const femaleKeywords = ["female", "feminino", "mulher", "woman", "francisca", "luciana", "maria", "ana", "fernanda", "alice"];
-    const nonFemale = ptVoices.filter(v => !femaleKeywords.some(k => v.name.toLowerCase().includes(k)));
-
-    // Priority: known male voices
-    const maleKeywords = ["male", "masculino", "homem", "daniel", "ricardo", "guilherme", "microsoft", "google português do brasil"];
-    for (const keyword of maleKeywords) {
-      const match = nonFemale.find(v => v.name.toLowerCase().includes(keyword));
-      if (match) return match;
-    }
-
-    // Any non-female Portuguese voice
-    if (nonFemale.length > 0) return nonFemale[0];
-
-    // Any Portuguese Google voice
-    const googlePt = ptVoices.find(v => v.name.toLowerCase().includes("google"));
-    if (googlePt) return googlePt;
-
-    if (ptVoices.length > 0) return ptVoices[0];
-    return voices[0] || null;
-  };
-
-  const humanizeText = (text: string): string => {
-    return text
-      .replace(/\.\.\./g, ", ")
-      .replace(/\n\n/g, ". ")
-      .replace(/\n/g, ", ")
-      .replace(/\d+\.\s/g, "")
-      .replace(/[•\-]\s/g, "")
-      .replace(/\s{2,}/g, " ")
-      // Add SSML-like pauses via natural punctuation
-      .replace(/,\s*/g, ", ")   // normalize comma spacing
-      .replace(/\.\s*/g, ". ")  // normalize period spacing
-      .trim();
-  };
-
-  const speakResponse = (text: string) => {
+  const speakResponse = async (text: string) => {
     setState("speaking");
-    window.speechSynthesis.cancel();
+    
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-tts`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({ text, path: isLegado ? "legado" : "flow" }),
+        }
+      );
 
-    const cleanedText = humanizeText(text);
+      if (!response.ok) {
+        throw new Error(`TTS request failed: ${response.status}`);
+      }
 
-    // Split into sentences for more natural delivery
-    const sentences = cleanedText.split(/(?<=[.!?])\s+/).filter(s => s.trim());
+      const audioBlob = await response.blob();
+      const audioUrl = URL.createObjectURL(audioBlob);
+      const audio = new Audio(audioUrl);
+      audioRef.current = audio;
 
-    let currentIndex = 0;
-
-    const speakNext = () => {
-      if (currentIndex >= sentences.length) {
+      audio.onended = () => {
+        URL.revokeObjectURL(audioUrl);
+        audioRef.current = null;
         setState("idle");
-        return;
-      }
-
-      const sentence = sentences[currentIndex];
-      const utterance = new SpeechSynthesisUtterance(sentence);
-      utterance.lang = "pt-BR";
-
-      if (isLegado) {
-        utterance.rate = 0.9;
-        utterance.pitch = 0.85;
-      } else {
-        utterance.rate = 1.05;
-        utterance.pitch = 1.1;
-      }
-
-      const voices = window.speechSynthesis.getVoices();
-      const selectedVoice = pickMaleVoice(voices);
-      if (selectedVoice) {
-        utterance.voice = selectedVoice;
-      } else {
-        utterance.pitch = 0.8;
-      }
-
-      utterance.onend = () => {
-        currentIndex++;
-        // Inter-sentence pause: 300ms
-        setTimeout(speakNext, 300);
       };
-      utterance.onerror = () => {
-        currentIndex++;
-        speakNext();
+      audio.onerror = () => {
+        URL.revokeObjectURL(audioUrl);
+        audioRef.current = null;
+        setState("idle");
       };
 
-      synthRef.current = utterance;
-      window.speechSynthesis.speak(utterance);
-    };
-
-    speakNext();
+      await audio.play();
+    } catch (e) {
+      console.error("ElevenLabs TTS error:", e);
+      setState("idle");
+    }
   };
 
   const startListening = async () => {
