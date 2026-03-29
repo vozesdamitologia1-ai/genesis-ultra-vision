@@ -22,6 +22,7 @@ export interface BibleStudyResult {
     meaning: string;
   };
   relatedTopics: string[];
+  applications?: string[];
 }
 
 const BibleReader = () => {
