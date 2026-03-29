@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      bible_api_cache: {
+        Row: {
+          book_name: string | null
+          chapter: number | null
+          created_at: string | null
+          full_text: string | null
+          id: string
+          reference_key: string | null
+          verse_number: string | null
+        }
+        Insert: {
+          book_name?: string | null
+          chapter?: number | null
+          created_at?: string | null
+          full_text?: string | null
+          id?: string
+          reference_key?: string | null
+          verse_number?: string | null
+        }
+        Update: {
+          book_name?: string | null
+          chapter?: number | null
+          created_at?: string | null
+          full_text?: string | null
+          id?: string
+          reference_key?: string | null
+          verse_number?: string | null
+        }
+        Relationships: []
+      }
       bible_insights: {
         Row: {
           id: string
