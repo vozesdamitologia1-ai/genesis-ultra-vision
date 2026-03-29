@@ -677,7 +677,7 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
       recognition.start();
     } catch (e) {
       console.error("Failed to start speech recognition:", e);
-      setResponseText("Não foi possível iniciar. Abra o app diretamente no navegador.");
+      setResponseText(isEnglish ? "Could not start. Open the app directly in the browser." : "Não foi possível iniciar. Abra o app diretamente no navegador.");
       setState("idle");
     }
   };
