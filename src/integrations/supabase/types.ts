@@ -18,6 +18,7 @@ export type Database = {
         Row: {
           id: string
           is_live: boolean | null
+          language: string | null
           live_url: string | null
           mentor_type: string | null
           name: string
@@ -26,6 +27,7 @@ export type Database = {
         Insert: {
           id?: string
           is_live?: boolean | null
+          language?: string | null
           live_url?: string | null
           mentor_type?: string | null
           name: string
@@ -34,6 +36,7 @@ export type Database = {
         Update: {
           id?: string
           is_live?: boolean | null
+          language?: string | null
           live_url?: string | null
           mentor_type?: string | null
           name?: string
@@ -48,6 +51,7 @@ export type Database = {
           created_at: string
           description: string | null
           id: string
+          language: string | null
           path_type: string | null
           thumbnail_url: string | null
           title: string
@@ -59,6 +63,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          language?: string | null
           path_type?: string | null
           thumbnail_url?: string | null
           title: string
@@ -70,6 +75,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          language?: string | null
           path_type?: string | null
           thumbnail_url?: string | null
           title?: string
@@ -82,6 +88,7 @@ export type Database = {
           avatar_url: string | null
           full_name: string | null
           id: string
+          language: string | null
           selected_path: string | null
           updated_at: string | null
         }
@@ -89,6 +96,7 @@ export type Database = {
           avatar_url?: string | null
           full_name?: string | null
           id: string
+          language?: string | null
           selected_path?: string | null
           updated_at?: string | null
         }
@@ -96,6 +104,7 @@ export type Database = {
           avatar_url?: string | null
           full_name?: string | null
           id?: string
+          language?: string | null
           selected_path?: string | null
           updated_at?: string | null
         }
