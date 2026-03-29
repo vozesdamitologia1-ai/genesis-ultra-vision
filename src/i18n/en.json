@@ -31,10 +31,12 @@
   },
   "nav": {
     "home": "Home",
-    "study": "Study",
-    "vip": "VIP",
-    "community": "Community",
+    "trails": "Trails",
+    "mentor": "Mentor",
     "profile": "Profile"
+  },
+  "profile": {
+    "comingSoon": "Coming soon: your full profile with history and settings."
   },
   "flow": {
     "hero": {

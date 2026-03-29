@@ -230,6 +230,21 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
       const reply = data?.reply ?? "Sem resposta.";
       setResponseText(reply);
       speakResponse(reply);
+
+      // Save to mentorship_logs
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          await supabase.from("mentorship_logs").insert({
+            user_id: user.id,
+            user_query: text,
+            ai_response: reply,
+            path_type: isLegado ? "legado" : "flow",
+          });
+        }
+      } catch (logErr) {
+        console.warn("Failed to save mentorship log:", logErr);
+      }
     } catch (e) {
       console.error("Gemini error:", e);
       setResponseText("Erro ao conectar com a IA.");
