@@ -139,7 +139,10 @@
     "bible": {
       "title": "Immersive Bible Reader",
       "placeholder": "Search passage... (e.g., Genesis 1:1)",
-      "button": "CONSULT THE LEGACY",
+      "button": "SEARCH",
+      "chapter": "Chapter",
+      "listen": "Listen to verse",
+      "noResults": "No verses found.",
       "example": {
         "title": "The Life of David",
         "text": "\"The Lord does not look at the things people look at. People look at the outward appearance, but the Lord looks at the heart.\" — 1 Samuel 16:7",
