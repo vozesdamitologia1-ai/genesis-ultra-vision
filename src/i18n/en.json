@@ -1,0 +1,39 @@
+{
+  "header": {
+    "brand": "LEGACY | FLOW"
+  },
+  "portal": {
+    "legado": {
+      "tag": "Tradition",
+      "title": "LEGACY: Roots, Theology and Depth.",
+      "subtitle": "Roots and Depth",
+      "button": "ACCESS TRADITION"
+    },
+    "flow": {
+      "tag": "Performance",
+      "title": "FLOW: Purpose, Leadership and Performance.",
+      "subtitle": "Purpose and Performance",
+      "button": "ACTIVATE DESTINY"
+    }
+  },
+  "path": {
+    "legado": {
+      "tag": "Tradition Activated",
+      "title": "Welcome to LEGACY",
+      "description": "Roots, Theology and Depth. Explore ancestral knowledge."
+    },
+    "flow": {
+      "tag": "Performance Activated",
+      "title": "Welcome to FLOW",
+      "description": "Purpose, Leadership and Performance. Activate your destiny."
+    },
+    "back": "BACK TO PORTAL"
+  },
+  "nav": {
+    "home": "Home",
+    "study": "Study",
+    "vip": "VIP",
+    "community": "Community",
+    "profile": "Profile"
+  }
+}

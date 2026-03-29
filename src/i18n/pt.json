@@ -1,0 +1,39 @@
+{
+  "header": {
+    "brand": "LEGADO | FLOW"
+  },
+  "portal": {
+    "legado": {
+      "tag": "Tradição",
+      "title": "LEGADO: Raízes, Teologia e Profundidade.",
+      "subtitle": "Raízes e Profundidade",
+      "button": "ACESSAR TRADIÇÃO"
+    },
+    "flow": {
+      "tag": "Performance",
+      "title": "FLOW: Propósito, Liderança e Performance.",
+      "subtitle": "Propósito e Performance",
+      "button": "ATIVAR DESTINO"
+    }
+  },
+  "path": {
+    "legado": {
+      "tag": "Tradição Ativada",
+      "title": "Bem-vindo ao LEGADO",
+      "description": "Raízes, Teologia e Profundidade. Explore o conhecimento ancestral."
+    },
+    "flow": {
+      "tag": "Performance Ativada",
+      "title": "Bem-vindo ao FLOW",
+      "description": "Propósito, Liderança e Performance. Ative seu destino."
+    },
+    "back": "VOLTAR AO PORTAL"
+  },
+  "nav": {
+    "home": "Home",
+    "study": "Study",
+    "vip": "VIP",
+    "community": "Community",
+    "profile": "Profile"
+  }
+}
