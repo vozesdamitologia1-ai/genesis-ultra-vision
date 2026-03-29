@@ -55,7 +55,7 @@ export const PathProvider = ({ children }: { children: ReactNode }) => {
             i18nModule.default.changeLanguage(profile.language);
           }
         } else {
-          setPath(getPathFromLocation());
+          setPath(getPathFromLocation("portal"));
         }
       } catch {
         setPath(getPathFromLocation());
