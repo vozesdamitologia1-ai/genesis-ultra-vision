@@ -5,13 +5,13 @@
   "portal": {
     "legado": {
       "tag": "Tradição",
-      "title": "LEGADO: Raízes, Teologia e Profundidade.",
+      "title": "LEGADO: Raízes Teológicas.",
       "subtitle": "Raízes e Profundidade",
       "button": "ACESSAR TRADIÇÃO"
     },
     "flow": {
       "tag": "Performance",
-      "title": "FLOW: Propósito, Liderança e Performance.",
+      "title": "FLOW: Viver o Propósito.",
       "subtitle": "Propósito e Performance",
       "button": "ATIVAR DESTINO"
     }
@@ -31,9 +31,79 @@
   },
   "nav": {
     "home": "Home",
-    "study": "Study",
+    "study": "Estudo",
     "vip": "VIP",
-    "community": "Community",
-    "profile": "Profile"
+    "community": "Comunidade",
+    "profile": "Perfil"
+  },
+  "flow": {
+    "hero": {
+      "tag": "The Global Lifestyle",
+      "title": "FLOW: Propósito, Liderança e Performance.",
+      "subtitle": "Seu destino começa aqui."
+    },
+    "rails": {
+      "performance": {
+        "title": "Performance & Disciplina",
+        "description": "Treinos físicos, foco nos estudos e rotinas de alta performance."
+      },
+      "government": {
+        "title": "Governo & Carreira",
+        "description": "Mentorias sobre trabalho, dinheiro e liderança."
+      },
+      "groups": {
+        "title": "GCs (Grupos de Conexão)",
+        "description": "Células e grupos online para crescimento em comunidade.",
+        "joinNow": "Entrar Agora",
+        "live": "AO VIVO",
+        "upcoming": "Em Breve"
+      }
+    },
+    "sos": {
+      "title": "SOS — Preciso de Ajuda",
+      "description": "Se você está passando por um momento difícil, estamos aqui por você.",
+      "button": "PEDIR AJUDA AGORA",
+      "message": "Você não está sozinho. Alguém da nossa equipe vai entrar em contato."
+    },
+    "volunteer": {
+      "title": "Voluntariado Global",
+      "description": "Campanhas humanitárias e impacto social ao redor do mundo.",
+      "donated": "arrecadado",
+      "goal": "meta",
+      "donate": "CONTRIBUIR",
+      "campaigns": "Campanhas Ativas"
+    }
+  },
+  "legado": {
+    "hero": {
+      "tag": "Theological Foundation",
+      "title": "LEGADO: Raízes, Teologia e Profundidade.",
+      "subtitle": "O alicerce da fé."
+    },
+    "rails": {
+      "school": {
+        "title": "Escola de Ensino",
+        "description": "Vídeos de exegese e teologia sistemática."
+      },
+      "archive": {
+        "title": "Acervo Histórico",
+        "description": "História da igreja e biografias de heróis da fé."
+      }
+    },
+    "bible": {
+      "title": "Leitor Bíblico Imersivo",
+      "placeholder": "Buscar passagem... (ex: Gênesis 1:1)",
+      "button": "CONSULTAR O LEGADO",
+      "example": {
+        "title": "A Vida de Davi",
+        "text": "\"O Senhor não vê como o homem vê. O homem olha para a aparência exterior, mas o Senhor olha para o coração.\" — 1 Samuel 16:7",
+        "explanation": "Davi, o pastor que se tornou rei, simboliza a jornada de alguém escolhido não pela aparência ou status, mas pelo coração. Sua história nos ensina sobre coragem diante de gigantes, arrependimento genuíno e a busca incansável pela presença de Deus."
+      }
+    }
+  },
+  "content": {
+    "noContent": "Nenhum conteúdo disponível ainda.",
+    "watchNow": "Assistir",
+    "readMore": "Ler Mais"
   }
 }
