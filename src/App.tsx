@@ -7,6 +7,7 @@ import { PathProvider } from "@/contexts/PathContext";
 import Index from "./pages/Index.tsx";
 import Flow from "./pages/Flow.tsx";
 import Legado from "./pages/Legado.tsx";
+import Profile from "./pages/Profile.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
