@@ -105,8 +105,9 @@
       "description": "Humanitarian campaigns and social impact around the world.",
       "donated": "raised",
       "goal": "goal",
-      "donate": "CONTRIBUTE",
-      "campaigns": "Active Campaigns"
+      "donate": "CONTRIBUTE VIA CARD",
+      "campaigns": "Active Campaigns",
+      "noCampaigns": "No campaigns available in your region."
     }
   },
   "legado": {

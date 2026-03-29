@@ -105,8 +105,9 @@
       "description": "Campanhas humanitárias e impacto social ao redor do mundo.",
       "donated": "arrecadado",
       "goal": "meta",
-      "donate": "CONTRIBUIR",
-      "campaigns": "Campanhas Ativas"
+      "donate": "CONTRIBUIR VIA PIX",
+      "campaigns": "Campanhas Ativas",
+      "noCampaigns": "Nenhuma campanha disponível na sua região."
     }
   },
   "legado": {
