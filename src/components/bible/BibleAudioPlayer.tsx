@@ -13,18 +13,27 @@ const BibleAudioPlayer = ({ result }: BibleAudioPlayerProps) => {
   const [loading, setLoading] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  const isEnglish = i18n.language?.startsWith("en");
+
   const speakWithBrowserTTS = (text: string) => {
     if (!("speechSynthesis" in window)) return;
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = "pt-BR";
+    utterance.lang = isEnglish ? "en-US" : "pt-BR";
     utterance.rate = 0.9;
     utterance.pitch = 0.85;
     const voices = window.speechSynthesis.getVoices();
-    const ptVoice = voices.find(v => v.lang.startsWith("pt") && v.name.toLowerCase().includes("google"))
-      || voices.find(v => v.lang.startsWith("pt-BR"))
-      || voices.find(v => v.lang.startsWith("pt"));
-    if (ptVoice) utterance.voice = ptVoice;
+    if (isEnglish) {
+      const enVoice = voices.find(v => v.lang === "en-US" && v.name.toLowerCase().includes("google"))
+        || voices.find(v => v.lang === "en-US")
+        || voices.find(v => v.lang.startsWith("en"));
+      if (enVoice) utterance.voice = enVoice;
+    } else {
+      const ptVoice = voices.find(v => v.lang.startsWith("pt") && v.name.toLowerCase().includes("google"))
+        || voices.find(v => v.lang.startsWith("pt-BR"))
+        || voices.find(v => v.lang.startsWith("pt"));
+      if (ptVoice) utterance.voice = ptVoice;
+    }
     utterance.onend = () => { setPlaying(false); };
     utterance.onerror = () => { setPlaying(false); };
     window.speechSynthesis.speak(utterance);
