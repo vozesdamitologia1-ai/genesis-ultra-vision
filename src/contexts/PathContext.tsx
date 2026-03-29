@@ -46,7 +46,7 @@ export const PathProvider = ({ children }: { children: ReactNode }) => {
               navigate(`/${profile.current_mode}`, { replace: true });
             }
           } else {
-            setPath(getPathFromLocation());
+            setPath(getPathFromLocation("portal"));
           }
 
           // Apply persisted language
