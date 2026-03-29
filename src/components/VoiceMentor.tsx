@@ -287,13 +287,17 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
   const startListening = async () => {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      setResponseText("Seu navegador não suporta reconhecimento de voz.");
+      setResponseText("Seu navegador não suporta reconhecimento de voz. Use o Chrome para melhor experiência.");
       return;
     }
 
     // Stop any ongoing speech
     window.speechSynthesis.cancel();
+    setState("listening");
+    setTranscript("");
+    setResponseText("");
 
+    // Set up audio visualization (optional - don't block if it fails)
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
@@ -305,28 +309,30 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
       analyser.fftSize = 2048;
       source.connect(analyser);
       analyserRef.current = analyser;
-    } catch {
-      setResponseText("Permissão de microfone negada.");
-      return;
+    } catch (e) {
+      console.warn("Mic visualization unavailable:", e);
+      // Continue without waveform - speech recognition may still work
     }
+
+    let finalTranscript = "";
 
     const recognition = new SpeechRecognition();
     recognition.lang = "pt-BR";
     recognition.interimResults = true;
     recognition.continuous = false;
-
-    recognition.onstart = () => {
-      setState("listening");
-      setTranscript("");
-      setResponseText("");
-    };
+    recognition.maxAlternatives = 1;
 
     recognition.onresult = (event: any) => {
-      let text = "";
+      let interim = "";
       for (let i = 0; i < event.results.length; i++) {
-        text += event.results[i][0].transcript;
+        const result = event.results[i];
+        if (result.isFinal) {
+          finalTranscript += result[0].transcript;
+        } else {
+          interim += result[0].transcript;
+        }
       }
-      setTranscript(text);
+      setTranscript(finalTranscript + interim);
     };
 
     recognition.onend = () => {
@@ -341,23 +347,46 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
       }
       analyserRef.current = null;
 
-      // Send to Gemini if we have text
-      setTranscript(prev => {
-        if (prev.trim()) {
-          sendToGemini(prev.trim());
-        } else {
-          setState("idle");
-        }
-        return prev;
-      });
+      // Use the captured finalTranscript directly
+      const textToSend = finalTranscript.trim() || "";
+      if (textToSend) {
+        console.log("Sending to Gemini:", textToSend);
+        sendToGemini(textToSend);
+      } else {
+        console.log("No speech detected");
+        setResponseText("Não consegui ouvir. Tente novamente.");
+        setState("idle");
+      }
     };
 
-    recognition.onerror = () => {
+    recognition.onerror = (event: any) => {
+      console.error("Speech recognition error:", event.error);
+      // Clean up audio
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(t => t.stop());
+        streamRef.current = null;
+      }
+      
+      const errorMessages: Record<string, string> = {
+        "not-allowed": "Permissão do microfone negada. Permita o acesso nas configurações do navegador.",
+        "no-speech": "Nenhuma fala detectada. Tente novamente.",
+        "network": "Erro de rede. Verifique sua conexão.",
+        "aborted": "Escuta cancelada.",
+      };
+      setResponseText(errorMessages[event.error] || `Erro no reconhecimento de voz: ${event.error}`);
       setState("idle");
     };
 
     recognitionRef.current = recognition;
-    recognition.start();
+    
+    try {
+      recognition.start();
+      console.log("Speech recognition started");
+    } catch (e) {
+      console.error("Failed to start speech recognition:", e);
+      setResponseText("Não foi possível iniciar o reconhecimento de voz. Abra o app diretamente no navegador (não em iframe).");
+      setState("idle");
+    }
   };
 
   const handleMicClick = () => {
