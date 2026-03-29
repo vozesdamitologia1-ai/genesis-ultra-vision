@@ -150,6 +150,17 @@
       "insightTitle": "Insight do Mentor",
       "originalTitle": "Raiz no Original",
       "relatedTitle": "Materiais Relacionados",
+      "mentorChat": {
+        "title": "Pergunte ao Mentor sobre este Capítulo",
+        "hint": "Ex: \"O que significa a 'vara' e o 'cajado' no versículo 4?\"",
+        "inputPlaceholder": "Sua pergunta sobre o capítulo...",
+        "thinking": "Meditando...",
+        "noAnswer": "Sem resposta.",
+        "error": "Erro ao consultar o Mentor. Tente novamente."
+      },
+      "mindMap": {
+        "title": "Aplicação para Hoje"
+      },
       "example": {
         "title": "A Vida de Davi",
         "text": "\"O Senhor não vê como o homem vê. O homem olha para a aparência exterior, mas o Senhor olha para o coração.\" — 1 Samuel 16:7",

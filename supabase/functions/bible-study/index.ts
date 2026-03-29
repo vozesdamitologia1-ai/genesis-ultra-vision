@@ -47,9 +47,11 @@ REGRAS ESTRITAS:
        "language": "Hebraico" ou "Grego",
        "meaning": "significado profundo da palavra e como ela ilumina o texto"
      },
-     "relatedTopics": ["tema1", "tema2", "tema3"]
+      "relatedTopics": ["tema1", "tema2", "tema3"],
+      "applications": ["Ponto prático 1 para aplicar hoje", "Ponto prático 2", "Ponto prático 3"]
    }
 4. Use a versão "Almeida Revista e Corrigida" para o texto bíblico.
+5. As "applications" devem ser 3 pontos práticos e pessoais de como aplicar a mensagem do capítulo no dia a dia do leitor.
 5. Sempre retorne JSON válido, sem markdown, sem backticks.
 6. Inclua todos os versículos do capítulo referenciado.
 7. Os "relatedTopics" devem ser temas teológicos relacionados (ex: adoração, oração, fé, redenção).`;

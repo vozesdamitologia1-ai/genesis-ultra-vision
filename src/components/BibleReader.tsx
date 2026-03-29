@@ -7,6 +7,8 @@ import BibleInsight from "@/components/bible/BibleInsight";
 import BibleOriginalWord from "@/components/bible/BibleOriginalWord";
 import BibleRelatedContent from "@/components/bible/BibleRelatedContent";
 import BibleAudioPlayer from "@/components/bible/BibleAudioPlayer";
+import BibleMentorChat from "@/components/bible/BibleMentorChat";
+import BibleMindMap from "@/components/bible/BibleMindMap";
 
 export interface BibleStudyResult {
   book: string;
@@ -20,6 +22,7 @@ export interface BibleStudyResult {
     meaning: string;
   };
   relatedTopics: string[];
+  applications?: string[];
 }
 
 const BibleReader = () => {
@@ -179,6 +182,12 @@ const BibleReader = () => {
 
               {/* Original Word */}
               <BibleOriginalWord originalWord={result.originalWord} />
+
+              {/* Mind Map - Practical Applications */}
+              <BibleMindMap applications={result.applications || []} />
+
+              {/* Ask the Mentor Chat */}
+              <BibleMentorChat result={result} />
 
               {/* Related Content */}
               <BibleRelatedContent topics={result.relatedTopics} />
