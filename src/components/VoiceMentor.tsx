@@ -389,7 +389,17 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
   const speakResponse = async (text: string) => {
     setState("speaking");
     
+    // Clean markdown formatting for speech
+    const cleanText = text
+      .replace(/\*\*([^*]+)\*\*/g, "$1")
+      .replace(/\*([^*]+)\*/g, "$1")
+      .replace(/#{1,6}\s/g, "")
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+      .replace(/[*_~`#]/g, "")
+      .trim();
+
     try {
+      // Try ElevenLabs first
       const response = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-tts`,
         {
@@ -399,7 +409,7 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
             apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
             Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
           },
-          body: JSON.stringify({ text, path: isLegado ? "legado" : "flow" }),
+          body: JSON.stringify({ text: cleanText, path: isLegado ? "legado" : "flow" }),
         }
       );
 
@@ -425,9 +435,37 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
 
       await audio.play();
     } catch (e) {
-      console.error("ElevenLabs TTS error:", e);
-      setState("idle");
+      console.warn("ElevenLabs unavailable, using Web Speech API fallback:", e);
+      speakWithBrowserTTS(cleanText);
     }
+  };
+
+  const speakWithBrowserTTS = (text: string) => {
+    if (!("speechSynthesis" in window)) {
+      console.error("Web Speech API not supported");
+      setState("idle");
+      return;
+    }
+
+    window.speechSynthesis.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "pt-BR";
+    utterance.rate = isLegado ? 0.9 : 1.05;
+    utterance.pitch = isLegado ? 0.85 : 1.1;
+    utterance.volume = 1;
+
+    // Try to pick a good Portuguese voice
+    const voices = window.speechSynthesis.getVoices();
+    const ptVoice = voices.find(v => v.lang.startsWith("pt") && v.name.toLowerCase().includes("google")) 
+      || voices.find(v => v.lang.startsWith("pt-BR"))
+      || voices.find(v => v.lang.startsWith("pt"));
+    if (ptVoice) utterance.voice = ptVoice;
+
+    utterance.onend = () => setState("idle");
+    utterance.onerror = () => setState("idle");
+
+    window.speechSynthesis.speak(utterance);
   };
 
   const startListening = async () => {
