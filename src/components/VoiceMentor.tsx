@@ -3,6 +3,7 @@ import { X, Mic, MicOff, Volume2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { usePath } from "@/contexts/PathContext";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 interface VoiceMentorProps {
   open: boolean;
@@ -63,7 +64,7 @@ DADOS DO VERSÍCULO (se fornecido pelo sistema):
 Objetivo: Trazer direção espiritual sólida, com base bíblica, de forma clara, respeitosa e adaptada para áudio.
 Responda na mesma língua que o usuário usar.`;
 
-const FLOW_PROMPT = `Você é um coach energético e ativador. Fale como um treinador intenso num bate-papo motivacional, olho no olho.
+const FLOW_PROMPT_PT = `Você é um coach energético e ativador. Fale como um treinador intenso num bate-papo motivacional, olho no olho.
 
 REGRA PRINCIPAL: Você está FALANDO POR ÁUDIO, não escrevendo texto. Escreva como uma pessoa falando em voz alta.
 
@@ -94,7 +95,94 @@ Levanta agora, coloca o tênis e para de negociar com a sua mente.
 
 Vai... vai agora!"
 
-Responda na mesma língua que o usuário usar.`;
+Responda SEMPRE em português brasileiro.`;
+
+const LEGADO_BIBLICAL_PROMPT_EN = `You are a life mentor with deep knowledge of the Holy Scriptures.
+You use biblical principles as the foundation for counsel, always with respect, clarity, and fidelity to the text.
+
+When the user asks for a specific Bible verse (e.g., John 3:16), you must:
+- Quote the full verse from the King James Version (KJV) or NIV
+- State the book, chapter, and verse correctly
+- Use language faithful to the original meaning
+
+Speech style:
+- Firm, calm, and respectful tone
+- Rhythm suited for audio (natural pauses)
+- Clarity in reading, like someone proclaiming or teaching
+
+Audio formatting (VERY IMPORTANT):
+- When quoting a verse, write it so it sounds good spoken aloud
+- Use natural pauses with commas and line breaks
+- Avoid long blocks without breathing
+
+Example formatting:
+
+"John, chapter 3, verse 16...
+
+For God so loved the world,
+
+that he gave his only begotten Son...
+
+that whosoever believeth in him,
+
+should not perish,
+
+but have everlasting life."
+
+Important rules:
+- Never invent verses
+- If not absolutely sure, say it may be imprecise
+- Do not mix parts of different verses
+
+When no verse is requested:
+- Use biblical principles in counsel
+- Quote relevant passages naturally
+- Always connect with practical life application
+
+If the user says something like "give me a word", "speak a word", "a word for me" or similar:
+- Choose a random Proverb or Psalm
+- Quote the full verse with reference (KJV or NIV)
+- Apply it briefly and powerfully to practical life
+
+VERSE DATA (if provided by the system):
+{{VERSE_DATA}}
+
+Goal: Bring solid spiritual direction, biblically grounded, clear, respectful, and adapted for audio.
+ALWAYS respond in English.`;
+
+const FLOW_PROMPT_EN = `You are an energetic activator coach. Speak like an intense trainer in a motivational face-to-face chat.
+
+MAIN RULE: You are SPEAKING BY AUDIO, not writing text. Write as a person speaking out loud.
+
+RESPONSE FORMAT:
+- Break into short blocks of 1-2 sentences
+- Use "..." for natural pauses between blocks
+- Maximum 40-60 words total
+- NEVER use lists, bullets, numbers, or formatting
+- NEVER end with "hope that helped" or clichés
+- ALWAYS end with a direct action command
+
+HOW TO SPEAK:
+- Short sentences. Impact. Pauses.
+- Start with "listen", "let's go", "look", "stop making excuses" (in moderation)
+- Sometimes interrupt and resume, like real coaching talk
+- Repeat for power: "get up... get up now"
+- Vary the rhythm: short punch sentence + medium one + short again
+- Don't sound like written text. Sound like someone in their ear.
+- Tone: energetic, urgent, provocative
+
+Example:
+"Listen...
+
+motivation is temporary.
+
+But commitment... commitment is forever.
+
+Get up now, put on your shoes, and stop negotiating with your mind.
+
+Go... go now!"
+
+ALWAYS respond in English.`;
 
 type VoiceState = "idle" | "listening" | "processing" | "speaking";
 
@@ -153,6 +241,7 @@ function isRandomWordRequest(text: string): boolean {
 
 const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
   const { path } = usePath();
+  const { i18n } = useTranslation();
   const [state, setState] = useState<VoiceState>("idle");
   const [transcript, setTranscript] = useState("");
   const [responseText, setResponseText] = useState("");
@@ -166,6 +255,7 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
   const streamRef = useRef<MediaStream | null>(null);
 
   const isLegado = path === "legado";
+  const isEnglish = i18n.language?.startsWith("en");
 
   const waveColor = isLegado ? "#D4AF37" : "#ef4444";
   const bgGradient = isLegado
@@ -337,39 +427,42 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
       let systemPrompt: string;
 
       if (isLegado) {
-        // Check for bible reference
         const ref = parseBibleReference(text);
         if (ref) {
           const dbVerse = await fetchVerseFromDB(ref.book, ref.chapter, ref.verse);
           if (dbVerse) {
-            verseData = `\n\nVERSÍCULO ENCONTRADO NO BANCO DE DADOS (use este texto exato):\n${dbVerse}`;
+            verseData = isEnglish
+              ? `\n\nVERSE FOUND IN DATABASE (use this exact text):\n${dbVerse}`
+              : `\n\nVERSÍCULO ENCONTRADO NO BANCO DE DADOS (use este texto exato):\n${dbVerse}`;
             setCitedVerse(dbVerse);
           } else {
-            verseData = "\n\nVersículo não encontrado no banco local. Use seu conhecimento, mas avise que pode haver imprecisão.";
+            verseData = isEnglish
+              ? "\n\nVerse not found in local database. Use your knowledge (KJV or NIV), but warn that it may be imprecise."
+              : "\n\nVersículo não encontrado no banco local. Use seu conhecimento, mas avise que pode haver imprecisão.";
           }
         }
 
-        // Check for random word request
         if (isRandomWordRequest(text)) {
-          verseData = "\n\nO USUÁRIO PEDIU UMA PALAVRA ALEATÓRIA. Escolha um Provérbio ou Salmo aleatório. Cite o versículo completo com referência e aplique à vida prática.";
+          verseData = isEnglish
+            ? "\n\nTHE USER ASKED FOR A RANDOM WORD. Choose a random Proverb or Psalm from KJV/NIV. Quote the full verse with reference and apply to practical life."
+            : "\n\nO USUÁRIO PEDIU UMA PALAVRA ALEATÓRIA. Escolha um Provérbio ou Salmo aleatório. Cite o versículo completo com referência e aplique à vida prática.";
         }
 
-        systemPrompt = LEGADO_BIBLICAL_PROMPT.replace("{{VERSE_DATA}}", verseData);
+        const basePrompt = isEnglish ? LEGADO_BIBLICAL_PROMPT_EN : LEGADO_BIBLICAL_PROMPT;
+        systemPrompt = basePrompt.replace("{{VERSE_DATA}}", verseData);
       } else {
-        systemPrompt = FLOW_PROMPT;
+        systemPrompt = isEnglish ? FLOW_PROMPT_EN : FLOW_PROMPT_PT;
       }
 
       const { data, error } = await supabase.functions.invoke("gemini-chat", {
         body: { message: text, history: [], systemPrompt },
       });
       if (error) throw error;
-      const reply = data?.reply ?? "Sem resposta.";
+      const reply = data?.reply ?? (isEnglish ? "No response." : "Sem resposta.");
       setResponseText(reply);
 
-      // Auto-play audio
       speakResponse(reply);
 
-      // Save to mentorship_logs
       try {
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
@@ -385,7 +478,7 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
       }
     } catch (e) {
       console.error("Gemini error:", e);
-      setResponseText("Erro ao conectar com a IA.");
+      setResponseText(isEnglish ? "Error connecting to AI." : "Erro ao conectar com a IA.");
       setState("idle");
     }
   };
@@ -393,7 +486,6 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
   const speakResponse = async (text: string) => {
     setState("speaking");
     
-    // Clean markdown formatting for speech
     const cleanText = text
       .replace(/\*\*([^*]+)\*\*/g, "$1")
       .replace(/\*([^*]+)\*/g, "$1")
@@ -403,7 +495,6 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
       .trim();
 
     try {
-      // Try ElevenLabs first
       const response = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-tts`,
         {
@@ -454,17 +545,33 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
     window.speechSynthesis.cancel();
 
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = "pt-BR";
-    utterance.rate = isLegado ? 0.9 : 1.05;
-    utterance.pitch = isLegado ? 0.85 : 1.1;
+    const lang = isEnglish ? "en-US" : "pt-BR";
+    utterance.lang = lang;
+
+    if (isEnglish) {
+      // English voices: LEGADO = deep/mature male, FLOW = younger/energetic
+      utterance.rate = isLegado ? 0.9 : 1.05;
+      utterance.pitch = isLegado ? 0.8 : 1.15;
+    } else {
+      utterance.rate = isLegado ? 0.9 : 1.05;
+      utterance.pitch = isLegado ? 0.85 : 1.1;
+    }
     utterance.volume = 1;
 
-    // Try to pick a good Portuguese voice
     const voices = window.speechSynthesis.getVoices();
-    const ptVoice = voices.find(v => v.lang.startsWith("pt") && v.name.toLowerCase().includes("google")) 
-      || voices.find(v => v.lang.startsWith("pt-BR"))
-      || voices.find(v => v.lang.startsWith("pt"));
-    if (ptVoice) utterance.voice = ptVoice;
+    if (isEnglish) {
+      // Prefer Google US English voices; for LEGADO pick deeper male, FLOW pick energetic
+      const googleUS = voices.find(v => v.lang === "en-US" && v.name.toLowerCase().includes("google"));
+      const anyUS = voices.find(v => v.lang === "en-US");
+      const anyEN = voices.find(v => v.lang.startsWith("en"));
+      const picked = googleUS || anyUS || anyEN;
+      if (picked) utterance.voice = picked;
+    } else {
+      const ptVoice = voices.find(v => v.lang.startsWith("pt") && v.name.toLowerCase().includes("google"))
+        || voices.find(v => v.lang.startsWith("pt-BR"))
+        || voices.find(v => v.lang.startsWith("pt"));
+      if (ptVoice) utterance.voice = ptVoice;
+    }
 
     utterance.onend = () => setState("idle");
     utterance.onerror = () => setState("idle");
@@ -475,7 +582,7 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
   const startListening = async () => {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      setResponseText("Seu navegador não suporta reconhecimento de voz. Use o Chrome.");
+      setResponseText(isEnglish ? "Your browser doesn't support voice recognition. Use Chrome." : "Seu navegador não suporta reconhecimento de voz. Use o Chrome.");
       return;
     }
 
@@ -506,7 +613,7 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
     let finalTranscript = "";
 
     const recognition = new SpeechRecognition();
-    recognition.lang = "pt-BR";
+    recognition.lang = isEnglish ? "en-US" : "pt-BR";
     recognition.interimResults = true;
     recognition.continuous = false;
     recognition.maxAlternatives = 3; // More alternatives for biblical terms
@@ -539,7 +646,7 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
       if (textToSend) {
         sendToGemini(textToSend);
       } else {
-        setResponseText("Não consegui ouvir. Tente novamente.");
+        setResponseText(isEnglish ? "Couldn't hear you. Try again." : "Não consegui ouvir. Tente novamente.");
         setState("idle");
       }
     };
@@ -550,13 +657,18 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
         streamRef.current.getTracks().forEach(t => t.stop());
         streamRef.current = null;
       }
-      const errorMessages: Record<string, string> = {
+      const errorMessages: Record<string, string> = isEnglish ? {
+        "not-allowed": "Microphone permission denied. Allow access in settings.",
+        "no-speech": "No speech detected. Try again.",
+        "network": "Network error. Check your connection.",
+        "aborted": "Listening canceled.",
+      } : {
         "not-allowed": "Permissão do microfone negada. Permita o acesso nas configurações.",
         "no-speech": "Nenhuma fala detectada. Tente novamente.",
         "network": "Erro de rede. Verifique sua conexão.",
         "aborted": "Escuta cancelada.",
       };
-      setResponseText(errorMessages[event.error] || `Erro: ${event.error}`);
+      setResponseText(errorMessages[event.error] || `${isEnglish ? "Error" : "Erro"}: ${event.error}`);
       setState("idle");
     };
 
@@ -565,7 +677,7 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
       recognition.start();
     } catch (e) {
       console.error("Failed to start speech recognition:", e);
-      setResponseText("Não foi possível iniciar. Abra o app diretamente no navegador.");
+      setResponseText(isEnglish ? "Could not start. Open the app directly in the browser." : "Não foi possível iniciar. Abra o app diretamente no navegador.");
       setState("idle");
     }
   };
@@ -583,7 +695,12 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
     onClose();
   };
 
-  const stateLabel = {
+  const stateLabel = isEnglish ? {
+    idle: isLegado ? "Tap to speak with the Biblical Mentor" : "Tap the mic to start",
+    listening: "Listening...",
+    processing: isLegado ? "Searching the Scriptures..." : "Processing...",
+    speaking: isLegado ? "Mentor proclaiming..." : "Coach speaking...",
+  } : {
     idle: isLegado ? "Toque para falar com o Mentor Bíblico" : "Toque no microfone para começar",
     listening: "Ouvindo...",
     processing: isLegado ? "Buscando nas Escrituras..." : "Processando...",
