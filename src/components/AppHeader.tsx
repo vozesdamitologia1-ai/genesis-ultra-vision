@@ -3,10 +3,14 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import LanguageSelector from "./LanguageSelector";
 import VoiceMentor from "./VoiceMentor";
+import { usePath } from "@/contexts/PathContext";
 
 const AppHeader = () => {
   const { t } = useTranslation();
   const [voiceOpen, setVoiceOpen] = useState(false);
+  const { path } = usePath();
+
+  const showMic = path === "legado" || path === "flow";
 
   return (
     <>
@@ -19,12 +23,14 @@ const AppHeader = () => {
         </div>
         <div className="flex items-center gap-3">
           <LanguageSelector />
-          <button
-            onClick={() => setVoiceOpen(true)}
-            className="text-muted-foreground transition-colors hover:text-foreground"
-          >
-            <Mic className="h-5 w-5" />
-          </button>
+          {showMic && (
+            <button
+              onClick={() => setVoiceOpen(true)}
+              className="text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <Mic className="h-5 w-5" />
+            </button>
+          )}
         </div>
       </header>
       <VoiceMentor open={voiceOpen} onClose={() => setVoiceOpen(false)} />
