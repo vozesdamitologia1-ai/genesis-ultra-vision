@@ -150,6 +150,17 @@
       "insightTitle": "Mentor Insight",
       "originalTitle": "Root in the Original",
       "relatedTitle": "Related Materials",
+      "mentorChat": {
+        "title": "Ask the Mentor about this Chapter",
+        "hint": "E.g.: \"What does 'rod' and 'staff' mean in verse 4?\"",
+        "inputPlaceholder": "Your question about the chapter...",
+        "thinking": "Meditating...",
+        "noAnswer": "No answer.",
+        "error": "Error consulting the Mentor. Try again."
+      },
+      "mindMap": {
+        "title": "Application for Today"
+      },
       "example": {
         "title": "The Life of David",
         "text": "\"The Lord does not look at the things people look at. People look at the outward appearance, but the Lord looks at the heart.\" — 1 Samuel 16:7",
