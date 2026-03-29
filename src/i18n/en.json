@@ -73,7 +73,13 @@
     "comingSoon": "Coming soon: your full profile with history and settings.",
     "language": "Language",
     "theme": "Theme",
-    "logout": "Logout"
+    "logout": "Logout",
+    "becomeVip": "Become VIP (test)",
+    "removeVip": "Remove VIP (test)",
+    "vipActivated": "🎉 VIP Activated!",
+    "vipDeactivated": "VIP Deactivated",
+    "vipActivatedDesc": "You now have access to premium content.",
+    "vipDeactivatedDesc": "Back to free plan."
   },
   "flow": {
     "hero": {
