@@ -12,10 +12,10 @@ serve(async (req) => {
   }
 
   try {
-    const GEMINI_KEY = Deno.env.get("GOOGLE_GEMINI_API_KEY");
-    if (!GEMINI_KEY) {
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    if (!LOVABLE_API_KEY) {
       return new Response(
-        JSON.stringify({ error: "GOOGLE_GEMINI_API_KEY not configured" }),
+        JSON.stringify({ error: "LOVABLE_API_KEY not configured" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -34,56 +34,54 @@ serve(async (req) => {
       ? systemPrompt
       : defaultSystemPrompt;
 
-    const contents: Array<{ role: string; parts: Array<{ text: string }> }> = [];
+    const messages: Array<{ role: string; content: string }> = [
+      { role: "system", content: finalSystemPrompt },
+    ];
 
     if (history && Array.isArray(history)) {
-      // Limit history to last 20 messages
       const recentHistory = history.slice(-20);
       for (const msg of recentHistory) {
         if (msg.role && msg.content && typeof msg.content === "string") {
-          contents.push({
-            role: msg.role === "assistant" ? "model" : "user",
-            parts: [{ text: msg.content }],
+          messages.push({
+            role: msg.role === "assistant" ? "assistant" : "user",
+            content: msg.content,
           });
         }
       }
     }
 
-    contents.push({
-      role: "user",
-      parts: [{ text: message.trim() }],
-    });
+    messages.push({ role: "user", content: message.trim() });
 
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
+      "https://ai.gateway.lovable.dev/v1/chat/completions",
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
-          contents,
-          systemInstruction: {
-            parts: [
-              {
-                text: finalSystemPrompt,
-              },
-            ],
-          },
-          generationConfig: {
-            temperature: 0.7,
-            maxOutputTokens: 1024,
-          },
+          model: "google/gemini-3-flash-preview",
+          messages,
         }),
       }
     );
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error("Gemini API error:", response.status, errorText);
+      console.error("AI gateway error:", response.status, errorText);
 
       if (response.status === 429) {
         return new Response(
           JSON.stringify({ error: "Rate limit exceeded. Please wait a moment and try again." }),
           { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      if (response.status === 402) {
+        return new Response(
+          JSON.stringify({ error: "AI credits exhausted. Please add funds in Settings > Workspace > Usage." }),
+          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
 
@@ -94,8 +92,7 @@ serve(async (req) => {
     }
 
     const data = await response.json();
-    const reply =
-      data?.candidates?.[0]?.content?.parts?.[0]?.text ?? "No response generated.";
+    const reply = data?.choices?.[0]?.message?.content ?? "No response generated.";
 
     return new Response(
       JSON.stringify({ reply }),
