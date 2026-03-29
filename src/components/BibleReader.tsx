@@ -183,6 +183,12 @@ const BibleReader = () => {
               {/* Original Word */}
               <BibleOriginalWord originalWord={result.originalWord} />
 
+              {/* Mind Map - Practical Applications */}
+              <BibleMindMap applications={result.applications || []} />
+
+              {/* Ask the Mentor Chat */}
+              <BibleMentorChat result={result} />
+
               {/* Related Content */}
               <BibleRelatedContent topics={result.relatedTopics} />
             </motion.div>
