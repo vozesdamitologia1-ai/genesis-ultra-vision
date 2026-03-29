@@ -58,7 +58,7 @@ export const PathProvider = ({ children }: { children: ReactNode }) => {
           setPath(getPathFromLocation("portal"));
         }
       } catch {
-        setPath(getPathFromLocation());
+        setPath(getPathFromLocation("portal"));
       }
       setLoaded(true);
     };
