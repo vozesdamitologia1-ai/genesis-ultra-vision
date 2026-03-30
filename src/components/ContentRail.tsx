@@ -48,8 +48,13 @@ const ContentRail = ({ title, description, pathType, category, isVip = false, la
         query = query.eq("category", category);
       }
 
-      const { data } = await query;
-      if (data) setItems(data as ContentItem[]);
+      const { data, error } = await query;
+      if (error) {
+        console.error("[ContentRail] Fetch error:", error.message, { pathType, category, isVip });
+      } else {
+        console.log("[ContentRail] Fetched", data?.length, "items for", { pathType, category, isVip });
+        if (data) setItems(data as ContentItem[]);
+      }
     };
     fetchContent();
   }, [pathType, category, isVip]);
