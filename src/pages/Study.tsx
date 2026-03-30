@@ -35,6 +35,7 @@ const Study = () => {
             title={t("legado.rails.school.title", "Escola de Ensino")}
             description={t("legado.rails.school.description", "")}
             pathType="legacy"
+            category="Escola de Ensino"
             isVip={false}
             layout="list"
             showSearch
