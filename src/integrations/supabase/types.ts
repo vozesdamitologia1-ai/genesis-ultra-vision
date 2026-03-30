@@ -200,6 +200,7 @@ export type Database = {
           created_at: string | null
           description: string | null
           id: string
+          is_reel: boolean | null
           is_vip: boolean | null
           path_type: string
           thumbnail_url: string | null
@@ -211,6 +212,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: string
+          is_reel?: boolean | null
           is_vip?: boolean | null
           path_type: string
           thumbnail_url?: string | null
@@ -222,6 +224,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: string
+          is_reel?: boolean | null
           is_vip?: boolean | null
           path_type?: string
           thumbnail_url?: string | null

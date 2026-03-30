@@ -48,7 +48,7 @@ const Study = () => {
               pathType="flow"
               category="performance"
               isVip={false}
-              layout="grid"
+              layout="reels"
               emptyMessage="Nenhum conteúdo disponível ainda."
             />
 
@@ -60,7 +60,7 @@ const Study = () => {
               pathType="flow"
               category="government"
               isVip={false}
-              layout="grid"
+              layout="reels"
               emptyMessage="Nenhum conteúdo disponível ainda."
             />
 
