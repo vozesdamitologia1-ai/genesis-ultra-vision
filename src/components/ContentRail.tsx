@@ -1,8 +1,9 @@
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
-import { Search } from "lucide-react";
+import { Search, Play } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import ReelsPlayer from "@/components/ReelsPlayer";
 
 interface ContentItem {
   id: string;
@@ -21,7 +22,7 @@ interface ContentRailProps {
   pathType: "legacy" | "flow";
   category?: string;
   isVip?: boolean;
-  layout?: "list" | "grid";
+  layout?: "list" | "grid" | "reels";
   showSearch?: boolean;
   emptyMessage?: string;
 }
@@ -30,6 +31,8 @@ const ContentRail = ({ title, description, pathType, category, isVip = false, la
   const { t } = useTranslation();
   const [items, setItems] = useState<ContentItem[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [reelsOpen, setReelsOpen] = useState(false);
+  const [reelsStartIndex, setReelsStartIndex] = useState(0);
 
   useEffect(() => {
     const fetchContent = async () => {
@@ -60,6 +63,11 @@ const ContentRail = ({ title, description, pathType, category, isVip = false, la
           (item.description && item.description.toLowerCase().includes(searchQuery.toLowerCase()))
       )
     : items;
+
+  const openReels = (index: number) => {
+    setReelsStartIndex(index);
+    setReelsOpen(true);
+  };
 
   const searchBar = (showSearch || items.length > 3) && (
     <div className={`mb-3 flex items-center gap-2 rounded-lg border px-3 py-2 ${
@@ -125,7 +133,71 @@ const ContentRail = ({ title, description, pathType, category, isVip = false, la
     );
   }
 
-  // Flow = modern grid layout
+  // Reels layout — vertical thumbnails styled like shorts
+  if (layout === "reels") {
+    return (
+      <section className="py-4">
+        <div className="mb-3">
+          <h3 className="text-lg font-bold text-foreground font-sans">{title}</h3>
+          <p className="text-xs text-muted-foreground">{description}</p>
+        </div>
+
+        {searchBar}
+
+        {filtered.length > 0 ? (
+          <div className="grid grid-cols-2 gap-3">
+            {filtered.map((item, i) => (
+              <motion.button
+                key={item.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.05 }}
+                onClick={() => openReels(i)}
+                className="group text-left"
+              >
+                <div className="relative overflow-hidden rounded-xl bg-card border border-primary/20 hover:border-primary/40 transition-colors aspect-[9/16]">
+                  {item.thumbnail_url ? (
+                    <img src={item.thumbnail_url} alt={item.title} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-gradient-to-b from-primary/10 to-primary/5">
+                      <span className="text-3xl">🚀</span>
+                    </div>
+                  )}
+                  {/* Play overlay */}
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="rounded-full bg-white/20 p-3 backdrop-blur-sm">
+                      <Play className="h-6 w-6 text-white fill-white" />
+                    </div>
+                  </div>
+                  {/* Bottom overlay */}
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2 pt-8">
+                    <p className="text-[11px] font-semibold text-white line-clamp-2 drop-shadow">{item.title}</p>
+                  </div>
+                </div>
+              </motion.button>
+            ))}
+          </div>
+        ) : (
+          <div className="flex h-32 items-center justify-center rounded-xl border border-border/50 bg-card/50">
+            <p className="text-xs text-muted-foreground">{searchQuery ? t("content.noResults", "Nenhum resultado.") : (emptyMessage || t("content.noContent"))}</p>
+          </div>
+        )}
+
+        {/* Fullscreen Reels Player */}
+        <AnimatePresence>
+          {reelsOpen && (
+            <ReelsPlayer
+              items={filtered}
+              startIndex={reelsStartIndex}
+              onClose={() => setReelsOpen(false)}
+            />
+          )}
+        </AnimatePresence>
+      </section>
+    );
+  }
+
+  // Flow = modern grid layout (default)
   return (
     <section className="py-4">
       <div className="mb-3">
