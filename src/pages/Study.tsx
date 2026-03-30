@@ -46,7 +46,7 @@ const Study = () => {
               title="Performance & Disciplina"
               description="Treinos físicos, foco nos estudos e rotinas de alta performance."
               pathType="flow"
-              category="performance"
+              category="Performance & Disciplina"
               isVip={false}
               layout="reels"
               emptyMessage="Nenhum conteúdo disponível ainda."
@@ -58,7 +58,7 @@ const Study = () => {
               title="Governo & Carreira"
               description="Mentorias sobre trabalho, dinheiro e liderança."
               pathType="flow"
-              category="government"
+              category="Governo & Carreira"
               isVip={false}
               layout="reels"
               emptyMessage="Nenhum conteúdo disponível ainda."
