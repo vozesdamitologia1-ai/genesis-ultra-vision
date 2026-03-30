@@ -40,6 +40,23 @@ const normalizePlayerUrl = (url: string): string | null => {
   return /^https?:\/\//i.test(trimmed) ? trimmed : null;
 };
 
+const getSocialEmbedUrl = (url: string): string | null => {
+  const trimmed = url.trim();
+  if (!trimmed) return null;
+
+  const igMatch = trimmed.match(/instagram\.com\/(?:reel|reels|p)\/([a-zA-Z0-9_-]+)/);
+  if (igMatch) {
+    return `https://www.instagram.com/reel/${igMatch[1]}/embed`;
+  }
+
+  const tkMatch = trimmed.match(/tiktok\.com\/@[^/]+\/video\/(\d+)/);
+  if (tkMatch) {
+    return `https://www.tiktok.com/embed/v2/${tkMatch[1]}`;
+  }
+
+  return null;
+};
+
 const ReelsPlayer = ({ items, startIndex, onClose }: ReelsPlayerProps) => {
   const [currentIndex, setCurrentIndex] = useState(startIndex);
   const [showNotes, setShowNotes] = useState(false);
@@ -50,6 +67,7 @@ const ReelsPlayer = ({ items, startIndex, onClose }: ReelsPlayerProps) => {
   const current = items[currentIndex];
   const playerUrl = current?.video_url ? normalizePlayerUrl(current.video_url) : null;
   const canPlay = !!playerUrl && ReactPlayer.canPlay(playerUrl);
+  const socialEmbedUrl = current?.video_url ? getSocialEmbedUrl(current.video_url) : null;
 
   const goNext = useCallback(() => {
     if (currentIndex < items.length - 1) setCurrentIndex(i => i + 1);
@@ -139,18 +157,16 @@ const ReelsPlayer = ({ items, startIndex, onClose }: ReelsPlayerProps) => {
                 controls={false}
                 width="100%"
                 height="100%"
-                playsinline
+                playsInline
                 style={{ background: "hsl(var(--background))" }}
-                config={{
-                  youtube: {
-                    playerVars: {
-                      playsinline: 1,
-                      rel: 0,
-                      modestbranding: 1,
-                      controls: 0,
-                    },
-                  },
-                }}
+              />
+            ) : socialEmbedUrl ? (
+              <iframe
+                src={socialEmbedUrl}
+                className="h-full w-full border-0"
+                allow="autoplay; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                title={current.title}
               />
             ) : (
               <div className="flex h-full w-full items-center justify-center bg-black">
