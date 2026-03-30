@@ -9,12 +9,17 @@ import { usePath } from "@/contexts/PathContext";
 const AppHeader = () => {
   const { t } = useTranslation();
   const [voiceOpen, setVoiceOpen] = useState(false);
-  const { path } = usePath();
+  const { path, selectPath } = usePath();
   const navigate = useNavigate();
   const location = useLocation();
 
   const showMic = path === "legado" || path === "flow";
   const isInsidePath = location.pathname !== "/";
+
+  const handleHomeClick = () => {
+    setVoiceOpen(false);
+    void selectPath("portal");
+  };
 
   return (
     <>
@@ -22,7 +27,7 @@ const AppHeader = () => {
         <div className="flex items-center gap-2">
           {isInsidePath && (
             <button
-              onClick={() => navigate("/")}
+              onClick={handleHomeClick}
               className="mr-1 text-muted-foreground transition-colors hover:text-foreground"
               aria-label="Home"
             >
