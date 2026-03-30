@@ -36,6 +36,8 @@ const ContentRail = ({ title, description, pathType, category, isVip = false, la
 
   useEffect(() => {
     const fetchContent = async () => {
+      const normalizedCategory = category?.trim();
+
       let query = supabase
         .from("contents")
         .select("*")
@@ -44,18 +46,44 @@ const ContentRail = ({ title, description, pathType, category, isVip = false, la
         .order("created_at", { ascending: false })
         .limit(20);
 
-      if (category) {
-        query = query.eq("category", category);
+      if (normalizedCategory) {
+        query = query.eq("category", normalizedCategory);
       }
 
       const { data, error } = await query;
+
+      console.log("[ContentRail] Supabase response", {
+        pathType,
+        category: normalizedCategory ?? null,
+        isVip,
+        data,
+        error,
+      });
+
       if (error) {
-        console.error("[ContentRail] Fetch error:", error.message, { pathType, category, isVip });
+        console.error("[ContentRail] Fetch error:", error.message, {
+          pathType,
+          category: normalizedCategory,
+          isVip,
+        });
+        setItems([]);
       } else {
-        console.log("[ContentRail] Fetched", data?.length, "items for", { pathType, category, isVip });
-        if (data) setItems(data as ContentItem[]);
+        console.log("[ContentRail] Fetched", data?.length ?? 0, "items for", {
+          pathType,
+          category: normalizedCategory,
+          isVip,
+        });
+        if (!data?.length) {
+          console.log("[ContentRail] Empty result set (check category/path_type/is_vip filters)", {
+            pathType,
+            category: normalizedCategory,
+            isVip,
+          });
+        }
+        setItems((data ?? []) as ContentItem[]);
       }
     };
+
     fetchContent();
   }, [pathType, category, isVip]);
 
