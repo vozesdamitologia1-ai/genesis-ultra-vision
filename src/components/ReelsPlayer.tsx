@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { X, Notebook, CheckCircle2, ChevronUp, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence, PanInfo } from "framer-motion";
+import ReactPlayer from "react-player";
 
 interface ReelItem {
   id: string;
@@ -17,26 +18,27 @@ interface ReelsPlayerProps {
   onClose: () => void;
 }
 
-const getEmbedUrl = (url: string): string | null => {
-  // YouTube / Shorts
-  const ytMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]+)/);
-  if (ytMatch) return `https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1&loop=1&controls=0&playsinline=1&rel=0&modestbranding=1`;
+const normalizePlayerUrl = (url: string): string | null => {
+  const trimmed = url.trim();
+  if (!trimmed) return null;
 
-  // Instagram Reels
-  const igMatch = url.match(/instagram\.com\/(?:reel|reels|p)\/([a-zA-Z0-9_-]+)/);
-  if (igMatch) return `https://www.instagram.com/reel/${igMatch[1]}/embed`;
+  const ytMatch = trimmed.match(/(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]+)/);
+  if (ytMatch) {
+    return `https://www.youtube.com/embed/${ytMatch[1]}?playsinline=1&rel=0&modestbranding=1`;
+  }
 
-  // TikTok
-  const tkMatch = url.match(/tiktok\.com\/@[^/]+\/video\/(\d+)/);
-  if (tkMatch) return `https://www.tiktok.com/embed/v2/${tkMatch[1]}`;
+  const igMatch = trimmed.match(/instagram\.com\/(?:reel|reels|p)\/([a-zA-Z0-9_-]+)/);
+  if (igMatch) {
+    return `https://www.instagram.com/reel/${igMatch[1]}/`;
+  }
 
-  // Direct video
-  if (url.match(/\.(mp4|webm|mov)(\?|$)/i)) return url;
+  const tkMatch = trimmed.match(/tiktok\.com\/@([^/]+)\/video\/(\d+)/);
+  if (tkMatch) {
+    return `https://www.tiktok.com/@${tkMatch[1]}/video/${tkMatch[2]}`;
+  }
 
-  return null;
+  return /^https?:\/\//i.test(trimmed) ? trimmed : null;
 };
-
-const isDirectVideo = (url: string) => /\.(mp4|webm|mov)(\?|$)/i.test(url);
 
 const ReelsPlayer = ({ items, startIndex, onClose }: ReelsPlayerProps) => {
   const [currentIndex, setCurrentIndex] = useState(startIndex);
@@ -46,7 +48,8 @@ const ReelsPlayer = ({ items, startIndex, onClose }: ReelsPlayerProps) => {
   const constraintsRef = useRef<HTMLDivElement>(null);
 
   const current = items[currentIndex];
-  const embedUrl = current?.video_url ? getEmbedUrl(current.video_url) : null;
+  const playerUrl = current?.video_url ? normalizePlayerUrl(current.video_url) : null;
+  const canPlay = !!playerUrl && ReactPlayer.canPlay(playerUrl);
 
   const goNext = useCallback(() => {
     if (currentIndex < items.length - 1) setCurrentIndex(i => i + 1);
@@ -80,6 +83,14 @@ const ReelsPlayer = ({ items, startIndex, onClose }: ReelsPlayerProps) => {
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [goNext, goPrev, onClose]);
+
+  useEffect(() => {
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prevOverflow;
+    };
+  }, []);
 
   if (!current) return null;
 
@@ -121,21 +132,25 @@ const ReelsPlayer = ({ items, startIndex, onClose }: ReelsPlayerProps) => {
             transition={{ duration: 0.3 }}
             className="absolute inset-0"
           >
-            {embedUrl && isDirectVideo(embedUrl) ? (
-              <video
-                src={embedUrl}
-                autoPlay
-                loop
-                playsInline
-                muted={false}
-                className="h-full w-full object-cover"
-              />
-            ) : embedUrl ? (
-              <iframe
-                src={embedUrl}
-                className="h-full w-full border-0"
-                allow="autoplay; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
+            {playerUrl && canPlay ? (
+              <ReactPlayer
+                url={playerUrl}
+                playing
+                controls={false}
+                width="100%"
+                height="100%"
+                playsinline
+                style={{ background: "hsl(var(--background))" }}
+                config={{
+                  youtube: {
+                    playerVars: {
+                      playsinline: 1,
+                      rel: 0,
+                      modestbranding: 1,
+                      controls: 0,
+                    },
+                  },
+                }}
               />
             ) : (
               <div className="flex h-full w-full items-center justify-center bg-black">
@@ -145,7 +160,7 @@ const ReelsPlayer = ({ items, startIndex, onClose }: ReelsPlayerProps) => {
                   <span className="text-6xl">🚀</span>
                 )}
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <p className="text-white/60 text-sm">Vídeo indisponível</p>
+                  <p className="text-white/60 text-sm">Vídeo indisponível ou bloqueado na origem</p>
                 </div>
               </div>
             )}
