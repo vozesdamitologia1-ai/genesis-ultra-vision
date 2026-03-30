@@ -1,7 +1,7 @@
 import { KeyRound, Mic, Home } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import LanguageSelector from "./LanguageSelector";
 import VoiceMentor from "./VoiceMentor";
 import { usePath } from "@/contexts/PathContext";
@@ -10,7 +10,6 @@ const AppHeader = () => {
   const { t } = useTranslation();
   const [voiceOpen, setVoiceOpen] = useState(false);
   const { path, selectPath } = usePath();
-  const navigate = useNavigate();
   const location = useLocation();
 
   const showMic = path === "legado" || path === "flow";
