@@ -1,7 +1,7 @@
 import { KeyRound, Mic, Home } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import LanguageSelector from "./LanguageSelector";
 import VoiceMentor from "./VoiceMentor";
 import { usePath } from "@/contexts/PathContext";
@@ -9,12 +9,16 @@ import { usePath } from "@/contexts/PathContext";
 const AppHeader = () => {
   const { t } = useTranslation();
   const [voiceOpen, setVoiceOpen] = useState(false);
-  const { path } = usePath();
-  const navigate = useNavigate();
+  const { path, selectPath } = usePath();
   const location = useLocation();
 
   const showMic = path === "legado" || path === "flow";
   const isInsidePath = location.pathname !== "/";
+
+  const handleHomeClick = () => {
+    setVoiceOpen(false);
+    void selectPath("portal");
+  };
 
   return (
     <>
@@ -22,7 +26,7 @@ const AppHeader = () => {
         <div className="flex items-center gap-2">
           {isInsidePath && (
             <button
-              onClick={() => navigate("/")}
+              onClick={handleHomeClick}
               className="mr-1 text-muted-foreground transition-colors hover:text-foreground"
               aria-label="Home"
             >
