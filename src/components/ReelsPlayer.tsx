@@ -152,7 +152,7 @@ const ReelsPlayer = ({ items, startIndex, onClose }: ReelsPlayerProps) => {
           >
             {playerUrl && canPlay ? (
               <ReactPlayer
-                url={playerUrl}
+                src={playerUrl}
                 playing
                 controls={false}
                 width="100%"
