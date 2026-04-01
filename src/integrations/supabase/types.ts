@@ -319,6 +319,7 @@ export type Database = {
           access_level: string | null
           avatar_url: string | null
           current_mode: string | null
+          email: string | null
           full_name: string | null
           id: string
           language: string | null
@@ -332,6 +333,7 @@ export type Database = {
           access_level?: string | null
           avatar_url?: string | null
           current_mode?: string | null
+          email?: string | null
           full_name?: string | null
           id: string
           language?: string | null
@@ -345,6 +347,7 @@ export type Database = {
           access_level?: string | null
           avatar_url?: string | null
           current_mode?: string | null
+          email?: string | null
           full_name?: string | null
           id?: string
           language?: string | null
