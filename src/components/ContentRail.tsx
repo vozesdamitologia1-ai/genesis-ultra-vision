@@ -36,57 +36,47 @@ const ContentRail = ({ title, description, pathType, category, isVip = false, la
   const [reelsOpen, setReelsOpen] = useState(false);
   const [reelsStartIndex, setReelsStartIndex] = useState(0);
 
+  const fetchContent = async () => {
+    const normalizedCategory = category?.trim();
+
+    let query = supabase
+      .from("contents")
+      .select("*")
+      .eq("path_type", pathType)
+      .eq("is_vip", isVip)
+      .order("created_at", { ascending: false })
+      .limit(20);
+
+    if (normalizedCategory) {
+      query = query.eq("category", normalizedCategory);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error("[ContentRail] Fetch error:", error.message);
+      setItems([]);
+    } else {
+      setItems((data ?? []) as ContentItem[]);
+    }
+  };
+
   useEffect(() => {
-    const fetchContent = async () => {
-      const normalizedCategory = category?.trim();
-
-      let query = supabase
-        .from("contents")
-        .select("*")
-        .eq("path_type", pathType)
-        .eq("is_vip", isVip)
-        .order("created_at", { ascending: false })
-        .limit(20);
-
-      if (normalizedCategory) {
-        query = query.eq("category", normalizedCategory);
-      }
-
-      const { data, error } = await query;
-
-      console.log("[ContentRail] Supabase response", {
-        pathType,
-        category: normalizedCategory ?? null,
-        isVip,
-        data,
-        error,
-      });
-
-      if (error) {
-        console.error("[ContentRail] Fetch error:", error.message, {
-          pathType,
-          category: normalizedCategory,
-          isVip,
-        });
-        setItems([]);
-      } else {
-        console.log("[ContentRail] Fetched", data?.length ?? 0, "items for", {
-          pathType,
-          category: normalizedCategory,
-          isVip,
-        });
-        if (!data?.length) {
-          console.log("[ContentRail] Empty result set (check category/path_type/is_vip filters)", {
-            pathType,
-            category: normalizedCategory,
-            isVip,
-          });
-        }
-        setItems((data ?? []) as ContentItem[]);
-      }
-    };
-
     fetchContent();
+  }, [pathType, category, isVip]);
+
+  // Re-fetch when page becomes visible (e.g. returning from Admin)
+  useEffect(() => {
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") fetchContent();
+    };
+    const handleFocus = () => fetchContent();
+    document.addEventListener("visibilitychange", handleVisibility);
+    window.addEventListener("focus", handleFocus);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibility);
+      window.removeEventListener("focus", handleFocus);
+    };
   }, [pathType, category, isVip]);
 
   const isLegado = pathType === "legacy";
