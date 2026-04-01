@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { BookOpen, Search, Play, Loader2, Sparkles, Languages, BookMarked } from "lucide-react";
+import { BookOpen, Search, Loader2, BookMarked } from "lucide-react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import BibleVerses from "@/components/bible/BibleVerses";
@@ -25,13 +25,31 @@ export interface BibleStudyResult {
   applications?: string[];
 }
 
-const BibleReader = () => {
+interface BibleReaderProps {
+  pathType?: "legado" | "flow";
+}
+
+const BibleReader = ({ pathType = "legado" }: BibleReaderProps) => {
   const { t } = useTranslation();
   const [search, setSearch] = useState("");
   const [result, setResult] = useState<BibleStudyResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [notBiblical, setNotBiblical] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const isLegado = pathType === "legado";
+
+  // Theme tokens
+  const accent = isLegado ? "text-amber-400" : "text-red-500";
+  const accentBorder = isLegado ? "border-amber-400/20" : "border-red-500/20";
+  const accentBg = isLegado ? "bg-amber-50/5" : "bg-black";
+  const accentBgInput = isLegado ? "bg-amber-950/20" : "bg-zinc-900";
+  const accentBtnBg = isLegado ? "bg-amber-400/10 hover:bg-amber-400/20" : "bg-red-500/10 hover:bg-red-500/20";
+  const accentBtnBorder = isLegado ? "border-amber-400/30" : "border-red-500/30";
+  const fontClass = isLegado ? "font-serif" : "font-sans";
+  const containerBg = isLegado
+    ? { backgroundColor: "#f4ecd8", backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E\")" }
+    : {};
 
   const handleSearch = async () => {
     const query = search.trim();
@@ -43,8 +61,6 @@ const BibleReader = () => {
     setError(null);
 
     try {
-      // Always use the Gemini-powered bible-study edge function
-      // It generates text, insights, and original word analysis in real-time
       const response = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/bible-study`,
         {
@@ -68,10 +84,8 @@ const BibleReader = () => {
       if (data.notBiblical) {
         setNotBiblical(true);
       } else if (data.book) {
-        // AI returned structured data — always trust the AI response
         setResult(data);
       } else {
-        // Fallback: retry or show generic guidance instead of "not found"
         setError("Tente buscar por livro e capítulo, ex: 'Salmos 23' ou 'João 3'.");
       }
     } catch (e: any) {
@@ -84,32 +98,35 @@ const BibleReader = () => {
 
   return (
     <section className="px-4 py-8">
-      <div className="rounded-lg border border-amber-400/20 bg-amber-50/5 p-6">
+      <div
+        className={`rounded-lg border ${accentBorder} ${accentBg} p-6`}
+        style={containerBg}
+      >
         {/* Header */}
         <div className="mb-4 flex items-center gap-2">
-          <BookOpen className="h-5 w-5 text-amber-400" />
-          <h3 className="font-serif text-lg font-bold text-foreground">
+          <BookOpen className={`h-5 w-5 ${accent}`} />
+          <h3 className={`${fontClass} text-lg font-bold ${isLegado ? "text-stone-800" : "text-foreground"}`}>
             {t("legado.bible.title")}
           </h3>
         </div>
 
         {/* Search bar */}
         <div className="mb-6 flex items-center gap-2">
-          <div className="flex flex-1 items-center gap-2 rounded border border-amber-400/20 bg-amber-950/20 px-3 py-2.5">
-            <Search className="h-4 w-4 text-amber-400/60" />
+          <div className={`flex flex-1 items-center gap-2 rounded border ${accentBorder} ${accentBgInput} px-3 py-2.5`}>
+            <Search className={`h-4 w-4 ${accent} opacity-60`} />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSearch()}
               placeholder={t("legado.bible.placeholder")}
-              className="flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground font-serif"
+              className={`flex-1 bg-transparent text-sm ${isLegado ? "text-stone-800" : "text-foreground"} outline-none placeholder:text-muted-foreground ${fontClass}`}
             />
           </div>
           <button
             onClick={handleSearch}
             disabled={loading}
-            className="rounded border border-amber-400/30 bg-amber-400/10 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.15em] text-amber-400 transition-all hover:bg-amber-400/20 disabled:opacity-50"
+            className={`rounded border ${accentBtnBorder} ${accentBtnBg} px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.15em] ${accent} transition-all disabled:opacity-50`}
           >
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : t("legado.bible.button")}
           </button>
@@ -125,8 +142,8 @@ const BibleReader = () => {
               exit={{ opacity: 0 }}
               className="flex h-48 flex-col items-center justify-center gap-3"
             >
-              <Loader2 className="h-8 w-8 animate-spin text-amber-400/60" />
-              <p className="text-xs text-muted-foreground font-serif animate-pulse">
+              <Loader2 className={`h-8 w-8 animate-spin ${accent} opacity-60`} />
+              <p className={`text-xs text-muted-foreground ${fontClass} animate-pulse`}>
                 {t("legado.bible.aiLoading", "O Mentor está preparando o estudo...")}
               </p>
             </motion.div>
@@ -139,10 +156,10 @@ const BibleReader = () => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
-              className="flex flex-col items-center justify-center gap-3 rounded-lg border border-amber-400/10 bg-amber-950/10 p-8"
+              className={`flex flex-col items-center justify-center gap-3 rounded-lg border ${accentBorder} ${isLegado ? "bg-amber-100/50" : "bg-zinc-900/80"} p-8`}
             >
-              <BookMarked className="h-8 w-8 text-amber-400/40" />
-              <p className="text-center text-sm text-muted-foreground font-serif leading-relaxed max-w-xs">
+              <BookMarked className={`h-8 w-8 ${accent} opacity-40`} />
+              <p className={`text-center text-sm text-muted-foreground ${fontClass} leading-relaxed max-w-xs`}>
                 {t("legado.bible.notBiblical", "Este conhecimento não consta nos registros do Legado. Tente uma referência bíblica.")}
               </p>
             </motion.div>
@@ -155,9 +172,9 @@ const BibleReader = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="flex h-32 items-center justify-center rounded-lg border border-red-400/20 bg-red-950/10"
+              className={`flex h-32 items-center justify-center rounded-lg border border-red-400/20 ${isLegado ? "bg-red-100/30" : "bg-red-950/10"}`}
             >
-              <p className="text-xs text-red-400 font-serif">{error}</p>
+              <p className={`text-xs text-red-400 ${fontClass}`}>{error}</p>
             </motion.div>
           )}
 
@@ -172,28 +189,17 @@ const BibleReader = () => {
             >
               {/* Title & Audio */}
               <div className="flex items-center justify-between">
-                <h4 className="font-serif text-base font-bold text-amber-400">
+                <h4 className={`${fontClass} text-base font-bold ${accent}`}>
                   {result.book} — {t("legado.bible.chapter")} {result.chapter}
                 </h4>
-                <BibleAudioPlayer result={result} />
+                <BibleAudioPlayer result={result} pathType={pathType} />
               </div>
 
-              {/* Verses */}
-              <BibleVerses verses={result.verses} />
-
-              {/* Insight */}
-              <BibleInsight insight={result.insight} />
-
-              {/* Original Word */}
-              <BibleOriginalWord originalWord={result.originalWord} />
-
-              {/* Mind Map - Practical Applications */}
+              <BibleVerses verses={result.verses} pathType={pathType} />
+              <BibleInsight insight={result.insight} pathType={pathType} />
+              <BibleOriginalWord originalWord={result.originalWord} pathType={pathType} />
               <BibleMindMap applications={result.applications || []} />
-
-              {/* Ask the Mentor Chat */}
               <BibleMentorChat result={result} />
-
-              {/* Related Content */}
               <BibleRelatedContent topics={result.relatedTopics} />
             </motion.div>
           )}

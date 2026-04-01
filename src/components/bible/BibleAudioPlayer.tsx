@@ -1,19 +1,25 @@
-import { Play, Loader2, Pause } from "lucide-react";
+import { Play, Loader2, Pause, Stamp } from "lucide-react";
 import { useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import type { BibleStudyResult } from "@/components/BibleReader";
 
 interface BibleAudioPlayerProps {
   result: BibleStudyResult;
+  pathType?: "legado" | "flow";
 }
 
-const BibleAudioPlayer = ({ result }: BibleAudioPlayerProps) => {
+const BibleAudioPlayer = ({ result, pathType = "legado" }: BibleAudioPlayerProps) => {
   const { t, i18n } = useTranslation();
   const [playing, setPlaying] = useState(false);
   const [loading, setLoading] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  const isLegado = pathType === "legado";
   const isEnglish = i18n.language?.startsWith("en");
+
+  const accent = isLegado ? "text-amber-700" : "text-red-500";
+  const borderColor = isLegado ? "border-amber-700/30" : "border-red-500/30";
+  const bg = isLegado ? "bg-amber-100/40 hover:bg-amber-200/50" : "bg-red-500/10 hover:bg-red-500/20";
 
   const speakWithBrowserTTS = (text: string) => {
     if (!("speechSynthesis" in window)) return;
@@ -34,8 +40,8 @@ const BibleAudioPlayer = ({ result }: BibleAudioPlayerProps) => {
         || voices.find(v => v.lang.startsWith("pt"));
       if (ptVoice) utterance.voice = ptVoice;
     }
-    utterance.onend = () => { setPlaying(false); };
-    utterance.onerror = () => { setPlaying(false); };
+    utterance.onend = () => setPlaying(false);
+    utterance.onerror = () => setPlaying(false);
     window.speechSynthesis.speak(utterance);
   };
 
@@ -67,7 +73,7 @@ const BibleAudioPlayer = ({ result }: BibleAudioPlayerProps) => {
             apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
             Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
           },
-          body: JSON.stringify({ text, path: "legado" }),
+          body: JSON.stringify({ text, path: pathType }),
         }
       );
 
@@ -105,11 +111,14 @@ const BibleAudioPlayer = ({ result }: BibleAudioPlayerProps) => {
     }
   };
 
+  // LEGADO uses a classic "seal" icon, FLOW uses play/pause
+  const PlayIcon = isLegado ? Stamp : Play;
+
   return (
     <button
       onClick={handlePlay}
       disabled={loading}
-      className="flex items-center gap-1.5 rounded-full border border-amber-400/30 bg-amber-400/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-amber-400 transition-all hover:bg-amber-400/20 disabled:opacity-50"
+      className={`flex items-center gap-1.5 rounded-full border ${borderColor} ${bg} px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest ${accent} transition-all disabled:opacity-50`}
       title={t("legado.bible.listenAll", "Ouvir capítulo")}
     >
       {loading ? (
@@ -117,7 +126,7 @@ const BibleAudioPlayer = ({ result }: BibleAudioPlayerProps) => {
       ) : playing ? (
         <Pause className="h-3.5 w-3.5" />
       ) : (
-        <Play className="h-3.5 w-3.5" />
+        <PlayIcon className="h-3.5 w-3.5" />
       )}
       {playing ? t("legado.bible.pause", "Pausar") : t("legado.bible.listenAll", "Ouvir")}
     </button>
