@@ -55,6 +55,16 @@ const Admin = () => {
     }
 
     setPublishing(true);
+
+    // Force session refresh to get a fresh JWT token
+    const { error: refreshError } = await supabase.auth.refreshSession();
+    if (refreshError) {
+      console.error("[Admin] Session refresh failed:", refreshError);
+      toast({ title: "Sessão expirada. Faça login novamente.", variant: "destructive" });
+      setPublishing(false);
+      return;
+    }
+
     const cleanUrl = normalizeVideoUrl(videoUrl.trim());
 
     const { error } = await supabase.from("contents").insert({
