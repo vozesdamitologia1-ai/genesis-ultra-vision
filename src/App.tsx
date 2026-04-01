@@ -12,6 +12,7 @@ import Study from "./pages/Study.tsx";
 import VIP from "./pages/VIP.tsx";
 import Community from "./pages/Community.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import Admin from "./pages/Admin.tsx";
 
 const queryClient = new QueryClient();
 
