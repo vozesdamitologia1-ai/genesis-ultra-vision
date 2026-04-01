@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Search, Play } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
