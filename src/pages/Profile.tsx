@@ -13,8 +13,9 @@ const Profile = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { path, selectPath } = usePath();
+  const { user: authUser, isAdmin } = useAuth();
   const isLegado = path === "legado";
-  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState<string | null>(authUser?.email ?? null);
   const [fullName, setFullName] = useState<string | null>(null);
   const [accessLevel, setAccessLevel] = useState<string>("free");
   const [togglingVip, setTogglingVip] = useState(false);
