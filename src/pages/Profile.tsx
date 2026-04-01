@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import AppHeader from "@/components/AppHeader";
 import BottomNav from "@/components/BottomNav";
 import { usePath } from "@/contexts/PathContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
@@ -12,8 +13,9 @@ const Profile = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { path, selectPath } = usePath();
+  const { user: authUser, isAdmin } = useAuth();
   const isLegado = path === "legado";
-  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState<string | null>(authUser?.email ?? null);
   const [fullName, setFullName] = useState<string | null>(null);
   const [accessLevel, setAccessLevel] = useState<string>("free");
   const [togglingVip, setTogglingVip] = useState(false);
@@ -115,7 +117,7 @@ const Profile = () => {
         </div>
 
         {/* Admin button — restricted to admin email */}
-        {userEmail === "vozesdamitologia1@gmail.com" && (
+        {isAdmin && (
           <button
             onClick={() => navigate("/admin")}
             className={`flex w-full items-center gap-3 rounded-xl border p-4 mb-4 transition-all active:scale-[0.98] ${accentBg}`}
