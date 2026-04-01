@@ -1,4 +1,5 @@
-import { User, Globe, Palette, LogOut, Crown, Loader2 } from "lucide-react";
+import { User, Globe, Palette, LogOut, Crown, Loader2, Settings } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import AppHeader from "@/components/AppHeader";
