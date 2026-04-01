@@ -117,7 +117,7 @@ const Profile = () => {
         </div>
 
         {/* Admin button — restricted to admin email */}
-        {userEmail === "vozesdamitologia1@gmail.com" && (
+        {isAdmin && (
           <button
             onClick={() => navigate("/admin")}
             className={`flex w-full items-center gap-3 rounded-xl border p-4 mb-4 transition-all active:scale-[0.98] ${accentBg}`}
