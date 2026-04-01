@@ -10,6 +10,7 @@ import { toast } from "@/hooks/use-toast";
 
 const Profile = () => {
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
   const { path, selectPath } = usePath();
   const isLegado = path === "legado";
   const [userEmail, setUserEmail] = useState<string | null>(null);
