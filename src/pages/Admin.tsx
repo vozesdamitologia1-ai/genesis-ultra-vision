@@ -83,7 +83,10 @@ const Admin = () => {
     } else {
       setPublished(true);
       const pathLabel = pathType === "legacy" ? "LEGADO" : "FLOW";
-      toast({ title: `✅ Conteúdo Ativado no Caminho ${pathLabel}!`, description: `"${title}" já está disponível na tela de Estudo.` });
+      toast({ 
+        title: "🎬 VÍDEO LANÇADO NO SISTEMA!", 
+        description: `"${title}" está AO VIVO no caminho ${pathLabel}. Seus seguidores já podem assistir!`,
+      });
       setTimeout(() => {
         setTitle("");
         setVideoUrl("");
