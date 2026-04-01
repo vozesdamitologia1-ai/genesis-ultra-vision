@@ -67,13 +67,12 @@ const BibleReader = () => {
 
       if (data.notBiblical) {
         setNotBiblical(true);
-      } else if (data.verses && data.verses.length > 0) {
-        setResult(data);
       } else if (data.book) {
-        // AI returned structured data but verses array might be named differently
+        // AI returned structured data — always trust the AI response
         setResult(data);
       } else {
-        setError("O Mentor não conseguiu processar esta referência. Tente novamente.");
+        // Fallback: retry or show generic guidance instead of "not found"
+        setError("Tente buscar por livro e capítulo, ex: 'Salmos 23' ou 'João 3'.");
       }
     } catch (e: any) {
       console.error("Bible study error:", e);

@@ -72,7 +72,8 @@ const Admin = () => {
       toast({ title: "Erro ao publicar", description: error.message, variant: "destructive" });
     } else {
       setPublished(true);
-      toast({ title: "✅ Conteúdo publicado com sucesso!", description: `"${title}" já está disponível na tela de Estudo.` });
+      const pathLabel = pathType === "legacy" ? "LEGADO" : "FLOW";
+      toast({ title: `✅ Conteúdo Ativado no Caminho ${pathLabel}!`, description: `"${title}" já está disponível na tela de Estudo.` });
       setTimeout(() => {
         setTitle("");
         setVideoUrl("");
