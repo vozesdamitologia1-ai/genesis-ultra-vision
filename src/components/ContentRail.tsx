@@ -30,6 +30,7 @@ interface ContentRailProps {
 
 const ContentRail = ({ title, description, pathType, category, isVip = false, layout = "grid", showSearch = false, emptyMessage }: ContentRailProps) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [items, setItems] = useState<ContentItem[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [reelsOpen, setReelsOpen] = useState(false);
