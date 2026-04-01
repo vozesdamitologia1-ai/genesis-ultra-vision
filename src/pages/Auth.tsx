@@ -25,14 +25,23 @@ const Auth = () => {
         email: email.trim(),
         password,
         options: {
-          data: { full_name: fullName.trim() || undefined },
+          data: { full_name: fullName.trim() || "" },
           emailRedirectTo: window.location.origin,
         },
       });
       if (error) {
         toast({ title: "Erro no cadastro", description: error.message, variant: "destructive" });
       } else {
-        toast({ title: "✅ Conta criada!", description: "Verifique seu e-mail para confirmar o cadastro." });
+        // Auto-login after successful signup
+        const { error: loginError } = await supabase.auth.signInWithPassword({
+          email: email.trim(),
+          password,
+        });
+        if (loginError) {
+          toast({ title: "✅ Conta criada!", description: "Faça login com suas credenciais." });
+        } else {
+          toast({ title: "✅ Bem-vindo!", description: "Conta criada e login realizado com sucesso!" });
+        }
       }
     } else {
       const { error } = await supabase.auth.signInWithPassword({
