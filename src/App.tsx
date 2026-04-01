@@ -31,6 +31,7 @@ const App = () => (
             <Route path="/study" element={<Study />} />
             <Route path="/vip" element={<VIP />} />
             <Route path="/community" element={<Community />} />
+            <Route path="/admin" element={<Admin />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </PathProvider>

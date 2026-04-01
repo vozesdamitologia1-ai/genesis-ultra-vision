@@ -114,6 +114,17 @@ const Profile = () => {
           </div>
         </div>
 
+        {/* Admin button */}
+        {userEmail && (
+          <button
+            onClick={() => navigate("/admin")}
+            className={`flex w-full items-center gap-3 rounded-xl border p-4 mb-4 transition-all active:scale-[0.98] ${accentBg}`}
+          >
+            <Settings className={`h-5 w-5 ${accentColor}`} />
+            <span className="text-sm font-bold text-foreground">Gerenciar Conteúdo</span>
+          </button>
+        )}
+
         {/* Settings */}
         <div className="space-y-2">
           {settingsItems.map((item, i) => (
