@@ -43,6 +43,8 @@ const BibleReader = () => {
     setError(null);
 
     try {
+      // Always use the Gemini-powered bible-study edge function
+      // It generates text, insights, and original word analysis in real-time
       const response = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/bible-study`,
         {
@@ -58,17 +60,20 @@ const BibleReader = () => {
 
       if (!response.ok) {
         const errData = await response.json().catch(() => ({}));
-        throw new Error(errData.error || "Request failed");
+        throw new Error(errData.error || "Erro ao conectar com o Mentor.");
       }
 
       const data = await response.json();
 
       if (data.notBiblical) {
         setNotBiblical(true);
-      } else if (data.verses) {
+      } else if (data.verses && data.verses.length > 0) {
+        setResult(data);
+      } else if (data.book) {
+        // AI returned structured data but verses array might be named differently
         setResult(data);
       } else {
-        setError(t("legado.bible.noResults"));
+        setError("O Mentor não conseguiu processar esta referência. Tente novamente.");
       }
     } catch (e: any) {
       console.error("Bible study error:", e);

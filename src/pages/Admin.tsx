@@ -15,6 +15,18 @@ const CATEGORIES = [
   "Escola de Ensino",
 ];
 
+const normalizeVideoUrl = (url: string): string => {
+  try {
+    const u = new URL(url);
+    // YouTube watch → embed
+    if (/youtu\.?be/.test(u.hostname)) {
+      const id = u.searchParams.get("v") || u.pathname.split("/").filter(Boolean).pop();
+      if (id) return `https://www.youtube.com/embed/${id}`;
+    }
+  } catch { /* keep original */ }
+  return url;
+};
+
 const Admin = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -43,9 +55,11 @@ const Admin = () => {
     }
 
     setPublishing(true);
+    const cleanUrl = normalizeVideoUrl(videoUrl.trim());
+
     const { error } = await supabase.from("contents").insert({
       title: title.trim(),
-      video_url: videoUrl.trim(),
+      video_url: cleanUrl,
       description: description.trim() || null,
       path_type: pathType,
       category,
@@ -58,8 +72,7 @@ const Admin = () => {
       toast({ title: "Erro ao publicar", description: error.message, variant: "destructive" });
     } else {
       setPublished(true);
-      toast({ title: "✅ Conteúdo publicado!", description: `"${title}" está disponível no app.` });
-      // Reset form after short delay
+      toast({ title: "✅ Conteúdo publicado com sucesso!", description: `"${title}" já está disponível na tela de Estudo.` });
       setTimeout(() => {
         setTitle("");
         setVideoUrl("");
