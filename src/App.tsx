@@ -12,6 +12,7 @@ import Study from "./pages/Study.tsx";
 import VIP from "./pages/VIP.tsx";
 import Community from "./pages/Community.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import Admin from "./pages/Admin.tsx";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +31,7 @@ const App = () => (
             <Route path="/study" element={<Study />} />
             <Route path="/vip" element={<VIP />} />
             <Route path="/community" element={<Community />} />
+            <Route path="/admin" element={<Admin />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </PathProvider>

@@ -1,4 +1,5 @@
-import { User, Globe, Palette, LogOut, Crown, Loader2 } from "lucide-react";
+import { User, Globe, Palette, LogOut, Crown, Loader2, Settings } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import AppHeader from "@/components/AppHeader";
@@ -9,6 +10,7 @@ import { toast } from "@/hooks/use-toast";
 
 const Profile = () => {
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
   const { path, selectPath } = usePath();
   const isLegado = path === "legado";
   const [userEmail, setUserEmail] = useState<string | null>(null);
@@ -111,6 +113,17 @@ const Profile = () => {
             {accessLevel === "vip" ? "VIP" : "FREE"}
           </div>
         </div>
+
+        {/* Admin button */}
+        {userEmail && (
+          <button
+            onClick={() => navigate("/admin")}
+            className={`flex w-full items-center gap-3 rounded-xl border p-4 mb-4 transition-all active:scale-[0.98] ${accentBg}`}
+          >
+            <Settings className={`h-5 w-5 ${accentColor}`} />
+            <span className="text-sm font-bold text-foreground">Gerenciar Conteúdo</span>
+          </button>
+        )}
 
         {/* Settings */}
         <div className="space-y-2">

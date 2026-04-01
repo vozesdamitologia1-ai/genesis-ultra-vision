@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Search, Play } from "lucide-react";
+import { Search, Play, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
 import ReelsPlayer from "@/components/ReelsPlayer";
@@ -29,6 +30,7 @@ interface ContentRailProps {
 
 const ContentRail = ({ title, description, pathType, category, isVip = false, layout = "grid", showSearch = false, emptyMessage }: ContentRailProps) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [items, setItems] = useState<ContentItem[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [reelsOpen, setReelsOpen] = useState(false);
@@ -158,8 +160,13 @@ const ContentRail = ({ title, description, pathType, category, isVip = false, la
             ))}
           </div>
         ) : (
-          <div className="flex h-32 items-center justify-center rounded-xl border border-border/50 bg-card/50">
+          <div className="flex flex-col h-32 items-center justify-center gap-2 rounded-xl border border-border/50 bg-card/50">
             <p className="text-xs text-muted-foreground">{searchQuery ? t("content.noResults", "Nenhum resultado.") : (emptyMessage || t("content.noContent"))}</p>
+            {!searchQuery && (
+              <button onClick={() => navigate("/admin")} className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition-all active:scale-95 ${isLegado ? "bg-amber-400/20 text-amber-400" : "bg-primary/20 text-primary"}`}>
+                <Plus className="h-3.5 w-3.5" /> Adicionar Vídeo
+              </button>
+            )}
           </div>
         )}
       </section>
@@ -211,8 +218,13 @@ const ContentRail = ({ title, description, pathType, category, isVip = false, la
             ))}
           </div>
         ) : (
-          <div className="flex h-32 items-center justify-center rounded-xl border border-border/50 bg-card/50">
+          <div className="flex flex-col h-32 items-center justify-center gap-2 rounded-xl border border-border/50 bg-card/50">
             <p className="text-xs text-muted-foreground">{searchQuery ? t("content.noResults", "Nenhum resultado.") : (emptyMessage || t("content.noContent"))}</p>
+            {!searchQuery && (
+              <button onClick={() => navigate("/admin")} className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition-all active:scale-95 ${isLegado ? "bg-amber-400/20 text-amber-400" : "bg-primary/20 text-primary"}`}>
+                <Plus className="h-3.5 w-3.5" /> Adicionar Primeiro Vídeo
+              </button>
+            )}
           </div>
         )}
 
@@ -272,8 +284,13 @@ const ContentRail = ({ title, description, pathType, category, isVip = false, la
           ))}
         </div>
       ) : (
-          <div className="flex h-32 items-center justify-center rounded-xl border border-border/50 bg-card/50">
+          <div className="flex flex-col h-32 items-center justify-center gap-2 rounded-xl border border-border/50 bg-card/50">
             <p className="text-xs text-muted-foreground">{searchQuery ? t("content.noResults", "Nenhum resultado.") : (emptyMessage || t("content.noContent"))}</p>
+            {!searchQuery && (
+              <button onClick={() => navigate("/admin")} className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition-all active:scale-95 ${isLegado ? "bg-amber-400/20 text-amber-400" : "bg-primary/20 text-primary"}`}>
+                <Plus className="h-3.5 w-3.5" /> Adicionar Vídeo
+              </button>
+            )}
           </div>
       )}
     </section>
