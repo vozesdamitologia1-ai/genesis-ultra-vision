@@ -55,7 +55,7 @@ const Legado = () => {
         <div className="mx-4 h-px bg-border/50" />
 
         {/* Bible Reader */}
-        <BibleReader />
+        <BibleReader pathType="legado" />
       </main>
 
       <BottomNav />
