@@ -99,3 +99,9 @@
     -webkit-text-fill-color: transparent;
   }
 }
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
