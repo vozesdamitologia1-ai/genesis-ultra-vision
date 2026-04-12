@@ -19,7 +19,7 @@ export function useGemini() {
 
     try {
       const { data, error } = await supabase.functions.invoke("gemini-chat", {
-        body: { message: message.trim(), history: messages },
+        body: { message: message.trim(), history: messages, pathType: pathType || null },
       });
 
       if (error) throw error;

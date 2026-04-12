@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_settings: {
+        Row: {
+          id: string
+          persona_name: string | null
+          system_prompt: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id: string
+          persona_name?: string | null
+          system_prompt?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          persona_name?: string | null
+          system_prompt?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       bible_api_cache: {
         Row: {
           book_name: string | null
