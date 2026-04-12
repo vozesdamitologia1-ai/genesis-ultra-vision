@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ArrowLeft, Upload, CheckCircle2, Plus } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { usePath } from "@/contexts/PathContext";
+import { useAuth } from "@/contexts/AuthContext";
 import AppHeader from "@/components/AppHeader";
 import BottomNav from "@/components/BottomNav";
 import { motion } from "framer-motion";
@@ -27,9 +28,12 @@ const normalizeVideoUrl = (url: string): string => {
   return url;
 };
 
+const ADMIN_EMAIL = "vozesdamitologia1@gmail.com";
+
 const Admin = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { user, loading: authLoading } = useAuth();
   const { path } = usePath();
   const isLegado = path === "legado";
 
@@ -41,6 +45,19 @@ const Admin = () => {
   const [isVip, setIsVip] = useState(false);
   const [publishing, setPublishing] = useState(false);
   const [published, setPublished] = useState(false);
+
+  // Strict guard: redirect non-admin users immediately
+  if (authLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+      </div>
+    );
+  }
+
+  if (!user || user.email !== ADMIN_EMAIL) {
+    return <Navigate to="/" replace />;
+  }
 
   const accentColor = isLegado ? "text-amber-400" : "text-primary";
   const accentBg = isLegado ? "bg-amber-400/10 border-amber-400/20" : "bg-primary/10 border-primary/20";
