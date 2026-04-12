@@ -60,53 +60,9 @@ const BibleAudioPlayer = ({ result, pathType = "legado" }: BibleAudioPlayerProps
     try {
       const versesText = result.verses
         .slice(0, 10)
-        .map((v) => `Versículo ${v.verse}. ${v.content}`)
-        .join(" ");
-      const text = `${result.book}, capítulo ${result.chapter}. ${versesText}`;
-
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-tts`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-          },
-          body: JSON.stringify({ text, path: pathType }),
-        }
-      );
-
-      const contentType = response.headers.get("Content-Type") || "";
-      if (!response.ok || contentType.includes("application/json")) {
-        throw new Error("TTS unavailable, using fallback");
-      }
-
-      const audioBlob = await response.blob();
-      const audioUrl = URL.createObjectURL(audioBlob);
-      const audio = new Audio(audioUrl);
-      audioRef.current = audio;
-
-      audio.onended = () => {
-        URL.revokeObjectURL(audioUrl);
-        setPlaying(false);
-        audioRef.current = null;
-      };
-      audio.onerror = () => {
-        URL.revokeObjectURL(audioUrl);
-        setPlaying(false);
-        audioRef.current = null;
-      };
-
-      await audio.play();
-      setPlaying(true);
-    } catch (e) {
-      console.warn("ElevenLabs unavailable, using browser TTS:", e);
-      const versesText = result.verses
-        .slice(0, 10)
-        .map((v) => `Versículo ${v.verse}. ${v.content}`)
+        .map((v) => `${isEnglish ? "Verse" : "Versículo"} ${v.verse}. ${v.content}`)
         .join(". ");
-      const text = `${result.book}, capítulo ${result.chapter}. ${versesText}`;
+      const text = `${result.book}, ${isEnglish ? "chapter" : "capítulo"} ${result.chapter}. ${versesText}`;
       setPlaying(true);
       speakWithBrowserTTS(text);
     } finally {
