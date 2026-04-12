@@ -77,7 +77,10 @@ const BibleAudioPlayer = ({ result, pathType = "legado" }: BibleAudioPlayerProps
         }
       );
 
-      if (!response.ok) throw new Error("TTS failed");
+      const contentType = response.headers.get("Content-Type") || "";
+      if (!response.ok || contentType.includes("application/json")) {
+        throw new Error("TTS unavailable, using fallback");
+      }
 
       const audioBlob = await response.blob();
       const audioUrl = URL.createObjectURL(audioBlob);
