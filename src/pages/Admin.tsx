@@ -58,16 +58,6 @@ const Admin = () => {
   if (!user || user.email !== ADMIN_EMAIL) {
     return <Navigate to="/" replace />;
   }
-  const isLegado = path === "legado";
-
-  const [title, setTitle] = useState("");
-  const [videoUrl, setVideoUrl] = useState("");
-  const [description, setDescription] = useState("");
-  const [pathType, setPathType] = useState<"flow" | "legacy">("flow");
-  const [category, setCategory] = useState(CATEGORIES[0]);
-  const [isVip, setIsVip] = useState(false);
-  const [publishing, setPublishing] = useState(false);
-  const [published, setPublished] = useState(false);
 
   const accentColor = isLegado ? "text-amber-400" : "text-primary";
   const accentBg = isLegado ? "bg-amber-400/10 border-amber-400/20" : "bg-primary/10 border-primary/20";
