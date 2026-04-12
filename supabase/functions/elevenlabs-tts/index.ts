@@ -58,8 +58,8 @@ serve(async (req) => {
       const errorText = await response.text();
       console.error("ElevenLabs API error:", response.status, errorText);
       return new Response(
-        JSON.stringify({ error: `ElevenLabs API error: ${response.status}` }),
-        { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        JSON.stringify({ error: `ElevenLabs API error: ${response.status}`, fallback: true }),
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
