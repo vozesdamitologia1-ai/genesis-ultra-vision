@@ -34,6 +34,17 @@ const Admin = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
+  const { path } = usePath();
+  const isLegado = path === "legado";
+
+  const [title, setTitle] = useState("");
+  const [videoUrl, setVideoUrl] = useState("");
+  const [description, setDescription] = useState("");
+  const [pathType, setPathType] = useState<"flow" | "legacy">("flow");
+  const [category, setCategory] = useState(CATEGORIES[0]);
+  const [isVip, setIsVip] = useState(false);
+  const [publishing, setPublishing] = useState(false);
+  const [published, setPublished] = useState(false);
 
   // Strict guard: redirect non-admin users immediately
   if (authLoading) {
@@ -47,7 +58,6 @@ const Admin = () => {
   if (!user || user.email !== ADMIN_EMAIL) {
     return <Navigate to="/" replace />;
   }
-  const { path } = usePath();
   const isLegado = path === "legado";
 
   const [title, setTitle] = useState("");
