@@ -898,7 +898,7 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
     window.speechSynthesis.speak(utterance);
   };
 
-  const startListening = async () => {
+  const startListening = () => {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) {
       setResponseText(isEnglish ? "Your browser doesn't support voice recognition. Use Chrome." : "Seu navegador não suporta reconhecimento de voz. Use o Chrome.");
@@ -910,13 +910,15 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
       audioRef.current.src = "";
       audioRef.current = null;
     }
+    if ("speechSynthesis" in window) window.speechSynthesis.cancel();
     setState("listening");
     setTranscript("");
     setResponseText("");
     setCitedVerse(null);
 
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    // Fire-and-forget mic visualization — do NOT await before recognition.start(),
+    // otherwise the user-gesture chain breaks and Chrome throws NotAllowedError.
+    navigator.mediaDevices?.getUserMedia({ audio: true }).then((stream) => {
       streamRef.current = stream;
       const audioContext = new AudioContext();
       audioContextRef.current = audioContext;
@@ -925,9 +927,9 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
       analyser.fftSize = 2048;
       source.connect(analyser);
       analyserRef.current = analyser;
-    } catch (e) {
+    }).catch((e) => {
       console.warn("Mic visualization unavailable:", e);
-    }
+    });
 
     let finalTranscript = "";
 
