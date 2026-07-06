@@ -180,27 +180,23 @@ const Admin = () => {
             />
           </div>
 
-          {/* Path Type */}
+          {/* Path (auto-detected from current mode) */}
           <div>
             <label className="text-xs font-medium text-foreground mb-1 block">Caminho</label>
-            <div className="flex gap-2">
-              {([["flow", "FLOW"], ["legacy", "LEGADO"]] as const).map(([val, label]) => (
-                <button
-                  key={val}
-                  onClick={() => setPathType(val)}
-                  className={`flex-1 rounded-xl border p-3 text-sm font-bold transition-all ${
-                    pathType === val
-                      ? val === "legacy"
-                        ? "border-amber-400 bg-amber-400/20 text-amber-400"
-                        : "border-primary bg-primary/20 text-primary"
-                      : "border-border bg-card text-muted-foreground"
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
+            <div
+              className={`rounded-xl border p-3 text-sm font-bold ${
+                isLegado
+                  ? "border-amber-400 bg-amber-400/20 text-amber-400"
+                  : "border-primary bg-primary/20 text-primary"
+              }`}
+            >
+              {pathLabel}
             </div>
+            <p className="text-[10px] text-muted-foreground mt-1">
+              O vídeo será publicado no caminho atual. Para publicar no outro, troque o modo no perfil.
+            </p>
           </div>
+
 
           {/* Category */}
           <div>
