@@ -30,7 +30,7 @@ interface BibleReaderProps {
 }
 
 const BibleReader = ({ pathType = "legado" }: BibleReaderProps) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [search, setSearch] = useState("");
   const [result, setResult] = useState<BibleStudyResult | null>(null);
   const [loading, setLoading] = useState(false);
@@ -70,7 +70,7 @@ const BibleReader = ({ pathType = "legado" }: BibleReaderProps) => {
             apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
             Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
           },
-          body: JSON.stringify({ reference: query }),
+          body: JSON.stringify({ reference: query, language: i18n.language }),
         }
       );
 
