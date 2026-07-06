@@ -15,7 +15,7 @@ interface ChatMsg {
 }
 
 const BibleMentorChat = ({ result }: BibleMentorChatProps) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<ChatMsg[]>([]);
