@@ -198,7 +198,7 @@ const BibleReader = ({ pathType = "legado" }: BibleReaderProps) => {
               <BibleVerses verses={result.verses} pathType={pathType} />
               <BibleInsight insight={result.insight} pathType={pathType} />
               <BibleOriginalWord originalWord={result.originalWord} pathType={pathType} />
-              <BibleMindMap applications={result.applications || []} />
+              <BibleMindMap applications={result.applications || []} pathType={pathType} />
               <BibleMentorChat result={result} />
               <BibleRelatedContent topics={result.relatedTopics} />
             </motion.div>
