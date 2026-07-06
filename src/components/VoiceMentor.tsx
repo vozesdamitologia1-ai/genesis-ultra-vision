@@ -916,22 +916,29 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
     setResponseText("");
     setCitedVerse(null);
 
-    // Fire-and-forget mic visualization — do NOT await before recognition.start(),
-    // otherwise the user-gesture chain breaks and Chrome throws NotAllowedError.
-    navigator.mediaDevices?.getUserMedia({ audio: true }).then((stream) => {
-      streamRef.current = stream;
-      const audioContext = new AudioContext();
-      audioContextRef.current = audioContext;
-      const source = audioContext.createMediaStreamSource(stream);
-      const analyser = audioContext.createAnalyser();
-      analyser.fftSize = 2048;
-      source.connect(analyser);
-      analyserRef.current = analyser;
-    }).catch((e) => {
-      console.warn("Mic visualization unavailable:", e);
-    });
+    // On mobile (Android/iOS) do NOT open a second getUserMedia stream:
+    // many devices give the mic exclusively to one consumer, so the extra
+    // stream starves SpeechRecognition and it ends with an empty result.
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (!isMobile) {
+      // Fire-and-forget mic visualization — do NOT await before recognition.start(),
+      // otherwise the user-gesture chain breaks and Chrome throws NotAllowedError.
+      navigator.mediaDevices?.getUserMedia({ audio: true }).then((stream) => {
+        streamRef.current = stream;
+        const audioContext = new AudioContext();
+        audioContextRef.current = audioContext;
+        const source = audioContext.createMediaStreamSource(stream);
+        const analyser = audioContext.createAnalyser();
+        analyser.fftSize = 2048;
+        source.connect(analyser);
+        analyserRef.current = analyser;
+      }).catch((e) => {
+        console.warn("Mic visualization unavailable:", e);
+      });
+    }
 
     let finalTranscript = "";
+    let latestTranscript = ""; // Android Chrome often never flags results as final
 
     const recognition = new SpeechRecognition();
     recognition.lang = isEnglish ? "en-US" : "pt-BR";
@@ -941,6 +948,7 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
 
     recognition.onresult = (event: any) => {
       let interim = "";
+      finalTranscript = "";
       for (let i = 0; i < event.results.length; i++) {
         const result = event.results[i];
         if (result.isFinal) {
@@ -949,6 +957,7 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
           interim += result[0].transcript;
         }
       }
+      latestTranscript = (finalTranscript + interim).trim();
       setTranscript(finalTranscript + interim);
     };
 
