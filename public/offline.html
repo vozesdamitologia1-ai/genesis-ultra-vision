@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sem conexão — Genesis Vision</title>
+    <style>
+      /* Página offline simples — exibida quando não há rede nem cache */
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: #0a0a0a;
+        color: #fff;
+        font-family: system-ui, -apple-system, sans-serif;
+        text-align: center;
+        padding: 24px;
+      }
+      img { width: 96px; height: 96px; margin-bottom: 24px; border-radius: 20px; }
+      h1 { font-size: 1.4rem; margin: 0 0 8px; }
+      p { color: #999; font-size: 0.95rem; max-width: 320px; }
+      button {
+        margin-top: 24px;
+        background: #d4a94e;
+        color: #0a0a0a;
+        border: none;
+        border-radius: 999px;
+        padding: 12px 28px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <img src="/icons/icon-192x192.png" alt="Genesis Vision" />
+    <h1>Você está offline</h1>
+    <p>Não foi possível conectar. Verifique sua internet e tente novamente.</p>
+    <button onclick="location.reload()">Tentar novamente</button>
+  </body>
+</html>

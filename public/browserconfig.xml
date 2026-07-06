@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Compatibilidade com Microsoft Edge / Windows tiles -->
+<browserconfig>
+  <msapplication>
+    <tile>
+      <square150x150logo src="/icons/mstile-150x150.png"/>
+      <TileColor>#0a0a0a</TileColor>
+    </tile>
+  </msapplication>
+</browserconfig>
