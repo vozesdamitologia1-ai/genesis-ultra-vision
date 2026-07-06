@@ -37,7 +37,7 @@ const BibleVerses = ({ verses, pathType = "legado" }: BibleVersesProps) => {
           <span className={`mt-0.5 min-w-[1.5rem] text-right ${fontClass} text-[10px] font-bold ${accent}`}>
             {verse.verse}
           </span>
-          <p className={`flex-1 ${fontClass} text-sm leading-relaxed ${textColor}`}>
+          <p className={`flex-1 ${fontClass} ${verseTextClass} ${textColor}`}>
             {verse.content}
           </p>
         </motion.div>
