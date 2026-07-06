@@ -51,8 +51,8 @@ const VIP = () => {
     );
   }
 
-  // VIP Content
-  if (accessLevel === "vip") {
+  // VIP Content — temporarily unlocked for all users
+  if (true || accessLevel === "vip") {
     return (
       <div className="flex min-h-screen flex-col bg-background">
         <AppHeader />
