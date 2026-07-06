@@ -33,9 +33,12 @@ const BibleMentorChat = ({ result }: BibleMentorChatProps) => {
     setLoading(true);
 
     try {
+      const langName = i18n.language === "en" ? "English" : "Português (Brasil)";
       const systemPrompt = `Você é o Mentor Legado do app Genesis Vision. O usuário está lendo ${result.book} capítulo ${result.chapter}. ${contextSummary}
 
-Responda a pergunta do usuário especificamente sobre este capítulo. Seja profundo mas conciso (máx 3 parágrafos). Use referências bíblicas quando relevante. Responda no idioma do usuário.`;
+Responda a pergunta do usuário especificamente sobre este capítulo. Seja profundo mas conciso (máx 3 parágrafos). Use referências bíblicas quando relevante.
+
+IDIOMA DE RESPOSTA OBRIGATÓRIO: ${langName}. Responda toda a mensagem em ${langName}, independentemente do idioma da pergunta.`;
 
       const { data, error } = await supabase.functions.invoke("gemini-chat", {
         body: {
