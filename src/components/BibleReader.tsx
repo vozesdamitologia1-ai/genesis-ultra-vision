@@ -98,6 +98,16 @@ const BibleReader = ({ pathType = "legado" }: BibleReaderProps) => {
     }
   };
 
+  const handleSearch = () => runSearch(search.trim(), i18n.language);
+
+  // Re-fetch the current study when the language changes
+  useEffect(() => {
+    if (lastQueryRef.current && (result || notBiblical)) {
+      runSearch(lastQueryRef.current, i18n.language);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [i18n.language]);
+
   return (
     <section className="px-4 py-8">
       <div
