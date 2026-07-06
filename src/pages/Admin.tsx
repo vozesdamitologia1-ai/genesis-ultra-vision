@@ -10,11 +10,16 @@ import AppHeader from "@/components/AppHeader";
 import BottomNav from "@/components/BottomNav";
 import { motion } from "framer-motion";
 
-const CATEGORIES = [
-  "Performance & Disciplina",
-  "Governo & Carreira",
-  "Escola de Ensino",
-];
+const CATEGORIES_BY_PATH: Record<"legacy" | "flow", { value: string; label: string }[]> = {
+  legacy: [
+    { value: "school", label: "Escola de Ensino" },
+    { value: "archive", label: "Arquivo do Legado" },
+  ],
+  flow: [
+    { value: "performance", label: "Performance & Disciplina" },
+    { value: "government", label: "Governo & Carreira" },
+  ],
+};
 
 const normalizeVideoUrl = (url: string): string => {
   try {
