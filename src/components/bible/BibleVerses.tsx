@@ -18,7 +18,7 @@ const BibleVerses = ({ verses, pathType = "legado" }: BibleVersesProps) => {
   const borderColor = isLegado ? "border-amber-700/15" : "border-red-500/10";
   const fontClass = isLegado ? "font-serif" : "font-sans";
   const verseTextClass = isLegado
-    ? "text-lg font-bold leading-relaxed"
+    ? "text-xl font-bold leading-loose tracking-wide"
     : "text-sm leading-relaxed";
 
   return (
