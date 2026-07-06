@@ -70,7 +70,7 @@ const BibleReader = ({ pathType = "legado" }: BibleReaderProps) => {
             apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
             Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
           },
-          body: JSON.stringify({ reference: query }),
+          body: JSON.stringify({ reference: query, language: i18n.language }),
         }
       );
 
