@@ -100,7 +100,7 @@ const Admin = () => {
       toast({ title: "Erro ao publicar", description: error.message, variant: "destructive" });
     } else {
       setPublished(true);
-      const pathLabel = pathType === "legacy" ? "LEGADO" : "FLOW";
+      const publishedLabel = pathLabel;
       toast({ 
         title: "🎬 VÍDEO LANÇADO NO SISTEMA!", 
         description: `"${title}" está AO VIVO no caminho ${pathLabel}. Seus seguidores já podem assistir!`,
