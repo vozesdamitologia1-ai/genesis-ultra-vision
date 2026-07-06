@@ -972,7 +972,7 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
       }
       analyserRef.current = null;
 
-      const textToSend = finalTranscript.trim();
+      const textToSend = (finalTranscript.trim() || latestTranscript).trim();
       if (textToSend) {
         sendToGemini(textToSend);
       } else {
