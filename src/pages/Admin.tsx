@@ -12,12 +12,11 @@ import { motion } from "framer-motion";
 
 const CATEGORIES_BY_PATH: Record<"legacy" | "flow", { value: string; label: string }[]> = {
   legacy: [
-    { value: "school", label: "Escola de Ensino" },
-    { value: "archive", label: "Arquivo do Legado" },
+    { value: "Escola de Ensino", label: "Escola de Ensino" },
   ],
   flow: [
-    { value: "performance", label: "Performance & Disciplina" },
-    { value: "government", label: "Governo & Carreira" },
+    { value: "Performance & Disciplina", label: "Performance & Disciplina" },
+    { value: "Governo & Carreira", label: "Governo & Carreira" },
   ],
 };
 
@@ -194,7 +193,7 @@ const Admin = () => {
           {/* Category */}
           <div>
             <label className="text-xs font-medium text-foreground mb-1 block">
-              Categoria <span className="text-muted-foreground">({pathLabel})</span>
+              Categoria
             </label>
             <div className="flex flex-col gap-2">
               {categories.map((cat) => (
