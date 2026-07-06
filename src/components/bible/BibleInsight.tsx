@@ -15,7 +15,8 @@ const BibleInsight = ({ insight, pathType = "legado" }: BibleInsightProps) => {
   const borderColor = isLegado ? "border-amber-700/15" : "border-red-500/15";
   const bg = isLegado ? "bg-amber-100/40" : "bg-red-500/5";
   const fontClass = isLegado ? "font-serif" : "font-sans";
-  const textColor = isLegado ? "text-stone-700" : "text-foreground/80";
+  const textColor = isLegado ? "text-stone-900" : "text-foreground/80";
+  const textSize = isLegado ? "text-base font-bold" : "text-sm";
 
   return (
     <motion.div
@@ -30,7 +31,7 @@ const BibleInsight = ({ insight, pathType = "legado" }: BibleInsightProps) => {
           {t("legado.bible.insightTitle", "Insight do Mentor")}
         </h5>
       </div>
-      <p className={`${fontClass} text-sm leading-relaxed ${textColor} whitespace-pre-line`}>
+      <p className={`${fontClass} ${textSize} leading-relaxed ${textColor} whitespace-pre-line`}>
         {insight}
       </p>
     </motion.div>
