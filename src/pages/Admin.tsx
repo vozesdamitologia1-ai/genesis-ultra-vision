@@ -36,11 +36,12 @@ const Admin = () => {
   const { user, loading: authLoading } = useAuth();
   const { path } = usePath();
   const isLegado = path === "legado";
+  const pathType: "flow" | "legacy" = isLegado ? "legacy" : "flow";
+  const pathLabel = isLegado ? "LEGADO" : "FLOW";
 
   const [title, setTitle] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
   const [description, setDescription] = useState("");
-  const [pathType, setPathType] = useState<"flow" | "legacy">("flow");
   const [category, setCategory] = useState(CATEGORIES[0]);
   const [isVip, setIsVip] = useState(false);
   const [publishing, setPublishing] = useState(false);
