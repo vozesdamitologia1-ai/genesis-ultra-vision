@@ -30,7 +30,7 @@ interface BibleReaderProps {
 }
 
 const BibleReader = ({ pathType = "legado" }: BibleReaderProps) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [search, setSearch] = useState("");
   const [result, setResult] = useState<BibleStudyResult | null>(null);
   const [loading, setLoading] = useState(false);
