@@ -20,7 +20,9 @@ serve(async (req) => {
       );
     }
 
-    const { reference } = await req.json();
+    const { reference, language } = await req.json();
+    const lang = language === "en" ? "en" : "pt";
+    const langName = lang === "en" ? "English" : "Português (Brasil)";
 
     if (!reference || typeof reference !== "string" || reference.trim().length === 0 || reference.length > 500) {
       return new Response(
