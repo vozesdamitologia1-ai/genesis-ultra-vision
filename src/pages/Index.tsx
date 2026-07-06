@@ -5,6 +5,7 @@ import portalLegado from "@/assets/portal-legado.jpg";
 import portalFlow from "@/assets/portal-flow.jpg";
 import { usePath } from "@/contexts/PathContext";
 import LanguageSelector from "@/components/LanguageSelector";
+import brandLogo from "@/assets/logo-legado-flow.jpeg.asset.json";
 
 const Index = () => {
   const { selectPath } = usePath();
@@ -14,10 +15,12 @@ const Index = () => {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       {/* Minimal header with just brand + language */}
-      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between bg-background/95 px-4 py-3 backdrop-blur-md">
-        <span className="font-serif text-lg font-bold italic tracking-wide text-foreground">
-          {t("header.brand")}
-        </span>
+      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between bg-background/95 px-4 py-2 backdrop-blur-md">
+        <img
+          src={brandLogo.url}
+          alt={t("header.brand")}
+          className="h-9 w-auto object-contain"
+        />
         <LanguageSelector />
       </header>
 
