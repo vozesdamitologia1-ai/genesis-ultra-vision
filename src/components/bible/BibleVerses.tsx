@@ -12,11 +12,14 @@ const BibleVerses = ({ verses, pathType = "legado" }: BibleVersesProps) => {
     ? { backgroundColor: "rgba(244, 236, 216, 0.7)" }
     : { backgroundImage: "linear-gradient(to bottom, hsl(0 0% 5% / 0.9), hsl(0 0% 3% / 0.95))" };
 
-  const accent = isLegado ? "text-amber-700/60" : "text-red-500/50";
-  const textColor = isLegado ? "text-stone-800/90" : "text-foreground/90";
+  const accent = isLegado ? "text-amber-700" : "text-red-500/50";
+  const textColor = isLegado ? "text-black" : "text-foreground/90";
   const hoverBg = isLegado ? "hover:bg-amber-800/5" : "hover:bg-red-500/5";
   const borderColor = isLegado ? "border-amber-700/15" : "border-red-500/10";
   const fontClass = isLegado ? "font-serif" : "font-sans";
+  const verseTextClass = isLegado
+    ? "text-lg font-bold leading-relaxed"
+    : "text-sm leading-relaxed";
 
   return (
     <div
@@ -34,7 +37,7 @@ const BibleVerses = ({ verses, pathType = "legado" }: BibleVersesProps) => {
           <span className={`mt-0.5 min-w-[1.5rem] text-right ${fontClass} text-[10px] font-bold ${accent}`}>
             {verse.verse}
           </span>
-          <p className={`flex-1 ${fontClass} text-sm leading-relaxed ${textColor}`}>
+          <p className={`flex-1 ${fontClass} ${verseTextClass} ${textColor}`}>
             {verse.content}
           </p>
         </motion.div>
