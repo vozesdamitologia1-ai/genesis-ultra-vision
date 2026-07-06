@@ -53,9 +53,9 @@ const BibleReader = ({ pathType = "legado" }: BibleReaderProps) => {
     ? { backgroundColor: "#f4ecd8", backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E\")" }
     : {};
 
-  const handleSearch = async () => {
-    const query = search.trim();
+  const runSearch = async (query: string, language: string) => {
     if (!query) return;
+    lastQueryRef.current = query;
 
     setLoading(true);
     setResult(null);
@@ -72,7 +72,7 @@ const BibleReader = ({ pathType = "legado" }: BibleReaderProps) => {
             apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
             Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
           },
-          body: JSON.stringify({ reference: query, language: i18n.language }),
+          body: JSON.stringify({ reference: query, language }),
         }
       );
 
