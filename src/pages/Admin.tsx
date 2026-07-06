@@ -44,10 +44,12 @@ const Admin = () => {
   const pathType: "flow" | "legacy" = isLegado ? "legacy" : "flow";
   const pathLabel = isLegado ? "LEGADO" : "FLOW";
 
+  const categories = CATEGORIES_BY_PATH[pathType];
+
   const [title, setTitle] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
   const [description, setDescription] = useState("");
-  const [category, setCategory] = useState(CATEGORIES[0]);
+  const [category, setCategory] = useState(categories[0].value);
   const [isVip, setIsVip] = useState(false);
   const [publishing, setPublishing] = useState(false);
   const [published, setPublished] = useState(false);
