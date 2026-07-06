@@ -34,7 +34,7 @@ const BibleVerses = ({ verses, pathType = "legado" }: BibleVersesProps) => {
           transition={{ delay: i * 0.02 }}
           className={`flex items-start gap-2 rounded px-2 py-1.5 ${hoverBg} transition-colors`}
         >
-          <span className={`mt-0.5 min-w-[1.5rem] text-right ${fontClass} text-[10px] font-bold ${accent}`}>
+          <span className={`mt-1 min-w-[1.75rem] text-right ${fontClass} ${isLegado ? "text-sm font-bold" : "text-[10px] font-bold"} ${accent}`}>
             {verse.verse}
           </span>
           <p className={`flex-1 ${fontClass} ${verseTextClass} ${textColor}`}>
