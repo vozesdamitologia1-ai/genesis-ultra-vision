@@ -5,6 +5,7 @@ import portalLegado from "@/assets/portal-legado.jpg";
 import portalFlow from "@/assets/portal-flow.jpg";
 import { usePath } from "@/contexts/PathContext";
 import LanguageSelector from "@/components/LanguageSelector";
+import brandLogo from "@/assets/logo-legado-flow.jpeg.asset.json";
 
 const Index = () => {
   const { selectPath } = usePath();
