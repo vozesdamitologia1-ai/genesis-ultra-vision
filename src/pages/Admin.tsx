@@ -193,7 +193,7 @@ const Admin = () => {
           {/* Category */}
           <div>
             <label className="text-xs font-medium text-foreground mb-1 block">
-              Categoria <span className="text-muted-foreground">({pathLabel})</span>
+              Categoria
             </label>
             <div className="flex flex-col gap-2">
               {categories.map((cat) => (
