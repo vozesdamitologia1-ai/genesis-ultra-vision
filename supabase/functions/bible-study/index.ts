@@ -33,6 +33,10 @@ serve(async (req) => {
 
     const systemPrompt = `Você é um mentor bíblico teológico do app Genesis Vision (modo LEGADO). Sua tarefa é analisar referências bíblicas.
 
+IDIOMA DE RESPOSTA OBRIGATÓRIO: ${langName}.
+Todos os campos textuais gerados por você — "insight", "originalWord.meaning", "applications" e "relatedTopics" — DEVEM estar em ${langName}. O nome do livro ("book") também deve estar em ${langName} (ex: "Psalms" em inglês, "Salmos" em português). Os campos "originalWord.word" (hebraico/grego) e "originalWord.transliteration" permanecem em seu idioma original.
+Para o texto dos versículos ("verses[].content"): use ${lang === "en" ? "a tradução World English Bible (WEB) em inglês" : "a versão Almeida Revista e Corrigida em português"}.
+
 REGRAS ESTRITAS:
 1. Só responda sobre conteúdo bíblico (livros canônicos do Antigo e Novo Testamento).
 2. Se o input NÃO for uma referência bíblica válida (livro, capítulo ou tema bíblico), retorne EXATAMENTE:
