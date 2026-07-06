@@ -187,39 +187,23 @@ const Admin = () => {
             />
           </div>
 
-          {/* Path (auto-detected from current mode) */}
-          <div>
-            <label className="text-xs font-medium text-foreground mb-1 block">Caminho</label>
-            <div
-              className={`rounded-xl border p-3 text-sm font-bold ${
-                isLegado
-                  ? "border-amber-400 bg-amber-400/20 text-amber-400"
-                  : "border-primary bg-primary/20 text-primary"
-              }`}
-            >
-              {pathLabel}
-            </div>
-            <p className="text-[10px] text-muted-foreground mt-1">
-              O vídeo será publicado no caminho atual. Para publicar no outro, troque o modo no perfil.
-            </p>
-          </div>
-
-
           {/* Category */}
           <div>
-            <label className="text-xs font-medium text-foreground mb-1 block">Categoria</label>
+            <label className="text-xs font-medium text-foreground mb-1 block">
+              Categoria <span className="text-muted-foreground">({pathLabel})</span>
+            </label>
             <div className="flex flex-col gap-2">
-              {CATEGORIES.map((cat) => (
+              {categories.map((cat) => (
                 <button
-                  key={cat}
-                  onClick={() => setCategory(cat)}
+                  key={cat.value}
+                  onClick={() => setCategory(cat.value)}
                   className={`rounded-xl border p-3 text-left text-sm transition-all ${
-                    category === cat
+                    category === cat.value
                       ? `${accentBg} ${accentColor} font-bold`
                       : "border-border bg-card text-muted-foreground"
                   }`}
                 >
-                  {cat}
+                  {cat.label}
                 </button>
               ))}
             </div>
