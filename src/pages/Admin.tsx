@@ -103,7 +103,7 @@ const Admin = () => {
       const publishedLabel = pathLabel;
       toast({ 
         title: "🎬 VÍDEO LANÇADO NO SISTEMA!", 
-        description: `"${title}" está AO VIVO no caminho ${pathLabel}. Seus seguidores já podem assistir!`,
+        description: `"${title}" está AO VIVO no caminho ${publishedLabel}. Seus seguidores já podem assistir!`,
       });
       setTimeout(() => {
         setTitle("");
