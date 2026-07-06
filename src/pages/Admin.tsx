@@ -36,11 +36,12 @@ const Admin = () => {
   const { user, loading: authLoading } = useAuth();
   const { path } = usePath();
   const isLegado = path === "legado";
+  const pathType: "flow" | "legacy" = isLegado ? "legacy" : "flow";
+  const pathLabel = isLegado ? "LEGADO" : "FLOW";
 
   const [title, setTitle] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
   const [description, setDescription] = useState("");
-  const [pathType, setPathType] = useState<"flow" | "legacy">("flow");
   const [category, setCategory] = useState(CATEGORIES[0]);
   const [isVip, setIsVip] = useState(false);
   const [publishing, setPublishing] = useState(false);
@@ -99,10 +100,10 @@ const Admin = () => {
       toast({ title: "Erro ao publicar", description: error.message, variant: "destructive" });
     } else {
       setPublished(true);
-      const pathLabel = pathType === "legacy" ? "LEGADO" : "FLOW";
+      const publishedLabel = pathLabel;
       toast({ 
         title: "🎬 VÍDEO LANÇADO NO SISTEMA!", 
-        description: `"${title}" está AO VIVO no caminho ${pathLabel}. Seus seguidores já podem assistir!`,
+        description: `"${title}" está AO VIVO no caminho ${publishedLabel}. Seus seguidores já podem assistir!`,
       });
       setTimeout(() => {
         setTitle("");
@@ -179,27 +180,23 @@ const Admin = () => {
             />
           </div>
 
-          {/* Path Type */}
+          {/* Path (auto-detected from current mode) */}
           <div>
             <label className="text-xs font-medium text-foreground mb-1 block">Caminho</label>
-            <div className="flex gap-2">
-              {([["flow", "FLOW"], ["legacy", "LEGADO"]] as const).map(([val, label]) => (
-                <button
-                  key={val}
-                  onClick={() => setPathType(val)}
-                  className={`flex-1 rounded-xl border p-3 text-sm font-bold transition-all ${
-                    pathType === val
-                      ? val === "legacy"
-                        ? "border-amber-400 bg-amber-400/20 text-amber-400"
-                        : "border-primary bg-primary/20 text-primary"
-                      : "border-border bg-card text-muted-foreground"
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
+            <div
+              className={`rounded-xl border p-3 text-sm font-bold ${
+                isLegado
+                  ? "border-amber-400 bg-amber-400/20 text-amber-400"
+                  : "border-primary bg-primary/20 text-primary"
+              }`}
+            >
+              {pathLabel}
             </div>
+            <p className="text-[10px] text-muted-foreground mt-1">
+              O vídeo será publicado no caminho atual. Para publicar no outro, troque o modo no perfil.
+            </p>
           </div>
+
 
           {/* Category */}
           <div>
