@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { BookOpen, Search, Loader2, BookMarked } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import BibleVerses from "@/components/bible/BibleVerses";
 import BibleInsight from "@/components/bible/BibleInsight";
