@@ -36,6 +36,8 @@ const BibleReader = ({ pathType = "legado" }: BibleReaderProps) => {
   const [loading, setLoading] = useState(false);
   const [notBiblical, setNotBiblical] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const lastQueryRef = useRef<string>("");
+
 
   const isLegado = pathType === "legado";
 
