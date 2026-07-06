@@ -54,6 +54,10 @@ const Admin = () => {
   const [publishing, setPublishing] = useState(false);
   const [published, setPublished] = useState(false);
 
+  useEffect(() => {
+    setCategory(categories[0].value);
+  }, [pathType]);
+
   // Strict guard: redirect non-admin users immediately
   if (authLoading) {
     return (
