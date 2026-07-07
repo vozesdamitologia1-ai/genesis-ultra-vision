@@ -1076,27 +1076,101 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-gradient-to-b ${bgGradient}`}
+          className={`fixed inset-0 z-[100] flex flex-col bg-gradient-to-b ${bgGradient}`}
         >
-          <canvas ref={canvasRef} className="absolute inset-0 z-0" />
+          <canvas ref={canvasRef} className="absolute inset-0 z-0 opacity-60" />
 
           <button
             onClick={handleClose}
-            className="absolute top-4 right-4 z-10 rounded-full bg-white/10 p-2 text-white/70 backdrop-blur-sm transition-colors hover:bg-white/20 hover:text-white"
+            className="absolute top-4 right-4 z-20 rounded-full bg-white/10 p-2 text-white/70 backdrop-blur-sm transition-colors hover:bg-white/20 hover:text-white"
           >
             <X className="h-6 w-6" />
           </button>
 
-          <div className={`absolute top-6 left-6 z-10 text-xs font-bold uppercase tracking-[0.3em] ${accentColor}`}>
+          <div className={`absolute top-6 left-6 z-20 text-xs font-bold uppercase tracking-[0.3em] ${accentColor}`}>
             {isLegado ? "MENTOR BÍBLICO" : "FLOW"}
           </div>
 
-          <div className="relative z-10 flex flex-col items-center gap-6 px-6 max-w-md w-full">
+          {messages.length > 0 && (
+            <button
+              onClick={resetConversation}
+              className="absolute top-16 right-4 z-20 rounded-full bg-white/10 px-3 py-1 text-[10px] font-medium uppercase tracking-wider text-white/70 backdrop-blur-sm transition-colors hover:bg-white/20 hover:text-white"
+            >
+              {isEnglish ? "New chat" : "Nova conversa"}
+            </button>
+          )}
+
+          {/* Chat log */}
+          <div
+            ref={scrollRef}
+            className="relative z-10 flex-1 overflow-y-auto px-4 pt-20 pb-4 w-full max-w-md mx-auto flex flex-col gap-3"
+          >
+            {messages.length === 0 && (
+              <div className="flex-1 flex items-center justify-center">
+                <p className={`text-sm text-center ${accentColor} ${isLegado ? "font-serif" : ""} opacity-70`}>
+                  {isEnglish
+                    ? "Tap the mic to start a conversation"
+                    : "Toque no microfone para iniciar uma conversa"}
+                </p>
+              </div>
+            )}
+            {messages.map((m, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={`rounded-2xl px-4 py-3 backdrop-blur-sm max-w-[85%] ${
+                  m.role === "user"
+                    ? "self-end bg-white/10 border border-white/10"
+                    : `self-start bg-black/40 border ${accentBorder}`
+                }`}
+              >
+                <p className={`text-[10px] uppercase tracking-wider mb-1 ${
+                  m.role === "user" ? "text-white/50" : accentColor
+                }`}>
+                  {m.role === "user"
+                    ? (isEnglish ? "You" : "Você")
+                    : isLegado ? (isEnglish ? "Biblical Mentor" : "Mentor Bíblico") : (isEnglish ? "Coach" : "Coach")}
+                </p>
+                <p className={`text-sm text-white/90 leading-relaxed whitespace-pre-line ${
+                  m.role === "assistant" && isLegado ? "font-serif" : ""
+                }`}>
+                  {m.content}
+                </p>
+              </motion.div>
+            ))}
+            {transcript && state === "listening" && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="self-end rounded-2xl bg-white/5 border border-white/10 px-4 py-3 backdrop-blur-sm max-w-[85%] italic"
+              >
+                <p className="text-sm text-white/70 leading-relaxed">{transcript}</p>
+              </motion.div>
+            )}
+            {citedVerse && isLegado && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="self-start rounded-2xl border border-amber-400/30 bg-amber-950/30 px-4 py-3 backdrop-blur-sm max-w-[85%]"
+              >
+                <p className="text-[10px] text-amber-400/70 uppercase tracking-[0.2em] mb-1 font-bold">
+                  {isEnglish ? "Verse Found" : "Versículo Encontrado"}
+                </p>
+                <p className="font-serif text-sm text-amber-100/90 leading-relaxed italic whitespace-pre-line">
+                  {citedVerse}
+                </p>
+              </motion.div>
+            )}
+          </div>
+
+          {/* Composer / mic */}
+          <div className="relative z-10 flex flex-col items-center gap-3 px-6 pb-8 pt-2">
             <motion.p
               key={state}
-              initial={{ opacity: 0, y: -10 }}
+              initial={{ opacity: 0, y: -6 }}
               animate={{ opacity: 1, y: 0 }}
-              className={`text-sm font-medium tracking-wide ${accentColor} ${isLegado ? "font-serif" : ""}`}
+              className={`text-xs font-medium tracking-wide ${accentColor} ${isLegado ? "font-serif" : ""}`}
             >
               {stateLabel[state]}
             </motion.p>
@@ -1105,16 +1179,16 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
               onClick={handleMicClick}
               disabled={state === "processing" || state === "speaking"}
               whileTap={{ scale: 0.9 }}
-              className={`relative flex h-24 w-24 items-center justify-center rounded-full border-2 transition-all disabled:opacity-40 ${
+              className={`relative flex h-20 w-20 items-center justify-center rounded-full border-2 transition-all disabled:opacity-40 ${
                 state === "listening" ? micActive : micBg
               }`}
             >
               {state === "listening" ? (
-                <MicOff className="h-10 w-10" />
+                <MicOff className="h-9 w-9" />
               ) : state === "speaking" ? (
-                <Volume2 className="h-10 w-10 text-white animate-pulse" />
+                <Volume2 className="h-9 w-9 text-white animate-pulse" />
               ) : (
-                <Mic className={`h-10 w-10 ${state === "processing" ? "animate-pulse text-white/50" : "text-white"}`} />
+                <Mic className={`h-9 w-9 ${state === "processing" ? "animate-pulse text-white/50" : "text-white"}`} />
               )}
 
               {state === "listening" && (
@@ -1124,7 +1198,6 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
                   transition={{ duration: 1.5, repeat: Infinity }}
                 />
               )}
-
               {state === "speaking" && (
                 <motion.div
                   className={`absolute inset-0 rounded-full border-2 ${accentBorder}`}
@@ -1133,50 +1206,6 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
                 />
               )}
             </motion.button>
-
-            {/* Transcript (what user said) */}
-            {transcript && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="rounded-2xl bg-white/5 px-6 py-4 backdrop-blur-sm max-h-24 overflow-y-auto w-full"
-              >
-                <p className="text-xs text-white/50 mb-1">Você:</p>
-                <p className="text-sm text-white/90 leading-relaxed">{transcript}</p>
-              </motion.div>
-            )}
-
-            {/* Cited verse highlight (LEGADO only) */}
-            {citedVerse && isLegado && state !== "idle" && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="rounded-2xl border border-amber-400/30 bg-amber-950/30 px-6 py-5 backdrop-blur-sm max-h-40 overflow-y-auto w-full"
-              >
-                <p className="text-[10px] text-amber-400/70 uppercase tracking-[0.2em] mb-2 font-bold">
-                  Versículo Encontrado
-                </p>
-                <p className="font-serif text-sm text-amber-100/90 leading-relaxed italic whitespace-pre-line">
-                  {citedVerse}
-                </p>
-              </motion.div>
-            )}
-
-            {/* AI Response */}
-            {responseText && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className={`rounded-2xl border bg-white/5 px-6 py-4 backdrop-blur-sm max-h-48 overflow-y-auto w-full ${accentBorder}`}
-              >
-                <p className={`text-xs mb-1 ${accentColor}`}>
-                  {isLegado ? "Mentor Bíblico:" : "Coach:"}
-                </p>
-                <p className={`text-sm text-white/90 leading-relaxed whitespace-pre-line ${isLegado ? "font-serif" : ""}`}>
-                  {responseText}
-                </p>
-              </motion.div>
-            )}
           </div>
 
           <div className="absolute bottom-8 z-10">
