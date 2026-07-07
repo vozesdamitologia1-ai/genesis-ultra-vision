@@ -67,17 +67,26 @@ export default defineConfig(({ mode }) => ({
         ],
       },
       workbox: {
-        // Precache the built app shell (hashed JS/CSS + index.html)
-        globPatterns: ["**/*.{js,css,html,ico,png,svg,webmanifest}"],
-        cleanupOutdatedCaches: true, // remove old cache versions on activate
+        // Precache built app shell (hashed JS/CSS). HTML is handled via NetworkFirst below.
+        globPatterns: ["**/*.{js,css,ico,png,svg,webmanifest}"],
+        cleanupOutdatedCaches: true,
         clientsClaim: true,
         skipWaiting: true,
-        // SPA offline fallback — never for OAuth callback routes
-        navigateFallback: "/index.html",
+        navigateFallback: "/offline.html",
         navigateFallbackDenylist: [/^\/~oauth/],
         runtimeCaching: [
           {
-            // Cache First for images
+            // NetworkFirst for HTML navigations — always try network so the
+            // installed app picks up new releases immediately.
+            urlPattern: ({ request }) => request.mode === "navigate",
+            handler: "NetworkFirst",
+            options: {
+              cacheName: "html-cache",
+              networkTimeoutSeconds: 5,
+              expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 },
+            },
+          },
+          {
             urlPattern: ({ request, sameOrigin }) =>
               sameOrigin && request.destination === "image",
             handler: "CacheFirst",
@@ -87,7 +96,6 @@ export default defineConfig(({ mode }) => ({
             },
           },
           {
-            // Network First for API calls (Supabase)
             urlPattern: /^https:\/\/.*\.supabase\.co\/.*/i,
             handler: "NetworkFirst",
             options: {
@@ -97,7 +105,6 @@ export default defineConfig(({ mode }) => ({
             },
           },
           {
-            // Stale While Revalidate for external CSS/JS (fonts, CDNs)
             urlPattern: ({ request, sameOrigin }) =>
               !sameOrigin &&
               (request.destination === "style" || request.destination === "script" || request.destination === "font"),
@@ -109,6 +116,7 @@ export default defineConfig(({ mode }) => ({
           },
         ],
       },
+
     }),
   ].filter(Boolean),
   resolve: {
