@@ -255,7 +255,7 @@ const Site = () => {
           href={CTA_URL}
           className="hidden md:inline-flex items-center gap-2 rounded-full bg-white text-black px-5 py-2 text-sm font-semibold hover:bg-white/90 transition"
         >
-          Assinar VIP <ArrowRight className="h-4 w-4" />
+          Entrar grátis <ArrowRight className="h-4 w-4" />
         </a>
       </header>
 
@@ -310,7 +310,7 @@ const Site = () => {
               href={CTA_URL}
               className="inline-flex items-center justify-center gap-2 rounded-full bg-red-600 hover:bg-red-500 px-8 py-4 text-sm font-bold uppercase tracking-widest transition"
             >
-              Assinar VIP agora <ArrowRight className="h-4 w-4" />
+              Acessar grátis <ArrowRight className="h-4 w-4" />
             </a>
             <a
               href="#modulos"
@@ -532,7 +532,7 @@ const Site = () => {
             href={CTA_URL}
             className="mt-8 flex items-center justify-center gap-2 rounded-full bg-red-600 hover:bg-red-500 px-6 py-4 text-sm font-bold uppercase tracking-widest transition"
           >
-            Assinar VIP <ArrowRight className="h-4 w-4" />
+            Entrar grátis <ArrowRight className="h-4 w-4" />
           </a>
           <p className="mt-4 text-center text-[11px] text-white/40">
             Pagamento seguro via Stripe. Ativação automática no app após o cadastro.
