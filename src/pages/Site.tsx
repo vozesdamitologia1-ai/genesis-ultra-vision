@@ -16,8 +16,9 @@ import {
   Quote,
 } from "lucide-react";
 
-// TODO: substitua pelo seu Payment Link do Stripe (Dashboard → Payment Links)
-const STRIPE_CHECKOUT_URL = "https://buy.stripe.com/test_REPLACE_ME";
+// Acesso liberado (sem assinatura): CTA leva ao app / cadastro gratuito
+const CTA_URL = "/auth";
+const CTA_LABEL = "Acessar grátis";
 
 // Imagens (Unsplash — livres para uso)
 const IMG_HERO =
