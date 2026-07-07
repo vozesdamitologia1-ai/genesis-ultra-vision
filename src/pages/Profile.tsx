@@ -1,4 +1,4 @@
-import { User, Globe, Palette, LogOut, Crown, Loader2, Settings } from "lucide-react";
+import { User, Globe, Palette, LogOut, Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
@@ -7,7 +7,6 @@ import BottomNav from "@/components/BottomNav";
 import { usePath } from "@/contexts/PathContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/hooks/use-toast";
 
 const Profile = () => {
   const { t, i18n } = useTranslation();
@@ -17,8 +16,6 @@ const Profile = () => {
   const isLegado = path === "legado";
   const [userEmail, setUserEmail] = useState<string | null>(authUser?.email ?? null);
   const [fullName, setFullName] = useState<string | null>(null);
-  const [accessLevel, setAccessLevel] = useState<string>("free");
-  const [togglingVip, setTogglingVip] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -27,11 +24,10 @@ const Profile = () => {
         setUserEmail(user.email ?? null);
         const { data: profile } = await supabase
           .from("profiles")
-          .select("full_name, access_level")
+            .select("full_name")
           .eq("id", user.id)
           .single();
         if (profile?.full_name) setFullName(profile.full_name);
-        if (profile?.access_level) setAccessLevel(profile.access_level);
       }
     };
     load();
@@ -53,23 +49,6 @@ const Profile = () => {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     window.location.reload();
-  };
-
-  const handleToggleVip = async () => {
-    setTogglingVip(true);
-    const newLevel = accessLevel === "vip" ? "free" : "vip";
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      await supabase.from("profiles").update({ access_level: newLevel }).eq("id", user.id);
-      setAccessLevel(newLevel);
-      toast({
-        title: newLevel === "vip" ? t("profile.vipActivated", "🎉 VIP Ativado!") : t("profile.vipDeactivated", "VIP Desativado"),
-        description: newLevel === "vip"
-          ? t("profile.vipActivatedDesc", "Você agora tem acesso ao conteúdo premium.")
-          : t("profile.vipDeactivatedDesc", "Voltou ao plano gratuito."),
-      });
-    }
-    setTogglingVip(false);
   };
 
   const accentColor = isLegado ? "text-amber-400" : "text-primary";
@@ -105,15 +84,6 @@ const Profile = () => {
           {userEmail && (
             <p className="text-[11px] text-muted-foreground">{userEmail}</p>
           )}
-          {/* Access level badge */}
-          <div className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider ${
-            accessLevel === "vip"
-              ? isLegado ? "bg-amber-400/20 text-amber-400" : "bg-primary/20 text-primary"
-              : "bg-muted text-muted-foreground"
-          }`}>
-            {accessLevel === "vip" && <Crown className="h-3 w-3" />}
-            {accessLevel === "vip" ? "VIP" : "FREE"}
-          </div>
         </div>
 
         {/* Admin button — restricted to admin email */}
@@ -142,35 +112,6 @@ const Profile = () => {
               <span className="text-xs text-muted-foreground">{item.value}</span>
             </button>
           ))}
-
-          {/* Test VIP Toggle */}
-          {userEmail && (
-            <button
-              onClick={handleToggleVip}
-              disabled={togglingVip}
-              className={`flex w-full items-center justify-between rounded-xl border p-4 transition-all active:scale-[0.98] ${
-                accessLevel === "vip"
-                  ? isLegado ? "border-amber-400/30 bg-amber-400/10" : "border-primary/30 bg-primary/10"
-                  : "border-amber-400/20 bg-amber-400/5"
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <Crown className={`h-5 w-5 ${accessLevel === "vip" ? accentColor : "text-muted-foreground"}`} />
-                <span className="text-sm text-foreground">
-                  {accessLevel === "vip"
-                    ? t("profile.removeVip", "Remover VIP (teste)")
-                    : t("profile.becomeVip", "Tornar-se VIP (teste)")}
-                </span>
-              </div>
-              {togglingVip ? (
-                <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-              ) : (
-                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                  {accessLevel === "vip" ? "VIP" : "FREE"}
-                </span>
-              )}
-            </button>
-          )}
 
           {userEmail && (
             <button

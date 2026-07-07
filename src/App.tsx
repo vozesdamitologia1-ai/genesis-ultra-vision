@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -11,7 +11,6 @@ import Flow from "./pages/Flow.tsx";
 import Legado from "./pages/Legado.tsx";
 import Profile from "./pages/Profile.tsx";
 import Study from "./pages/Study.tsx";
-import VIP from "./pages/VIP.tsx";
 import Community from "./pages/Community.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import Admin from "./pages/Admin.tsx";
@@ -33,8 +32,10 @@ const AppRoutes = () => {
   if (!user) {
     return (
       <Routes>
+        <Route path="/" element={<Site />} />
         <Route path="/site" element={<Site />} />
-        <Route path="*" element={<Auth />} />
+        <Route path="/auth" element={<Auth />} />
+        <Route path="*" element={<Site />} />
       </Routes>
     );
   }
@@ -47,10 +48,11 @@ const AppRoutes = () => {
         <Route path="/legado" element={<Legado />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/study" element={<Study />} />
-        <Route path="/vip" element={<VIP />} />
+        <Route path="/vip" element={<Navigate to="/study" replace />} />
         <Route path="/community" element={<Community />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/site" element={<Site />} />
+        <Route path="/auth" element={<Navigate to="/" replace />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </PathProvider>

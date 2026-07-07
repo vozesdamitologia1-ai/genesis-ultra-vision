@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import {
-  Crown,
   Sparkles,
   BookOpen,
   Users,
@@ -15,40 +14,33 @@ import {
   Star,
   Quote,
 } from "lucide-react";
+import heroFlow from "@/assets/hero-flow.jpg";
+import heroLegado from "@/assets/hero-legado.jpg";
+import portalFlow from "@/assets/portal-flow.jpg";
+import portalLegado from "@/assets/portal-legado.jpg";
+import siteLoopVideo from "@/assets/site-loop.mp4";
 
 // Acesso liberado (sem assinatura): CTA leva ao app / cadastro gratuito
 const CTA_URL = "/auth";
-const CTA_LABEL = "Acessar grátis";
+const CTA_LABEL = "Entrar no app grátis";
 
-// Imagens (Unsplash — livres para uso)
-const IMG_HERO =
-  "https://images.unsplash.com/photo-1518098268026-4e89f1a2cd8e?auto=format&fit=crop&w=1600&q=80";
-const IMG_BIBLE =
-  "https://images.unsplash.com/photo-1504052434569-70ad5836ab65?auto=format&fit=crop&w=1200&q=80";
-const IMG_PRAY =
-  "https://images.unsplash.com/photo-1476234251651-f353703a034d?auto=format&fit=crop&w=1200&q=80";
-const IMG_COMMUNITY =
-  "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1200&q=80";
-const IMG_STUDY =
-  "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&w=1200&q=80";
-const IMG_MENTOR =
-  "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=1200&q=80";
-const IMG_FLOW =
-  "https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?auto=format&fit=crop&w=1200&q=80";
-const IMG_ROOTS =
-  "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1200&q=80";
-const IMG_CAREER =
-  "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1200&q=80";
+const IMG_HERO = heroFlow;
+const IMG_BIBLE = heroLegado;
+const IMG_PRAY = portalLegado;
+const IMG_COMMUNITY = portalFlow;
+const IMG_STUDY = heroLegado;
+const IMG_MENTOR = heroFlow;
+const IMG_FLOW = portalFlow;
+const IMG_ROOTS = portalLegado;
+const IMG_CAREER = heroFlow;
 
-// Vídeo público (Coverr / Pexels — livres)
-const VIDEO_LOOP =
-  "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_1MB.mp4";
+const VIDEO_LOOP = siteLoopVideo;
 
 const features = [
   {
-    icon: Crown,
-    title: "Acesso VIP total",
-    desc: "Todo o catálogo LEGADO e FLOW liberado sem limites.",
+    icon: ShieldCheck,
+    title: "Acesso liberado",
+    desc: "Todo o catálogo LEGADO e FLOW aberto nesta fase inicial.",
     img: IMG_STUDY,
   },
   {
@@ -66,7 +58,7 @@ const features = [
   {
     icon: Users,
     title: "Comunidade privada",
-    desc: "Grupos VIP e mentoria em grupo ao vivo.",
+    desc: "Grupos, conexões e mentoria em comunidade.",
     img: IMG_COMMUNITY,
   },
   {
@@ -77,8 +69,8 @@ const features = [
   },
   {
     icon: ShieldCheck,
-    title: "Cancele quando quiser",
-    desc: "Sem fidelidade. Sem taxa de app store.",
+    title: "Sem assinatura agora",
+    desc: "Nenhum pagamento ativo. Entre, teste e use livremente.",
     img: IMG_FLOW,
   },
 ];
@@ -121,9 +113,9 @@ const modules = [
     img: IMG_MENTOR,
   },
   {
-    title: "Comunidade VIP",
+    title: "Comunidade Aberta",
     tag: "COMUNIDADE",
-    desc: "Grupos privados, encontros ao vivo e rede de fé real.",
+    desc: "Grupos, encontros ao vivo e rede de fé real.",
     img: IMG_COMMUNITY,
   },
 ];
@@ -144,7 +136,7 @@ const testimonials = [
   {
     name: "Diego S.",
     role: "Empresário · RJ",
-    text: "Assinei o VIP no primeiro dia. Vale cada centavo. O FLOW é diferente de tudo.",
+    text: "Entrei no primeiro dia. O FLOW é diferente de tudo que eu já tinha usado.",
   },
   {
     name: "Ana P.",
@@ -164,7 +156,7 @@ const testimonials = [
 ];
 
 const stats = [
-  { n: "+50k", l: "assinantes VIP" },
+  { n: "100%", l: "acesso liberado" },
   { n: "+1.200", l: "aulas e reels" },
   { n: "24/7", l: "mentor por voz" },
   { n: "4.9★", l: "avaliação média" },
@@ -173,6 +165,20 @@ const stats = [
 const Carousel = ({ children, id }: { children: React.ReactNode; id: string }) => {
   const ref = useRef<HTMLDivElement>(null);
   const scroll = (dir: number) => ref.current?.scrollBy({ left: dir * 360, behavior: "smooth" });
+
+  useEffect(() => {
+    const node = ref.current;
+    if (!node) return;
+
+    const timer = window.setInterval(() => {
+      if (node.matches(":hover")) return;
+      const nearEnd = node.scrollLeft + node.clientWidth >= node.scrollWidth - 8;
+      node.scrollTo({ left: nearEnd ? 0 : node.scrollLeft + 1.2, behavior: "smooth" });
+    }, 24);
+
+    return () => window.clearInterval(timer);
+  }, []);
+
   return (
     <div className="relative group">
       <div
@@ -228,7 +234,7 @@ const Site = () => {
   }, []);
 
   useEffect(() => {
-    document.title = "LEGADO | FLOW — Assinatura VIP";
+    document.title = "LEGADO | FLOW — Acesso Liberado";
   }, []);
 
   return (
@@ -249,13 +255,13 @@ const Site = () => {
           <a href="#modulos" className="hover:text-white">Módulos</a>
           <a href="#beneficios" className="hover:text-white">Benefícios</a>
           <a href="#depoimentos" className="hover:text-white">Depoimentos</a>
-          <a href="#planos" className="hover:text-white">Planos</a>
+          <a href="#acesso" className="hover:text-white">Acesso</a>
         </nav>
         <a
           href={CTA_URL}
           className="hidden md:inline-flex items-center gap-2 rounded-full bg-white text-black px-5 py-2 text-sm font-semibold hover:bg-white/90 transition"
         >
-          Entrar grátis <ArrowRight className="h-4 w-4" />
+          {CTA_LABEL} <ArrowRight className="h-4 w-4" />
         </a>
       </header>
 
@@ -310,7 +316,7 @@ const Site = () => {
               href={CTA_URL}
               className="inline-flex items-center justify-center gap-2 rounded-full bg-red-600 hover:bg-red-500 px-8 py-4 text-sm font-bold uppercase tracking-widest transition"
             >
-              Acessar grátis <ArrowRight className="h-4 w-4" />
+              {CTA_LABEL} <ArrowRight className="h-4 w-4" />
             </a>
             <a
               href="#modulos"
@@ -414,7 +420,7 @@ const Site = () => {
       {/* BENEFÍCIOS */}
       <section id="beneficios" className="relative z-10 px-6 md:px-12 py-24">
         <div className="mb-10">
-          <span className="text-xs uppercase tracking-[0.3em] text-white/40">02 · Benefícios VIP</span>
+          <span className="text-xs uppercase tracking-[0.3em] text-white/40">02 · Benefícios</span>
           <h2 className="mt-2 font-serif text-4xl md:text-5xl font-bold">
             Tudo <span className="italic text-red-500">desbloqueado</span>
           </h2>
@@ -492,15 +498,15 @@ const Site = () => {
         </Carousel>
       </section>
 
-      {/* PLANOS */}
-      <section id="planos" className="relative z-10 px-6 md:px-12 py-24">
+      {/* ACESSO LIBERADO */}
+      <section id="acesso" className="relative z-10 px-6 md:px-12 py-24">
         <div className="max-w-2xl mx-auto text-center">
-          <span className="text-xs uppercase tracking-[0.3em] text-red-500">04 · Assinatura</span>
+          <span className="text-xs uppercase tracking-[0.3em] text-red-500">04 · Acesso</span>
           <h2 className="mt-4 font-serif text-4xl md:text-5xl font-bold">
-            Um plano. <span className="italic">Tudo incluso.</span>
+            Tudo aberto. <span className="italic">Sem assinatura.</span>
           </h2>
           <p className="mt-4 text-white/60">
-            Cancele quando quiser. Sem fidelidade. Sem taxa de app store.
+            Enquanto não houver modelo de pagamento definido, o site leva direto ao cadastro gratuito.
           </p>
         </div>
         <motion.div
@@ -512,13 +518,13 @@ const Site = () => {
         >
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-xs uppercase tracking-[0.3em] text-red-500">VIP</div>
+              <div className="text-xs uppercase tracking-[0.3em] text-red-500">Liberado agora</div>
               <div className="mt-2 flex items-baseline gap-1">
-                <span className="text-5xl font-bold">R$29</span>
-                <span className="text-white/50">/mês</span>
+                <span className="text-5xl font-bold">R$0</span>
+                <span className="text-white/50">nesta fase</span>
               </div>
             </div>
-            <Crown className="h-10 w-10 text-red-500" />
+            <ShieldCheck className="h-10 w-10 text-red-500" />
           </div>
           <ul className="mt-8 space-y-3 text-sm text-white/85">
             {features.map((f) => (
@@ -532,10 +538,10 @@ const Site = () => {
             href={CTA_URL}
             className="mt-8 flex items-center justify-center gap-2 rounded-full bg-red-600 hover:bg-red-500 px-6 py-4 text-sm font-bold uppercase tracking-widest transition"
           >
-            Entrar grátis <ArrowRight className="h-4 w-4" />
+            {CTA_LABEL} <ArrowRight className="h-4 w-4" />
           </a>
           <p className="mt-4 text-center text-[11px] text-white/40">
-            Pagamento seguro via Stripe. Ativação automática no app após o cadastro.
+            Nenhum checkout ativo. Nenhuma cobrança. Conteúdo liberado no app após o cadastro.
           </p>
         </motion.div>
       </section>

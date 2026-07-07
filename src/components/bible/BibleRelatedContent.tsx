@@ -30,7 +30,6 @@ const BibleRelatedContent = ({ topics }: BibleRelatedContentProps) => {
         .from("contents")
         .select("id, title, description, thumbnail_url, video_url, category")
         .eq("path_type", "legacy")
-        .eq("is_vip", false)
         .limit(6);
 
       if (data && data.length > 0) {
