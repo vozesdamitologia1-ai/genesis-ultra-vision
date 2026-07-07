@@ -613,7 +613,17 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
     setTranscript("");
     setResponseText("");
     setCitedVerse(null);
+    messagesRef.current = [];
+    setMessages([]);
   }, []);
+
+  const resetConversation = () => {
+    messagesRef.current = [];
+    setMessages([]);
+    setTranscript("");
+    setResponseText("");
+    setCitedVerse(null);
+  };
 
   useEffect(() => {
     if (!open) stopEverything();
