@@ -785,11 +785,13 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
       }
 
       const { data, error } = await supabase.functions.invoke("gemini-chat", {
-        body: { message: text, history: [], systemPrompt },
+        body: { message: text, history: historyForApi, systemPrompt },
       });
       if (error) throw error;
       const reply = data?.reply ?? (isEnglish ? "No response." : "Sem resposta.");
       setResponseText(reply);
+      messagesRef.current = [...messagesRef.current, { role: "assistant", content: reply }];
+      setMessages(messagesRef.current);
 
       speakResponse(reply);
 
