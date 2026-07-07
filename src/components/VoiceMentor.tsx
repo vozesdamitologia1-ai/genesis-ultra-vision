@@ -629,6 +629,12 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
     if (!open) stopEverything();
   }, [open, stopEverything]);
 
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages, transcript, responseText]);
+
   // Draw waveform from mic
   const drawWaveform = useCallback(() => {
     const canvas = canvasRef.current;
