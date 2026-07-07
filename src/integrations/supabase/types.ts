@@ -196,6 +196,8 @@ export type Database = {
           content: string | null
           created_at: string | null
           id: string
+          likes: string[]
+          parent_id: string | null
           path_type: string | null
           user_id: string | null
         }
@@ -203,6 +205,8 @@ export type Database = {
           content?: string | null
           created_at?: string | null
           id?: string
+          likes?: string[]
+          parent_id?: string | null
           path_type?: string | null
           user_id?: string | null
         }
@@ -210,10 +214,20 @@ export type Database = {
           content?: string | null
           created_at?: string | null
           id?: string
+          likes?: string[]
+          parent_id?: string | null
           path_type?: string | null
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "community_messages_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "community_messages"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       contents: {
         Row: {
