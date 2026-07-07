@@ -40,5 +40,12 @@
     <h1>Você está offline</h1>
     <p>Não foi possível conectar. Verifique sua internet e tente novamente.</p>
     <button onclick="location.reload()">Tentar novamente</button>
+    <script>
+      // Auto-recover: if the browser regains connection, reload immediately.
+      window.addEventListener("online", () => location.reload());
+      // And retry once after 2s in case we landed here on a transient timeout.
+      setTimeout(() => { if (navigator.onLine) location.reload(); }, 2000);
+    </script>
   </body>
 </html>
+
