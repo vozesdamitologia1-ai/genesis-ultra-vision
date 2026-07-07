@@ -72,20 +72,21 @@ export default defineConfig(({ mode }) => ({
         cleanupOutdatedCaches: true,
         clientsClaim: true,
         skipWaiting: true,
-        navigateFallback: "/offline.html",
         navigateFallbackDenylist: [/^\/~oauth/],
         runtimeCaching: [
           {
-            // NetworkFirst for HTML navigations — always try network so the
-            // installed app picks up new releases immediately.
+            // NetworkFirst for HTML navigations. Long timeout so slow mobile
+            // networks don't trigger the offline fallback. Falls back to the
+            // last cached HTML (not offline.html) when the network truly fails.
             urlPattern: ({ request }) => request.mode === "navigate",
             handler: "NetworkFirst",
             options: {
               cacheName: "html-cache",
-              networkTimeoutSeconds: 5,
+              networkTimeoutSeconds: 20,
               expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 },
             },
           },
+
           {
             urlPattern: ({ request, sameOrigin }) =>
               sameOrigin && request.destination === "image",
