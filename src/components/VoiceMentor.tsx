@@ -746,6 +746,12 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
     setResponseText("");
     setCitedVerse(null);
 
+    // Push user turn into continuous chat log
+    const userMsg: ChatMsg = { role: "user", content: text };
+    const historyForApi = messagesRef.current.slice(-20);
+    messagesRef.current = [...messagesRef.current, userMsg];
+    setMessages(messagesRef.current);
+
     try {
       let verseData = "";
       let systemPrompt: string;
