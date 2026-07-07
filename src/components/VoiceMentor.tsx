@@ -558,6 +558,8 @@ function isRandomWordRequest(text: string): boolean {
   return triggers.some(t => normalized.includes(t));
 }
 
+type ChatMsg = { role: "user" | "assistant"; content: string };
+
 const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
   const { path } = usePath();
   const { i18n } = useTranslation();
@@ -565,6 +567,9 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
   const [transcript, setTranscript] = useState("");
   const [responseText, setResponseText] = useState("");
   const [citedVerse, setCitedVerse] = useState<string | null>(null);
+  const [messages, setMessages] = useState<ChatMsg[]>([]);
+  const messagesRef = useRef<ChatMsg[]>([]);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const animFrameRef = useRef<number>(0);
