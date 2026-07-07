@@ -42,7 +42,7 @@ const IMG_CAREER =
 
 // Vídeo público (Coverr / Pexels — livres)
 const VIDEO_LOOP =
-  "https://cdn.coverr.co/videos/coverr-a-man-praying-in-the-church-1080p/1080p.mp4";
+  "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_1MB.mp4";
 
 const features = [
   {
@@ -252,7 +252,7 @@ const Site = () => {
           <a href="#planos" className="hover:text-white">Planos</a>
         </nav>
         <a
-          href={STRIPE_CHECKOUT_URL}
+          href={CTA_URL}
           className="hidden md:inline-flex items-center gap-2 rounded-full bg-white text-black px-5 py-2 text-sm font-semibold hover:bg-white/90 transition"
         >
           Assinar VIP <ArrowRight className="h-4 w-4" />
@@ -307,7 +307,7 @@ const Site = () => {
             className="mt-10 flex flex-col sm:flex-row gap-4"
           >
             <a
-              href={STRIPE_CHECKOUT_URL}
+              href={CTA_URL}
               className="inline-flex items-center justify-center gap-2 rounded-full bg-red-600 hover:bg-red-500 px-8 py-4 text-sm font-bold uppercase tracking-widest transition"
             >
               Assinar VIP agora <ArrowRight className="h-4 w-4" />
@@ -529,7 +529,7 @@ const Site = () => {
             ))}
           </ul>
           <a
-            href={STRIPE_CHECKOUT_URL}
+            href={CTA_URL}
             className="mt-8 flex items-center justify-center gap-2 rounded-full bg-red-600 hover:bg-red-500 px-6 py-4 text-sm font-bold uppercase tracking-widest transition"
           >
             Assinar VIP <ArrowRight className="h-4 w-4" />
