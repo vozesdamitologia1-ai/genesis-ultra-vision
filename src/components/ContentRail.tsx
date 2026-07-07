@@ -86,7 +86,6 @@ const ContentRail = ({
       .from("contents")
       .select("*")
       .eq("path_type", pathType)
-      .eq("is_vip", isVip)
       .order("created_at", { ascending: false })
       .limit(20);
 

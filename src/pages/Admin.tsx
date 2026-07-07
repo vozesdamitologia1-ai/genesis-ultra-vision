@@ -49,7 +49,6 @@ const Admin = () => {
   const [videoUrl, setVideoUrl] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState(categories[0].value);
-  const [isVip, setIsVip] = useState(false);
   const [publishing, setPublishing] = useState(false);
   const [published, setPublished] = useState(false);
 
@@ -101,7 +100,7 @@ const Admin = () => {
       description: description.trim() || null,
       path_type: pathType,
       category,
-      is_vip: isVip,
+      is_vip: false,
       is_reel: true,
     });
 
@@ -119,7 +118,6 @@ const Admin = () => {
         setTitle("");
         setVideoUrl("");
         setDescription("");
-        setIsVip(false);
         setPublished(false);
       }, 2000);
     }
@@ -210,21 +208,6 @@ const Admin = () => {
                 </button>
               ))}
             </div>
-          </div>
-
-          {/* VIP toggle */}
-          <div className="flex items-center justify-between rounded-xl border p-3 border-border bg-card">
-            <span className="text-sm text-foreground">Conteúdo VIP?</span>
-            <button
-              onClick={() => setIsVip(!isVip)}
-              className={`rounded-full px-4 py-1 text-xs font-bold transition-all ${
-                isVip
-                  ? "bg-amber-400/20 text-amber-400 border border-amber-400/40"
-                  : "bg-muted text-muted-foreground"
-              }`}
-            >
-              {isVip ? "SIM" : "NÃO"}
-            </button>
           </div>
 
           {/* Publish Button */}

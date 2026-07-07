@@ -1,4 +1,4 @@
-import { BookOpen, Crown, Users, User } from "lucide-react";
+import { BookOpen, Users, User } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { usePath } from "@/contexts/PathContext";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -13,7 +13,6 @@ const BottomNav = () => {
 
   const navItems = [
     { icon: BookOpen, key: "study", route: "/study" },
-    { icon: Crown, key: "vip", route: "/vip" },
     { icon: Users, key: "community", route: "/community" },
     { icon: User, key: "profile", route: "/profile" },
   ];
@@ -21,9 +20,8 @@ const BottomNav = () => {
   const getActiveIndex = () => {
     const map: Record<string, number> = {
       "/study": 0,
-      "/vip": 1,
-      "/community": 2,
-      "/profile": 3,
+      "/community": 1,
+      "/profile": 2,
       "/legado": -1,
       "/flow": -1,
     };
