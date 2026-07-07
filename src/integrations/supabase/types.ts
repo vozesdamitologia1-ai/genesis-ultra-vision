@@ -197,6 +197,8 @@ export type Database = {
           created_at: string | null
           id: string
           likes: string[]
+          media_type: string | null
+          media_url: string | null
           parent_id: string | null
           path_type: string | null
           user_id: string | null
@@ -206,6 +208,8 @@ export type Database = {
           created_at?: string | null
           id?: string
           likes?: string[]
+          media_type?: string | null
+          media_url?: string | null
           parent_id?: string | null
           path_type?: string | null
           user_id?: string | null
@@ -215,6 +219,8 @@ export type Database = {
           created_at?: string | null
           id?: string
           likes?: string[]
+          media_type?: string | null
+          media_url?: string | null
           parent_id?: string | null
           path_type?: string | null
           user_id?: string | null
