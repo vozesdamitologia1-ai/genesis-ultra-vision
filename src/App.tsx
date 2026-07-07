@@ -15,6 +15,7 @@ import VIP from "./pages/VIP.tsx";
 import Community from "./pages/Community.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import Admin from "./pages/Admin.tsx";
+import Site from "./pages/Site.tsx";
 
 const queryClient = new QueryClient();
 
@@ -30,7 +31,12 @@ const AppRoutes = () => {
   }
 
   if (!user) {
-    return <Auth />;
+    return (
+      <Routes>
+        <Route path="/site" element={<Site />} />
+        <Route path="*" element={<Auth />} />
+      </Routes>
+    );
   }
 
   return (
@@ -44,6 +50,7 @@ const AppRoutes = () => {
         <Route path="/vip" element={<VIP />} />
         <Route path="/community" element={<Community />} />
         <Route path="/admin" element={<Admin />} />
+        <Route path="/site" element={<Site />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </PathProvider>
