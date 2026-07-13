@@ -1170,18 +1170,95 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
             <X className="h-6 w-6" />
           </button>
 
-          <div className={`absolute top-6 left-6 z-20 text-xs font-bold uppercase tracking-[0.3em] ${accentColor}`}>
+          <button
+            onClick={() => setSidebarOpen(true)}
+            aria-label={isEnglish ? "Chat history" : "Histórico de conversas"}
+            className="absolute top-4 left-4 z-20 rounded-full bg-white/10 p-2 text-white/70 backdrop-blur-sm transition-colors hover:bg-white/20 hover:text-white"
+          >
+            <Menu className="h-5 w-5" />
+          </button>
+
+          <div className={`absolute top-16 left-4 z-20 text-[10px] font-bold uppercase tracking-[0.3em] ${accentColor}`}>
             {isLegado ? "MENTOR BÍBLICO" : "FLOW"}
           </div>
 
           {messages.length > 0 && (
             <button
               onClick={resetConversation}
-              className="absolute top-16 right-4 z-20 rounded-full bg-white/10 px-3 py-1 text-[10px] font-medium uppercase tracking-wider text-white/70 backdrop-blur-sm transition-colors hover:bg-white/20 hover:text-white"
+              className="absolute top-4 right-16 z-20 rounded-full bg-white/10 px-3 py-2 text-[10px] font-medium uppercase tracking-wider text-white/70 backdrop-blur-sm transition-colors hover:bg-white/20 hover:text-white flex items-center gap-1"
             >
-              {isEnglish ? "New chat" : "Nova conversa"}
+              <Plus className="h-3 w-3" />
+              {isEnglish ? "New" : "Nova"}
             </button>
           )}
+
+          {/* Sidebar drawer */}
+          <AnimatePresence>
+            {sidebarOpen && (
+              <>
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  onClick={() => setSidebarOpen(false)}
+                  className="absolute inset-0 z-30 bg-black/60 backdrop-blur-sm"
+                />
+                <motion.aside
+                  initial={{ x: "-100%" }}
+                  animate={{ x: 0 }}
+                  exit={{ x: "-100%" }}
+                  transition={{ type: "tween", duration: 0.25 }}
+                  className={`absolute left-0 top-0 bottom-0 z-40 w-72 max-w-[85%] flex flex-col bg-neutral-950 border-r ${accentBorder}`}
+                >
+                  <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
+                    <span className={`text-xs font-bold uppercase tracking-[0.2em] ${accentColor}`}>
+                      {isEnglish ? "History" : "Histórico"}
+                    </span>
+                    <button
+                      onClick={() => setSidebarOpen(false)}
+                      className="rounded-full p-1 text-white/60 hover:text-white hover:bg-white/10"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                  <button
+                    onClick={() => { resetConversation(); setSidebarOpen(false); }}
+                    className={`mx-3 mt-3 flex items-center gap-2 rounded-lg border ${accentBorder} bg-white/5 px-3 py-2 text-sm text-white/90 hover:bg-white/10 transition-colors`}
+                  >
+                    <Plus className="h-4 w-4" />
+                    {isEnglish ? "New conversation" : "Nova conversa"}
+                  </button>
+                  <div className="flex-1 overflow-y-auto px-2 py-3 space-y-1">
+                    {threads.length === 0 && (
+                      <p className="px-3 py-4 text-center text-xs text-white/40">
+                        {isEnglish ? "No conversations yet" : "Nenhuma conversa ainda"}
+                      </p>
+                    )}
+                    {threads.map((t) => (
+                      <div
+                        key={t.id}
+                        className={`group flex items-center gap-2 rounded-lg px-3 py-2 cursor-pointer transition-colors ${
+                          activeThreadId === t.id ? "bg-white/10" : "hover:bg-white/5"
+                        }`}
+                        onClick={() => loadThreadMessages(t.id)}
+                      >
+                        <MessageSquare className={`h-3.5 w-3.5 flex-shrink-0 ${accentColor}`} />
+                        <span className="flex-1 text-xs text-white/80 truncate">{t.title}</span>
+                        <button
+                          onClick={(e) => deleteThread(t.id, e)}
+                          className="opacity-0 group-hover:opacity-100 rounded p-1 text-white/40 hover:text-red-400 hover:bg-white/10 transition-opacity"
+                          aria-label="Delete"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </motion.aside>
+              </>
+            )}
+          </AnimatePresence>
+
 
           {/* Chat log */}
           <div
