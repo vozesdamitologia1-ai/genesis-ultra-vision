@@ -983,19 +983,27 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
     }
     utterance.volume = 1;
 
+    // Always prefer a MALE voice for both LEGADO and FLOW
     const voices = window.speechSynthesis.getVoices();
+    const maleHints = /(male|masculin|homem|daniel|diego|fernando|ricardo|luciano|felipe|thiago|paulo|jorge|carlos|antonio|roberto|david|james|mark|alex|fred|george|oliver|arthur|guy)/i;
+    const femaleHints = /(female|femin|mulher|maria|luciana|luana|joana|helena|paulina|samantha|karen|victoria|zira|susan|amelia|emma|ava|nicky|moira|tessa|fiona)/i;
+    const isMale = (v: SpeechSynthesisVoice) => maleHints.test(v.name) && !femaleHints.test(v.name);
     if (isEnglish) {
-      // Prefer Google US English voices; for LEGADO pick deeper male, FLOW pick energetic
-      const googleUS = voices.find(v => v.lang === "en-US" && v.name.toLowerCase().includes("google"));
-      const anyUS = voices.find(v => v.lang === "en-US");
-      const anyEN = voices.find(v => v.lang.startsWith("en"));
-      const picked = googleUS || anyUS || anyEN;
+      const enVoices = voices.filter(v => v.lang.startsWith("en"));
+      const picked =
+        enVoices.find(v => v.lang === "en-US" && isMale(v)) ||
+        enVoices.find(isMale) ||
+        enVoices.find(v => !femaleHints.test(v.name)) ||
+        enVoices[0];
       if (picked) utterance.voice = picked;
     } else {
-      const ptVoice = voices.find(v => v.lang.startsWith("pt") && v.name.toLowerCase().includes("google"))
-        || voices.find(v => v.lang.startsWith("pt-BR"))
-        || voices.find(v => v.lang.startsWith("pt"));
-      if (ptVoice) utterance.voice = ptVoice;
+      const ptVoices = voices.filter(v => v.lang.startsWith("pt"));
+      const picked =
+        ptVoices.find(v => v.lang.startsWith("pt-BR") && isMale(v)) ||
+        ptVoices.find(isMale) ||
+        ptVoices.find(v => !femaleHints.test(v.name)) ||
+        ptVoices[0];
+      if (picked) utterance.voice = picked;
     }
 
     utterance.onend = () => setState("idle");
