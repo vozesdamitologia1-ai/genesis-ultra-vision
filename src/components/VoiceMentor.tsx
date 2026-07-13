@@ -629,11 +629,57 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
     setTranscript("");
     setResponseText("");
     setCitedVerse(null);
+    activeThreadIdRef.current = null;
+    setActiveThreadId(null);
+  };
+
+  const loadThreads = useCallback(async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const { data } = await supabase
+      .from("mentor_threads")
+      .select("id, title, updated_at, path_type")
+      .eq("user_id", user.id)
+      .eq("path_type", pathType)
+      .order("updated_at", { ascending: false })
+      .limit(100);
+    if (data) setThreads(data as Thread[]);
+  }, [pathType]);
+
+  const loadThreadMessages = async (threadId: string) => {
+    const { data } = await supabase
+      .from("mentorship_logs")
+      .select("user_query, ai_response, created_at")
+      .eq("thread_id", threadId)
+      .order("created_at", { ascending: true });
+    const msgs: ChatMsg[] = [];
+    (data || []).forEach((row: any) => {
+      if (row.user_query) msgs.push({ role: "user", content: row.user_query });
+      if (row.ai_response) msgs.push({ role: "assistant", content: row.ai_response });
+    });
+    messagesRef.current = msgs;
+    setMessages(msgs);
+    activeThreadIdRef.current = threadId;
+    setActiveThreadId(threadId);
+    setSidebarOpen(false);
+    setTranscript("");
+    setResponseText("");
+    setCitedVerse(null);
+  };
+
+  const deleteThread = async (threadId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    await supabase.from("mentor_threads").delete().eq("id", threadId);
+    setThreads((prev) => prev.filter((t) => t.id !== threadId));
+    if (activeThreadIdRef.current === threadId) {
+      resetConversation();
+    }
   };
 
   useEffect(() => {
     if (!open) stopEverything();
-  }, [open, stopEverything]);
+    else loadThreads();
+  }, [open, stopEverything, loadThreads]);
 
   useEffect(() => {
     if (scrollRef.current) {
