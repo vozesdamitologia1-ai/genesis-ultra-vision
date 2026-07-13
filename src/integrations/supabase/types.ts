@@ -328,12 +328,40 @@ export type Database = {
         }
         Relationships: []
       }
+      mentor_threads: {
+        Row: {
+          created_at: string
+          id: string
+          path_type: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          path_type?: string
+          title?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          path_type?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       mentorship_logs: {
         Row: {
           ai_response: string | null
           created_at: string | null
           id: string
           path_type: string | null
+          thread_id: string | null
           user_id: string | null
           user_query: string | null
         }
@@ -342,6 +370,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           path_type?: string | null
+          thread_id?: string | null
           user_id?: string | null
           user_query?: string | null
         }
@@ -350,10 +379,19 @@ export type Database = {
           created_at?: string | null
           id?: string
           path_type?: string | null
+          thread_id?: string | null
           user_id?: string | null
           user_query?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "mentorship_logs_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "mentor_threads"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
