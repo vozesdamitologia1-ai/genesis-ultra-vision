@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { X, Mic, MicOff, Volume2 } from "lucide-react";
+import { X, Mic, MicOff, Volume2, Menu, Plus, MessageSquare, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { usePath } from "@/contexts/PathContext";
 import { motion, AnimatePresence } from "framer-motion";
