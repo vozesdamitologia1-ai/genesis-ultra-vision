@@ -559,6 +559,7 @@ function isRandomWordRequest(text: string): boolean {
 }
 
 type ChatMsg = { role: "user" | "assistant"; content: string };
+type Thread = { id: string; title: string; updated_at: string; path_type: string };
 
 const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
   const { path } = usePath();
@@ -569,6 +570,10 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
   const [citedVerse, setCitedVerse] = useState<string | null>(null);
   const [messages, setMessages] = useState<ChatMsg[]>([]);
   const messagesRef = useRef<ChatMsg[]>([]);
+  const [threads, setThreads] = useState<Thread[]>([]);
+  const [activeThreadId, setActiveThreadId] = useState<string | null>(null);
+  const activeThreadIdRef = useRef<string | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -580,6 +585,7 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
 
   const isLegado = path === "legado";
   const isEnglish = i18n.language?.startsWith("en");
+  const pathType = isLegado ? "legado" : "flow";
 
   const waveColor = isLegado ? "#D4AF37" : "#ef4444";
   const bgGradient = isLegado
