@@ -866,11 +866,36 @@ const VoiceMentor = ({ open, onClose }: VoiceMentorProps) => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
+          let threadId = activeThreadIdRef.current;
+          if (!threadId) {
+            const title = text.trim().slice(0, 60) || (isEnglish ? "New conversation" : "Nova conversa");
+            const { data: newThread } = await supabase
+              .from("mentor_threads")
+              .insert({ user_id: user.id, path_type: pathType, title })
+              .select("id, title, updated_at, path_type")
+              .single();
+            if (newThread) {
+              threadId = newThread.id;
+              activeThreadIdRef.current = threadId;
+              setActiveThreadId(threadId);
+              setThreads((prev) => [newThread as Thread, ...prev]);
+            }
+          } else {
+            const nowIso = new Date().toISOString();
+            await supabase.from("mentor_threads").update({ updated_at: nowIso }).eq("id", threadId);
+            setThreads((prev) => {
+              const idx = prev.findIndex((t) => t.id === threadId);
+              if (idx < 0) return prev;
+              const updated = { ...prev[idx], updated_at: nowIso };
+              return [updated, ...prev.filter((t) => t.id !== threadId)];
+            });
+          }
           await supabase.from("mentorship_logs").insert({
             user_id: user.id,
             user_query: text,
             ai_response: reply,
-            path_type: isLegado ? "legado" : "flow",
+            path_type: pathType,
+            thread_id: threadId,
           });
         }
       } catch (logErr) {
