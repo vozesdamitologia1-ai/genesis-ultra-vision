@@ -1,4 +1,4 @@
-import { BookOpen, Users, User, Mic } from "lucide-react";
+import { BookOpen, Users, User, Mic, Home } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { usePath } from "@/contexts/PathContext";
@@ -15,8 +15,10 @@ const BottomNav = () => {
   const isLegado = path === "legado";
   const showMentor = path === "legado" || path === "flow";
   const mentorLabel = isLegado ? "Legado" : "Flow";
+  const homeRoute = path === "flow" ? "/flow" : path === "legado" ? "/legado" : "/";
 
   const navItems = [
+    { icon: Home, key: "home", route: homeRoute, label: t("nav.home", "Início") },
     { icon: BookOpen, key: "study", route: "/study", label: t("nav.study") },
     { icon: Users, key: "community", route: "/community", label: t("nav.community") },
     ...(showMentor
@@ -30,10 +32,14 @@ const BottomNav = () => {
       "/study": "study",
       "/community": "community",
       "/profile": "profile",
+      "/legado": "home",
+      "/flow": "home",
+      "/": "home",
     };
     return map[location.pathname] ?? "";
   };
   const activeKey = voiceOpen ? "mentor" : getActiveKey();
+
 
   const activeColor = isLegado
     ? "text-amber-400 drop-shadow-[0_0_6px_rgba(212,175,55,0.5)]"
